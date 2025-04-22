@@ -14,36 +14,6 @@ app = Flask(__name__)
 CORS(app)
 
 engine = create_engine("mysql://diogo123:diogo123@localhost/Scan")
-
-@app.route('/geral', methods=['GET'])
-def get_geral():
-    query = text("""
-        SELECT
-            p.product_id AS product_id,
-            p.product_name AS product_name,
-            p.amount AS amount,
-            p.category AS category
-        FROM
-            Products p
-    """)
-
-    try:
-        with engine.connect() as con:
-            result = con.execute(query)
-            geral = []
-
-            for row in result:
-                geral.append({
-                    'product_id': row[0],
-                    'product_name': row[1],
-                    'amount': row[2],
-                    'category': row[3],
-                })
-
-        return jsonify(geral), 200
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
     
 # ===================================== PRODUCTS ======================================= #
 
