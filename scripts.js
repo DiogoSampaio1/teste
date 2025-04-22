@@ -1,34 +1,15 @@
-let scannerAtivo = false;
+function openSidebar() {
+    let icon = document.getElementById('ham-men');
+    let sidebar = document.getElementById('nav');
 
-function iniciarScanner() {
-  const readerDiv = document.getElementById("reader");
-  const resultadoDiv = document.getElementById("resultado");
+    sidebar.classList.toggle('active');
 
-  if (scannerAtivo) return; // Evita múltiplas ativações
-
-  scannerAtivo = true;
-  readerDiv.style.display = "block";
-
-  const html5QrCode = new Html5Qrcode("reader");
-
-  html5QrCode.start(
-    { facingMode: "environment" },
-    {
-      fps: 10,
-      qrbox: 250
-    },
-    (decodedText, decodedResult) => {
-      resultadoDiv.innerText = `📦 Código detectado: ${decodedText}`;
-      html5QrCode.stop().then(() => {
-        scannerAtivo = false;
-        readerDiv.style.display = "none";
-      });
-    },
-    (errorMessage) => {
-      // Pode mostrar erros aqui
+    if (sidebar.style.contain('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-xmark');
+    } else {
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
     }
-  ).catch(err => {
-    resultadoDiv.innerText = `Erro ao acessar câmera: ${err}`;
-    scannerAtivo = false;
-  });
 }
+

@@ -1,19 +1,51 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Scanner de Código</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="style.css">
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <title>Scan CodeBar</title>
 </head>
 <body>
 
-  <h1>Leitor de Código de Barras</h1>
-  <button onclick="iniciarScanner()">📷 Scanear</button>
+  <header>
+    <div class="cont-left-side-header">
+      <div class="icon-menu-and-sidebar">
+        <div class="menu" id="menu-burguer" onclick="openSidebar()"><i id="ham-men" class="fa-solid fa-bars"></i></div>
+        <aside class="nav" id="nav">
+          <div class="products-menu-txt"><a href="#">Produtos</a></div>
+          <div class="rooms-menu-txt"><a href="#">Salas</a></div>
+          <div class="access-menu-txt"><a href="#">Utilizadores</a></div>
+        </aside>
+      </div>
+      <div class="tittle">Scan CodeBar</div>
+    </div>
+    <div class="cont-right-side-header">
+      <div class="user" id="user-name">Isaac</div>
+    </div>
+  </header>
 
-  <div id="reader"></div>
-  <div id="resultado"></div>
+  <div class="container">
+    <div class="searchbar">
+      <input type="search" id="searchbar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Código</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody id="items-table">
+      </tbody>
+    </table>
+  </div>
 
-  <script src="scripts.js"></script>
+  <script src="scripts.js"></script>  
+
 </body>
 </html>

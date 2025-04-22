@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Scanner de Código</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+
+  <h1>Leitor de Código de Barras</h1>
+  <button onclick="iniciarScanner()">📷 Scanear</button>
+
+  <div id="reader"></div>
+  <div id="resultado"></div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
+
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
+    background-color: #f8f8f8;
+  }
+  
+  button {
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  #reader {
+    width: 300px;
+    margin: 30px auto;
+    display: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: white;
+  }
+  
+  #resultado {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+</style>
+
+<script>
+  let scannerAtivo = false;
+
+  function iniciarScanner() {
+    const readerDiv = document.getElementById("reader");
+    const resultadoDiv = document.getElementById("resultado");
+
+    if (scannerAtivo) return; // Evita múltiplas ativações
+
+    scannerAtivo = true;
+    readerDiv.style.display = "block";
+
+    const html5QrCode = new Html5Qrcode("reader");
+
+    html5QrCode.start(
+      { facingMode: "environment" },
+      {
+        fps: 10,
+        qrbox: 250
+      },
+      (decodedText, decodedResult) => {
+        resultadoDiv.innerText = `📦 Código detectado: ${decodedText}`;
+        html5QrCode.stop().then(() => {
+          scannerAtivo = false;
+          readerDiv.style.display = "none";
+        });
+      },
+      (errorMessage) => {
+        // Pode mostrar erros aqui
+      }
+    ).catch(err => {
+      resultadoDiv.innerText = `Erro ao acessar câmera: ${err}`;
+      scannerAtivo = false;
+    });
+  }
+</script>
