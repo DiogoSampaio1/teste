@@ -21,7 +21,7 @@ VALUES
   (1003, 'Cabos Rede Amarelos', 1005464535340, 'nssss'),
   (1020, 'Cabos Rede Pretos', 545235634634646, 'nao ha');
 
-INSERT INTO Acess (ist_number)
+INSERT INTO Access (ist_number)
 VALUES
   (430453),
   (430452);
