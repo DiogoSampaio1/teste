@@ -1,16 +1,16 @@
 CREATE TABLE Products (
-    product_id AUTO_INCREMENT PRIMARY KEY,
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
     product_name VARCHAR(255),
     product_code VARCHAR(255),
     product_class VARCHAR(50)
 );
 
 CREATE TABLE Access (
-    ist_number VARCHAR(255),
+    ist_number VARCHAR(255) PRIMARY KEY
 );
 
 CREATE TABLE Rooms (
-    room_id AUTO_INCREMENT PRIMARY KEY,
+    room_id INT AUTO_INCREMENT PRIMARY KEY,
     room_name VARCHAR(15)
 );
 
