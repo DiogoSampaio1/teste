@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .then(data => {
         const tableBody = document.getElementById('items-table');
-        tableBody.innerHTML = ''; // limpa antes de inserir os novos
+        tableBody.innerHTML = ''; 
   
         data.forEach(product => {
           const row = document.createElement('tr');
