@@ -51,15 +51,67 @@ header{
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: fixed;
+  text-align: center;
   left: -100%;
   top: 0;
   width: 250px;
   height: 100vh;
   background-color: var(--sec-bg);
-  transition: .4s ease;
+  transition: .1s ease;
+  gap: 30px;
 }
 
 .nav.active{
   left: 0;
+}
+
+.nav div{
+  width: 100%;
+  font-size: 1.2em;
+  padding: 10px 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: .1s ease;
+}
+
+.nav div:hover{
+  background-color: #30303083;
+}
+
+.nav div a{
+  color: #fff;
+  text-decoration: none;
+}
+/* ======== */
+
+/* Main Container */
+.container{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+  width: 1000px;
+  height: 80vh;
+}
+
+table{
+  background-color: var(--sec-bg);
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+}
+
+td{
+  border-top: 1px solid #cccccc70;
+  padding: 12px 15px;
+  text-align: center;
+}
+
+th{
+  padding: 12px 15px;
+  text-align: center;
 }
