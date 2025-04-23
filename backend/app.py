@@ -17,6 +17,7 @@ engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
     
 # ===================================== PRODUCTS ======================================= #
 
+#GET PRODUCTS
 @app.route('/products', methods=['GET'])
 def get_products():
     query = text("""
@@ -41,7 +42,8 @@ def get_products():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
+    
+#DELETE PRODUCTS
 @app.route('/products', methods=['DELETE'])
 def delete_products():
     product_name = request.args.get('product_name')
@@ -69,6 +71,7 @@ def delete_products():
 
 # ===================================== ROOMS ======================================= #
 
+#GET ROOMS
 @app.route('/room', methods=['GET'])
 def get_products():
     query = text("""
@@ -91,7 +94,41 @@ def get_products():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+#POST ROOMS
+@app.route('/room', methods=['POST'])
+def add_user():
+    data = request.json
 
+    room_name = data.get('room_name')
+
+    if not room_name:
+        return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
+
+    try:
+        with engine.begin() as con:
+            query_check = text("SELECT * FROM Rooms WHERE room_name = :room_name")
+            result = con.execute(query_check, {'room_name': room_name}).fetchone()
+
+            if result:
+                return jsonify({'message': 'Esta Sala já existe'}), 409
+
+            query_insert = text("""
+                INSERT INTO Rooms (room_name)
+                VALUES (:room_name)
+            """)
+
+            con.execute(query_insert, {
+                'room_name': room_name
+            })
+
+        return jsonify({'message': 'Sala criada com sucesso!'}), 201
+
+    except Exception as e:
+        print("Erro ao criar sala:", e)
+        return jsonify({'error': str(e)}), 500
+
+#DELETE ROOMS
 @app.route('/room', methods=['DELETE'])
 def delete_products():
     room_name = request.args.get('room_name')
@@ -119,6 +156,7 @@ def delete_products():
 
 # ===================================== Users ======================================= #
 
+#GET USERS
 @app.route('/user', methods=['GET'])
 def get_products():
     query = text("""
@@ -140,7 +178,41 @@ def get_products():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+#POST USERS
+@app.route('/user', methods=['POST'])
+def add_user():
+    data = request.json
 
+    ist_number = data.get('ist_number')
+
+    if not ist_number:
+        return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
+
+    try:
+        with engine.begin() as con:
+            query_check = text("SELECT * FROM Access WHERE ist_number = :ist_number")
+            result = con.execute(query_check, {'ist_number': ist_number}).fetchone()
+
+            if result:
+                return jsonify({'message': 'O Utilizador já tem acesso'}), 409
+
+            query_insert = text("""
+                INSERT INTO Access (ist_number)
+                VALUES (:ist_number)
+            """)
+
+            con.execute(query_insert, {
+                'ist_number': ist_number
+            })
+
+        return jsonify({'message': 'Utilizador adicionado com sucesso!'}), 201
+
+    except Exception as e:
+        print("Erro ao adicionar Utilizador:", e)
+        return jsonify({'error': str(e)}), 500
+    
+#DELETE USERS
 @app.route('/user', methods=['DELETE'])
 def delete_products():
     ist_number = request.args.get('ist_number')
