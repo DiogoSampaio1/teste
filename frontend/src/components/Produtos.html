@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../css/mainCss.css">
+  <title>Scan CodeBar</title>
+</head>
+<body>
+
+  <header>
+    <div class="cont-left-side-header">
+      <div class="icon-menu-and-sidebar">
+        <div class="menu" id="menu-burguer" onclick="openSidebar()"><i id="ham-men" class="fa-solid fa-bars"></i></div>
+        <aside class="nav" id="nav">
+          <div class="products-menu-txt"><a href="#">Produtos</a></div>
+          <div class="rooms-menu-txt"><a href="#">Salas</a></div>
+          <div class="access-menu-txt"><a href="#">Utilizadores</a></div>
+        </aside>
+      </div>
+      <div class="tittle">Scan CodeBar</div>
+    </div>
+    <div class="cont-right-side-header">
+      <div class="user" id="user-name">Isaac</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="searchbar">
+      <label>
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="search" id="searchbar">
+      </label>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Código</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody id="items-table">
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- Main Script -->
+  <script src="../script/mainScript.js"></script>
+
+
+  <!-- Own Script -->
+  <script>
+    let allProducts = []; // global
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch('http://127.0.0.1:5000/products')
+        .then(response => response.json())
+        .then(data => {
+          allProducts = data;
+          renderTable(allProducts);
+        })
+        .catch(error => console.error('Erro:', error));
+    });
+
+    function renderTable(products) {
+      const tableBody = document.getElementById('items-table');
+      tableBody.innerHTML = '';
+
+      products.forEach(product => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${product.product_id}</td>
+          <td>${product.product_name}</td>
+          <td>${product.product_code}</td>
+          <td>${product.product_class}</td>
+          <td><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Filtro ao digitar
+    document.getElementById("searchbar").addEventListener("input", (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+
+      const filtered = allProducts.filter(p =>
+        p.product_name.toLowerCase().includes(searchTerm) ||
+        p.product_code.toLowerCase().includes(searchTerm) ||
+        p.product_class.toLowerCase().includes(searchTerm) ||
+        p.product_id.toString().includes(searchTerm)
+      );
+
+      renderTable(filtered);
+    });
+  </script>
+
+  <style>
+  /* Main Container */
+  .container{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -45%);
+    width: 1000px;
+    height: 80vh;
+  }
+  /* ========== */
+
+  /* Searchbar */
+  .searchbar{
+    border-bottom: 1px solid #ccc;
+    background-color: #1f1f1f9d;
+    padding: 10px 20px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    transition: .3s ease;
+  }
+
+  .searchbar:hover{
+    background-color: #2c2c2c8c;
+  }
+
+  .searchbar:has(input:focus){
+    background-color: #2e2e2e;
+  }
+
+  label{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+  }
+
+  .searchbar input{
+    width: 100%;
+    color: #ccc;
+    background: transparent;
+    border: none;
+    font-size: 1.2em;
+    padding: 10px;
+    outline: none;
+  }
+
+  .searchbar i{
+    color: #ccc;
+    cursor: text;
+  }
+
+  /* ========== */
+
+  table{
+    background-color: var(--sec-bg);
+    width: 100%;
+    border-collapse: collapse;
+    color: #fff;
+  }
+
+  td{
+    border-top: 1px solid #cccccc70;
+    padding: 15px;
+    text-align: center;
+  }
+
+  th{
+    padding: 15px;
+    text-align: center;
+  }
+  </style>
+
+</body>
+</html>
