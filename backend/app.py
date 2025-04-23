@@ -21,7 +21,7 @@ engine = create_engine("mysql://diogo123:diogo123@localhost/Scan")
 def get_products():
     query = text("""
     SELECT 
-        ALL FROM Products
+        * FROM Products
      """)
     
     try:
@@ -40,6 +40,7 @@ def get_products():
         return jsonify(products), 200
 
     except Exception as e:
+        print("Erro no backend:", e)  # <-- MUITO útil
         return jsonify({'error': str(e)}), 500
     
 # ===================================== ROUTE ======================================= #   
