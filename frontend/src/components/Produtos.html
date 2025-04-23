@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../css/mainCss.css">
+  <link rel="shortcut icon" href="../image/QRCODE.png" type="image/x-icon">
   <title>Scan CodeBar</title>
 </head>
 <body>
@@ -30,7 +31,7 @@
     <div class="searchbar">
       <label>
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="search" id="searchbar">
+        <input type="search" id="searchbar" autocomplete="off">
       </label>
     </div>
     <table>
@@ -134,6 +135,7 @@
     transform: translate(-50%, -45%);
     width: 1000px;
     height: 80vh;
+    z-index: 0;
   }
   /* ========== */
 

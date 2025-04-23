@@ -44,7 +44,7 @@ header{
     position: relative;
     cursor: pointer;
     transition: .3s ease;
-    z-index: 1;
+    z-index: 200;
 }
 
 .nav{
@@ -61,6 +61,7 @@ header{
     background-color: var(--sec-bg);
     transition: .1s ease;
     gap: 30px;
+    z-index: 100;
 }
 
 .nav.active{
