@@ -41,7 +41,32 @@ def get_products():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+@app.route('/products', methods=['DELETE'])
+def delete_products():
+    product_name = request.args.get('product_name')
+
+    if not product_name:
+        return jsonify({'message': 'Por favor adicione o Nome do Produto'}), 400
+
+    try:
+        with engine.begin() as con:
+
+            query_check = text("SELECT * FROM Products WHERE product_name = :product_name")
+            result = con.execute(query_check, {'product_name': product_name}).fetchone()
+
+            if not result:
+                return jsonify({'message': 'Produto não encontrado'}), 404
+
+            query_delete = text("DELETE FROM Products WHERE product_name = :product_name")
+            con.execute(query_delete, {'product_name': product_name})
+
+        return jsonify({'message': 'Produto deletado com sucesso!'}), 200
+
+    except Exception as e:
+        print("Erro ao deletar produto:", e)
+        return jsonify({'error': str(e)}), 500
+
 # ===================================== ROUTE ======================================= #   
     
 @app.route('/')
