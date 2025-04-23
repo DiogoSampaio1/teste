@@ -73,7 +73,7 @@ def delete_products():
 
 #GET ROOMS
 @app.route('/room', methods=['GET'])
-def get_products():
+def get_room():
     query = text("""
     SELECT 
         * FROM Rooms
@@ -97,7 +97,7 @@ def get_products():
     
 #POST ROOMS
 @app.route('/room', methods=['POST'])
-def add_user():
+def add_room():
     data = request.json
 
     room_name = data.get('room_name')
@@ -130,7 +130,7 @@ def add_user():
 
 #DELETE ROOMS
 @app.route('/room', methods=['DELETE'])
-def delete_products():
+def delete_room():
     room_name = request.args.get('room_name')
 
     if not room_name:
@@ -139,13 +139,13 @@ def delete_products():
     try:
         with engine.begin() as con:
 
-            query_check = text("SELECT * FROM Products WHERE room_name = :room_name")
+            query_check = text("SELECT * FROM Rooms WHERE room_name = :room_name")
             result = con.execute(query_check, {'room_name': room_name}).fetchone()
 
             if not result:
                 return jsonify({'message': 'Sala não encontrada'}), 404
 
-            query_delete = text("DELETE FROM Products WHERE room_name = :room_name")
+            query_delete = text("DELETE FROM Rooms WHERE room_name = :room_name")
             con.execute(query_delete, {'room_name': room_name})
 
         return jsonify({'message': 'Sala eliminada com sucesso!'}), 200
@@ -158,26 +158,27 @@ def delete_products():
 
 #GET USERS
 @app.route('/user', methods=['GET'])
-def get_products():
+def get_users():
     query = text("""
     SELECT 
         * FROM Access
-     """)
-    
+    """)
+
     try:
         with engine.connect() as con: 
             result = con.execute(query)
-            products = []
+            users = []
 
             for row in result:
-                products.append({
+                users.append({
                     'ist_number': row[0],
                 })
 
-        return jsonify(products), 200
+        return jsonify(users), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
     
 #POST USERS
 @app.route('/user', methods=['POST'])
@@ -214,7 +215,7 @@ def add_user():
     
 #DELETE USERS
 @app.route('/user', methods=['DELETE'])
-def delete_products():
+def delete_users():
     ist_number = request.args.get('ist_number')
 
     if not ist_number:
@@ -223,13 +224,13 @@ def delete_products():
     try:
         with engine.begin() as con:
 
-            query_check = text("SELECT * FROM Products WHERE ist_number = :ist_number")
+            query_check = text("SELECT * FROM Access WHERE ist_number = :ist_number")
             result = con.execute(query_check, {'ist_number': ist_number}).fetchone()
 
             if not result:
                 return jsonify({'message': 'Acesso não encontrado'}), 404
 
-            query_delete = text("DELETE FROM Products WHERE ist_number = :ist_number")
+            query_delete = text("DELETE FROM Access WHERE ist_number = :ist_number")
             con.execute(query_delete, {'ist_number': ist_number})
 
         return jsonify({'message': 'Acesso retirado com sucesso!'}), 200
