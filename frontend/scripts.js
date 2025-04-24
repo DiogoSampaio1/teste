@@ -86,10 +86,10 @@ function tratarCodigoLido(decodedText) {
     .then(produto => {
       resultadoDiv.style.display = 'flex';
       resultadoDiv.innerHTML = `
-  ✅ Produto encontrado:<br><br>
-    Nome: <i>${produto.product_name}</i><br>
-    Código: <i>${produto.product_code}</i><br>
-    Classe: <i>${produto.product_class}</i>
+    ✅ Produto encontrado:<br><br>
+      Nome: <i>${produto.product_name}</i><br>
+      Código: <i>${produto.product_code}</i><br>
+      Classe: <i>${produto.product_class}</i>
       `;
     })
     . catch(() => {
