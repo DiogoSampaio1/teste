@@ -77,7 +77,7 @@
            document.getElementById('items-table').addEventListener('click', (e) => {
              if (e.target.classList.contains('delete-icon')) {
                const row = e.target.closest('tr');
-               const roomName = row.children[1].textContent; // Coluna do nome
+               const roomName = row.children[0].textContent; // Coluna do nome
      
                if (confirm(`Deseja deletar a sala "${roomName}"?`)) {
                  fetch(`http://127.0.0.1:5000/room?room_name=${encodeURIComponent(roomName)}`, {
