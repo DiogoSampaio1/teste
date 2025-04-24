@@ -28,7 +28,7 @@ let scannerAtivo = false;
         // Pode mostrar erros aqui
       }
     ).catch(err => {
-      resultadoDiv.innerText = `Erro ao acessar câmera: ${err}`;
+      resultadoDiv.innerText = `Erro ao aceder à câmera`;
       scannerAtivo = false;
     });
   }
