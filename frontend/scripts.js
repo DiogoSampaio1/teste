@@ -59,7 +59,6 @@ document.getElementById("usb-scanner").addEventListener("input", (e) => {
   clearTimeout(timeoutScanner);
 
   codigoAtual = e.target.value.trim();
-  console.log("Código Atual:", codigoAtual);
 
   // Espera 300ms sem digitação pra processar
   timeoutScanner = setTimeout(() => {
@@ -85,10 +84,13 @@ function tratarCodigoLido(decodedText) {
       return res.json();
     })
     .then(produto => {
-      // Exibe as informações do produto encontrado, sem mostrar o código
-      resultadoDiv.innerText = 
-        `✅ Produto encontrado:\n• Nome: ${produto.product_name}\n• Código: ${produto.product_code}\n• Classe: ${produto.product_class}`;
-      formAdd.style.display = "none"; // Esconde o formulário de adicionar novo produto
+      resultadoDiv.style.display = 'flex';
+      resultadoDiv.innerHTML = `
+  ✅ Produto encontrado:<br><br>
+    Nome: <i>${produto.product_name}</i><br>
+    Código: <i>${produto.product_code}</i><br>
+    Classe: <i>${produto.product_class}</i>
+      `;
     })
     . catch(() => {
       // Produto não encontrado
@@ -103,6 +105,12 @@ function tratarCodigoLido(decodedText) {
       // Dar foco no primeiro campo do formulário para facilitar
       document.getElementById("newName").focus();
     });
+}
+
+function closeDialog() {
+  document.getElementById('form-add').style.display = 'none';
+
+  location.reload()
 }
 
 function adicionarProduto() {
