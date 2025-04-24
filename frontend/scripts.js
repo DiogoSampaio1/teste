@@ -14,7 +14,7 @@ let scannerAtivo = false;
     html5QrCode.start(
       { facingMode: "environment" },
       {
-        fps: 10,
+        fps: 60,
         qrbox: 250
       },
       (decodedText, decodedResult) => {
