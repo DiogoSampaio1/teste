@@ -43,6 +43,41 @@ def get_products():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+#POST PRODUCTS
+@app.route('/products', methods=['POST'])
+def add_product():
+    data = request.json
+
+    product_name = data.get('product_name')
+    product_code = data.get('product_code')
+    product_class = data.get('product_class')
+
+    if not product_name or not product_code or not product_class:
+        return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
+
+    try:
+        with engine.begin() as con:
+            query_check = text("SELECT * FROM Products WHERE product_code = :product_code")
+            result = con.execute(query_check, {'product_code': product_code}).fetchone()
+
+            if result:
+                return jsonify({'message': 'Este produto já existe'}), 409
+
+            query_insert = text("""
+                INSERT INTO Products (product_name, product_code, product_class)
+                VALUES (:product_name), (:product_code), (:product_class)
+            """)
+
+            con.execute(query_insert, {
+                'product_name': product_name, 'product_code': product_code, 'product_class': product_class
+            })
+
+        return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
+
+    except Exception as e:
+        print("Erro ao adicionar produto:", e)
+        return jsonify({'error': str(e)}), 500
+        
 #DELETE PRODUCTS
 @app.route('/products', methods=['DELETE'])
 def delete_products():
