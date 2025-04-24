@@ -65,7 +65,7 @@ def add_product():
 
             query_insert = text("""
                 INSERT INTO Products (product_name, product_code, product_class)
-                VALUES (:product_name), (:product_code), (:product_class)
+                VALUES (:product_name, :product_code, :product_class)
             """)
 
             con.execute(query_insert, {
@@ -273,7 +273,50 @@ def delete_users():
     except Exception as e:
         print("Erro ao retirar acesso:", e)
         return jsonify({'error': str(e)}), 500
-     
+
+
+# GET PRODUCTS?BY?SCAN
+@app.route('/products_scan', methods=['GET'])
+def get_products_scan():
+    product_code = request.args.get('product_code')
+
+    try:
+        with engine.connect() as con:
+            if product_code:
+                # Busca específica por código
+                query = text("SELECT * FROM Products WHERE product_code = :code")
+                result = con.execute(query, {"code": product_code})
+                row = result.fetchone()
+
+                if row:
+                    produto = {
+                        'product_id': row[0],
+                        'product_name': row[1],
+                        'product_code': row[2],
+                        'product_class': row[3],
+                    }
+                    return jsonify(produto), 200
+                else:
+                    return jsonify({'error': 'Produto não encontrado'}), 404
+
+            else:
+                # Retorna todos os produtos
+                query = text("SELECT * FROM Products")
+                result = con.execute(query)
+
+                products = []
+                for row in result:
+                    products.append({
+                        'product_id': row[0],
+                        'product_name': row[1],
+                        'product_code': row[2],
+                        'product_class': row[3],
+                    })
+                return jsonify(products), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # ===================================== ROUTE ======================================= #   
     
 @app.route('/')

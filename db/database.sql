@@ -17,9 +17,8 @@ CREATE TABLE Rooms (
 INSERT INTO Products (product_id, product_name, product_code, product_class)
 VALUES 
   (1001, 'Cabos Rede Red', 1032131232132, 'ms'),
-  (1002, 'Cabos Rede Brancos', 12276523546230, 'ms'),
-  (1003, 'Cabos Rede Amarelos', 1005464535340, 'nssss'),
-  (1020, 'Cabos Rede Pretos', 545235634634646, 'nao ha');
+  (10, 'ARROXZ', 'CZC3298D83', 'ABOBORA'),
+  (23, 'werfjo', '201044G010006126', 'arroz');
 
 INSERT INTO Access (ist_number)
 VALUES

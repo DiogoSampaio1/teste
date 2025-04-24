@@ -30,8 +30,11 @@
 
   <div class="container">
     <h1>Leitor de Código de Barras</h1>
-    <button onclick="iniciarScanner()">📷 Scanear</button>
-    <div id="reader"></div>
+    <button onclick="iniciarScanner()">📷 Usar Câmera</button>
+    <button onclick="focusInput()">⌨️ Usar Leitor USB</button>
+    <div id="reader" style="display:none;"></div>
+    <!-- Campo invisível para o leitor USB -->
+    <input type="text" id="usb-scanner" placeholder="Escaneie com leitor USB" style="position: absolute; width: 1px; height: 1px; opacity: 0;" autofocus>
     <div id="resultado"></div>
   </div>
 
@@ -39,13 +42,12 @@
     <h3>Adicionar novo produto</h3>
     <input type="text" id="newName" placeholder="Nome do produto">
     <input type="text" id="newClass" placeholder="Classe do produto">
+    <span id="newCode"></span>
     <button onclick="adicionarProduto()">Salvar</button>
   </div>
 
-  <!-- general script -->
   <script src="src/script/mainScript.js"></script>
-
-  <!-- own script -->
   <script src="scripts.js"></script>
+
 </body>
 </html>

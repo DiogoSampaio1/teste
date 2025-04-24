@@ -1,10 +1,10 @@
 let scannerAtivo = false;
 let ultimoCodigoDetectado = "";
 
+// Função para iniciar o scanner (câmera)
 function iniciarScanner() {
   const readerDiv = document.getElementById("reader");
   const resultadoDiv = document.getElementById("resultado");
-  const formAdd = document.getElementById("form-add");
 
   if (scannerAtivo) return;
 
@@ -16,40 +16,93 @@ function iniciarScanner() {
   html5QrCode.start(
     { facingMode: "environment" },
     { fps: 60, qrbox: 250 },
-    (decodedText, decodedResult) => {
-      fetch(`/products?product_code=${decodedText}`)
-        .then(res => {
-          if (!res.ok) throw new Error("Produto não encontrado");
-          return res.json();
-        })
-        .then(produto => {
-          resultadoDiv.innerText = `
-            ✅ Produto encontrado:
-            • Nome: ${product_name}
-            • Código: ${product_code}
-            • Classe: ${product_class}
-          `;
-          formAdd.style.display = "none";
-        })
-        .catch(() => {
-          resultadoDiv.innerText = `❌ Produto não encontrado para o código: ${decodedText}`;
-          formAdd.style.display = "block";
-          ultimoCodigoDetectado = decodedText;
-        })
-        .finally(() => {
-          html5QrCode.stop().then(() => {
-            scannerAtivo = false;
-            readerDiv.style.display = "none";
-          });
-        });
+    (decodedText) => {
+      // Chama a função para tratar o código lido pela câmera
+      tratarCodigoLido(decodedText);
+      html5QrCode.stop().then(() => {
+        scannerAtivo = false;
+        readerDiv.style.display = "none";
+      });
     },
     (errorMessage) => {
-      // Ignorar erros de leitura
+      // Erros de leitura ignorados
     }
   ).catch(err => {
-    resultadoDiv.innerText = `Erro ao acessar a câmera`;
+    resultadoDiv.innerText = "Erro ao acessar a câmera";
     scannerAtivo = false;
   });
+}
+
+// Função para focar no campo de entrada do leitor USB (campo invisível)
+function focusInput() {
+  const usbScannerInput = document.getElementById("usb-scanner");
+
+  // Temporary styling for debugging
+  usbScannerInput.style.display = "block";
+  usbScannerInput.style.border = "1px solid red";
+  usbScannerInput.focus();
+
+  console.log("Campo de entrada USB focado (com visual)");
+
+  setTimeout(() => {
+    usbScannerInput.style.display = "none";
+    usbScannerInput.style.border = "none"; // Remove temporary border
+  }, 500); // Increased delay to 500ms
+}
+
+
+// Captura do leitor USB (simula teclado)
+let codigoAtual = '';
+let timeoutScanner = null;
+
+document.getElementById("usb-scanner").addEventListener("input", (e) => {
+  clearTimeout(timeoutScanner);
+
+  codigoAtual = e.target.value.trim();
+  console.log("Código Atual:", codigoAtual);
+
+  // Espera 300ms sem digitação pra processar
+  timeoutScanner = setTimeout(() => {
+    if (codigoAtual.length >= 10) {
+      console.log("Chamando tratarCodigoLido com:", codigoAtual);
+      tratarCodigoLido(codigoAtual);
+      e.target.value = '';
+      codigoAtual = '';
+    }
+  }, 300);
+});
+
+
+// Função para tratar o código lido (câmera ou USB)
+function tratarCodigoLido(decodedText) {
+  const resultadoDiv = document.getElementById("resultado");
+  const formAdd = document.getElementById("form-add");
+
+  // Não mostrar o decodedText diretamente ao usuário
+  fetch(`http://127.0.0.1:5000/products_scan?product_code=${decodedText}`)
+    .then(res => {
+      if (!res.ok) throw new Error("Produto não encontrado");
+      return res.json();
+    })
+    .then(produto => {
+      // Exibe as informações do produto encontrado, sem mostrar o código
+      resultadoDiv.innerText = 
+        `✅ Produto encontrado:\n• Nome: ${produto.product_name}\n• Código: ${produto.product_code}\n• Classe: ${produto.product_class}`;
+      formAdd.style.display = "none"; // Esconde o formulário de adicionar novo produto
+    })
+    . catch(() => {
+      // Produto não encontrado
+      resultadoDiv.innerText = `❌ Produto não encontrado para o código "${decodedText}".`;
+    
+      // Mostrar formulário para adicionar novo produto
+      formAdd.style.display = "block";
+    
+      // Preenche automaticamente o código no formulário (opcional)
+      ultimoCodigoDetectado = decodedText;
+    
+      // Dar foco no primeiro campo do formulário para facilitar
+      document.getElementById("newName").focus();
+    });
 }
 
 function adicionarProduto() {
@@ -63,12 +116,12 @@ function adicionarProduto() {
   }
 
   const novoProduto = {
-    name: nome,
-    class: classe,
-    code: ultimoCodigoDetectado
+    product_name: nome,
+    product_code: ultimoCodigoDetectado,
+    product_class: classe
   };
 
-  fetch("/products", {
+  fetch("http://127.0.0.1:5000/products", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -79,8 +132,8 @@ function adicionarProduto() {
       if (!res.ok) throw new Error("Erro ao adicionar produto");
       return res.json();
     })
-    .then(data => {
-      resultadoDiv.innerText = `✅ Produto adicionado com sucesso!`;
+    .then(() => {
+      resultadoDiv.innerText = "✅ Produto adicionado com sucesso!";
       document.getElementById("form-add").style.display = "none";
       document.getElementById("newName").value = "";
       document.getElementById("newClass").value = "";
