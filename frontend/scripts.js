@@ -178,6 +178,8 @@ function adicionarProduto() {
       resultadoDiv.innerText = `Erro: ${err.message}`;
     });
 
-    location.reload();
+    setTimeout(() => {
+      location.reload()
+    }, 500);
 
 }

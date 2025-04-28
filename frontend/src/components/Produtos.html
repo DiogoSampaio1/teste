@@ -15,10 +15,10 @@
       <div class="icon-menu-and-sidebar">
         <div class="menu" id="menu-burguer" onclick="openSidebar()"><i id="ham-men" class="fa-solid fa-bars"></i></div>
         <aside class="nav" id="nav">
-          <div class="products-menu-txt"><a href="">Produtos</a></div>
-          <div class="rooms-menu-txt"><a href="Salas.html">Salas</a></div>
-          <div class="access-menu-txt"><a href="Utilizadores.html">Utilizadores</a></div>
-          <div class="scan-menu-txt"><a href="../../scanpage.html">Scan</a></div>
+          <a href="">Produtos</a>
+          <a href="Salas.html">Salas</a>
+          <a href="Utilizadores.html">Utilizadores</a>
+          <a href="../../scanpage.html">Scan</a>
         </aside>
       </div>
       <div class="tittle">ScanWhitMe</div>
@@ -49,166 +49,198 @@
     </table>
   </div>
 
+  <!-- Confirm Alert -->
+  <div class="confirm-alert" id="confirm-alert" style="display: none;">
+    <div class="confirm-alert-box">
+      <h1>Alerta!</h1>
+      <span id="confirm-message"></span>
+      <div class="btn">
+        <button onclick="closeAlertConfirm()">Cancelar</button>
+        <button onclick="confirmOk()">Ok</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Main Script -->
   <script src="../script/mainScript.js"></script>
 
 
-  <!-- Own Script -->
-  <script>
-    let allProducts = []; // global
+<!-- Own Script -->
+<script>
+  let allProducts = []; 
+  let confirmCallback = null; // Variável global para guardar a função de confirmar
 
-    document.addEventListener("DOMContentLoaded", () => {
-      fetch('http://127.0.0.1:5000/products')
-        .then(response => response.json())
-        .then(data => {
-          allProducts = data;
-          renderTable(allProducts);
-          document.getElementById('items-table').addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-icon')) {
-              const row = e.target.closest('tr');
-              const productName = row.children[1].textContent; // Coluna do nome
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch('http://127.0.0.1:5000/products')
+      .then(response => response.json())
+      .then(data => {
+        allProducts = data;
+        renderTable(allProducts);
 
-              if (confirm(`Deseja deletar o produto "${productName}"?`)) {
-                fetch(`http://127.0.0.1:5000/products?product_name=${encodeURIComponent(productName)}`, {
-                  method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                  console.log(data.message || data.error);
+        document.getElementById('items-table').addEventListener('click', (e) => {
+          if (e.target.classList.contains('delete-icon')) {
+            const row = e.target.closest('tr');
+            const productName = row.children[1].textContent;
+            const productCode = row.children[2].textContent;
 
-                  // Recarrega os produtos após deletar
-                  return fetch('http://127.0.0.1:5000/products');
-                })
-                .then(response => response.json())
-                .then(data => {
-                  allProducts = data;
-                  renderTable(allProducts);
-                })
-                .catch(error => console.error('Erro ao deletar:', error));
-              }
-            }
-          });
-        })
-        .catch(error => console.error('Erro:', error));
+            // Chama o alerta com função de confirmação
+            showAlertConfirm(`Deseja deletar o produto "${productName}"?`, () => {
+              fetch(`http://127.0.0.1:5000/products?product_code=${encodeURIComponent(productCode)}`, {
+                method: 'DELETE'
+              })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data.message || data.error);
+
+                // Recarrega produtos depois de deletar
+                return fetch('http://127.0.0.1:5000/products');
+              })
+              .then(response => response.json())
+              .then(data => {
+                allProducts = data;
+                renderTable(allProducts);
+              })
+              .catch(error => console.error('Erro ao deletar:', error));
+            });
+          }
+        });
+      })
+      .catch(error => console.error('Erro:', error));
+  });
+
+  function renderTable(products) {
+    const tableBody = document.getElementById('items-table');
+    tableBody.innerHTML = '';
+
+    products.forEach(product => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td data-label="ID">${product.product_id}</td>
+        <td data-label="Nome">${product.product_name}</td>
+        <td data-label="Código">${product.product_code}</td>
+        <td data-label="Tipo">${product.product_class}</td>
+        <td data-label="Ações"><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
+      `;
+      tableBody.appendChild(row);
     });
+  }
 
-    function renderTable(products) {
-      const tableBody = document.getElementById('items-table');
-      tableBody.innerHTML = '';
+  function showAlertConfirm(message, callback){
+    document.getElementById('confirm-message').textContent = message;
+    document.getElementById('confirm-alert').style.display = 'block';
+    confirmCallback = callback;
+  }
 
-      products.forEach(product => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td data-label="ID">${product.product_id}</td>
-          <td data-label="Nome">${product.product_name}</td>
-          <td data-label="Código">${product.product_code}</td>
-          <td data-label="Tipo">${product.product_class}</td>
-          <td data-label="Ações"><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
-        `;
-        tableBody.appendChild(row);
-      });
+  function closeAlertConfirm(){
+    document.getElementById('confirm-alert').style.display = 'none';
+    confirmCallback = null;
+  }
+
+  function confirmOk(){
+    if (confirmCallback) {
+      confirmCallback(); // Executa a função que foi passada
     }
-
-
-    // Filtro ao digitar
-    document.getElementById("searchbar").addEventListener("input", (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-
-      const filtered = allProducts.filter(p =>
-        p.product_name.toLowerCase().includes(searchTerm) ||
-        p.product_code.toLowerCase().includes(searchTerm) ||
-        p.product_class.toLowerCase().includes(searchTerm) ||
-        p.product_id.toString().includes(searchTerm)
-      );
-
-      renderTable(filtered);
-    });
-  </script>
-
-  <style>
-  /* Main Container */
-  .container{
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -45%);
-    width: 70%;
-    height: 80vh;
-    z-index: 0;
-  }
-  /* ========== */
-
-  /* Searchbar */
-  .searchbar{
-    border-bottom: 1px solid #fff;
-    background-color: #1f1f1f9d;
-    padding: 10px 20px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    transition: .3s ease;
+    closeAlertConfirm();
   }
 
-  .searchbar:hover{
-    background-color: #2c2c2c8c;
-  }
+  // Filtro ao digitar
+  document.getElementById("searchbar").addEventListener("input", (e) => {
+    const searchTerm = e.target.value.toLowerCase();
 
-  .searchbar:has(input:focus){
-    background-color: #2e2e2e;
-  }
+    const filtered = allProducts.filter(p =>
+      p.product_name.toLowerCase().includes(searchTerm) ||
+      p.product_code.toLowerCase().includes(searchTerm) ||
+      p.product_class.toLowerCase().includes(searchTerm) ||
+      p.product_id.toString().includes(searchTerm)
+    );
 
-  label{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    renderTable(filtered);
+  });
+</script>
 
-  }
+<style>
+/* Main Container */
+.container{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+  width: 70%;
+  height: 80vh;
+  z-index: 0;
+}
+/* ========== */
 
-  .searchbar input{
-    width: 100%;
-    color: #ccc;
-    background: transparent;
-    border: none;
-    font-size: 1.2em;
-    padding: 10px;
-    outline: none;
-  }
+/* Searchbar */
+.searchbar{
+  border-bottom: 1px solid #fff;
+  background-color: #1f1f1f9d;
+  padding: 10px 20px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  transition: .3s ease;
+}
 
-  .searchbar i{
-    color: #ccc;
-    cursor: text;
-  }
+.searchbar:hover{
+  background-color: #2c2c2c8c;
+}
 
-  input[type="search"]::-webkit-search-decoration,
-  input[type="search"]::-webkit-search-cancel-button,
-  input[type="search"]::-webkit-search-results-button,
-  input[type="search"]::-webkit-search-results-decoration {
-  display: none;
-  }
+.searchbar:has(input:focus){
+  background-color: #2e2e2e;
+}
 
-  /* ========== */
+label{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-  table{
-    background-color: var(--sec-bg);
-    width: 100%;
-    border-collapse: collapse;
-    color: #fff;
-  }
+}
 
-  td{
-    border-top: 1px solid #cccccc70;
-    padding: 15px;
-    text-align: center;
-  }
+.searchbar input{
+  width: 100%;
+  color: #ccc;
+  background: transparent;
+  border: none;
+  font-size: 1.2em;
+  padding: 10px;
+  outline: none;
+}
 
-  th{
-    padding: 15px;
-    text-align: center;
-  }
+.searchbar i{
+  color: #ccc;
+  cursor: text;
+}
 
-  @media (max-width: 768px) {
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+display: none;
+}
+
+/* ========== */
+
+table{
+  background-color: var(--sec-bg);
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+}
+
+td{
+  border-top: 1px solid #cccccc70;
+  padding: 15px;
+  text-align: center;
+}
+
+th{
+  padding: 15px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
   .container {
     width: 95%;
     height: auto;
@@ -256,7 +288,56 @@
   }
 }
 
-  </style>
+/* Confirm Alert */
+.confirm-alert{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.582);
+  z-index: 1000;
+}
+
+.confirm-alert-box{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1f1f1f;
+  color: #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.confirm-alert .btn{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.confirm-alert .btn button{
+  background-color: transparent;
+  color: rgb(40, 132, 224);
+  border: none;
+  align-self: self-endbtn;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  transition: .3s ease;
+  padding: 10px;
+  width: 100px;
+}
+
+.confirm-alert-box .btn button:hover{
+  background-color: #2c2c2c8c;
+}
+
+</style>
 
 </body>
 </html>

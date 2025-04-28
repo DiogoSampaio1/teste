@@ -68,21 +68,18 @@ header{
     left: 0;
 }
 
-.nav div{
+.nav a{
     width: 100%;
     font-size: 1.2em;
     padding: 10px 0;
     overflow: hidden;
     cursor: pointer;
+    color: #fff;
+    text-decoration: none;
     transition: .1s ease;
 }
 
-.nav div:hover{
+.nav a:hover{
     background-color: #30303083;
-}
-
-.nav div a{
-    color: #fff;
-    text-decoration: none;
 }
 /* ======== */

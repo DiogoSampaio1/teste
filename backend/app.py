@@ -81,24 +81,24 @@ def add_product():
 #DELETE PRODUCTS
 @app.route('/products', methods=['DELETE'])
 def delete_products():
-    product_name = request.args.get('product_name')
+    product_code = request.args.get('product_code')
 
-    if not product_name:
-        return jsonify({'message': 'Por favor adicione o Nome do Produto'}), 400
+    if not product_code:
+        return jsonify({'message': 'Por favor adicione o código do Produto'}), 400
 
     try:
         with engine.begin() as con:
 
-            query_check = text("SELECT * FROM Products WHERE product_name = :product_name")
-            result = con.execute(query_check, {'product_name': product_name}).fetchone()
+            query_check = text("SELECT * FROM Products WHERE product_code = :product_code")
+            result = con.execute(query_check, {'product_code': product_code}).fetchone()
 
             if not result:
                 return jsonify({'message': 'Produto não encontrado'}), 404
 
-            query_delete = text("DELETE FROM Products WHERE product_name = :product_name")
-            con.execute(query_delete, {'product_name': product_name})
+            query_delete = text("DELETE FROM Products WHERE product_code = :product_code")
+            con.execute(query_delete, {'product_code': product_code})
 
-        return jsonify({'message': 'Produto deletado com sucesso!'}), 200
+        return jsonify({'message': 'Produto removido com sucesso!'}), 200
 
     except Exception as e:
         print("Erro ao deletar produto:", e)
