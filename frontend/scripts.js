@@ -15,7 +15,7 @@ function iniciarScanner() {
 
   html5QrCode.start(
     { facingMode: "environment" },
-    { fps: 60, qrbox: 250 },
+    { fps: 60, qrbox: {width: 250, height: 300} },
     (decodedText) => {
       // Chama a função para tratar o código lido pela câmera
       tratarCodigoLido(decodedText);
