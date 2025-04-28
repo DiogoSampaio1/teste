@@ -1,5 +1,8 @@
 let scannerAtivo = false;
 let ultimoCodigoDetectado = "";
+let ultimoCodigoProcessado = null;  // Controla se o código foi processado anteriormente
+let html5QrCode = null;
+let scannerTravado = false;  // Bloqueia o scanner por 1 segundo após cada leitura
 
 // Função para iniciar o scanner (câmera)
 function iniciarScanner() {
@@ -8,24 +11,45 @@ function iniciarScanner() {
 
   if (scannerAtivo) return;
 
+  if (!html5QrCode) {
+    html5QrCode = new Html5Qrcode("reader");
+  }
+
+  // Resetando variáveis ao iniciar um novo scan
+  ultimoCodigoProcessado = null;
+  scannerTravado = false;
+
   scannerAtivo = true;
   readerDiv.style.display = "block";
 
-  const html5QrCode = new Html5Qrcode("reader");
-
   html5QrCode.start(
     { facingMode: "environment" },
-    { fps: 60, qrbox: {width: 250, height: 300} },
+    { fps: 60, qrbox: { width: 250, height: 300 } },
     (decodedText) => {
-      // Chama a função para tratar o código lido pela câmera
+      // Evita leituras duplicadas rapidamente
+      if (decodedText === ultimoCodigoProcessado || scannerTravado) {
+        console.log("Código repetido ou scanner travado, ignorando:", decodedText);
+        return;
+      }
+
+      // Bloqueia o scanner por 1 segundo
+      scannerTravado = true;
+      setTimeout(() => {
+        scannerTravado = false;
+      }, 1000);
+
+      // Atualiza o último código processado
+      ultimoCodigoProcessado = decodedText;
+
       tratarCodigoLido(decodedText);
+
       html5QrCode.stop().then(() => {
         scannerAtivo = false;
         readerDiv.style.display = "none";
       });
     },
     (errorMessage) => {
-      // Erros de leitura ignorados
+      // Ignora erros de leitura
     }
   ).catch(err => {
     resultadoDiv.innerText = "Erro ao acessar a câmera";
@@ -50,7 +74,6 @@ function focusInput() {
   }, 500); // Increased delay to 500ms
 }
 
-
 // Captura do leitor USB (simula teclado)
 let codigoAtual = '';
 let timeoutScanner = null;
@@ -70,7 +93,6 @@ document.getElementById("usb-scanner").addEventListener("input", (e) => {
     }
   }, 300);
 });
-
 
 // Função para tratar o código lido (câmera ou USB)
 function tratarCodigoLido(decodedText) {
@@ -92,16 +114,16 @@ function tratarCodigoLido(decodedText) {
       Classe: <i>${produto.product_class}</i>
       `;
     })
-    . catch(() => {
+    .catch(() => {
       // Produto não encontrado
       resultadoDiv.innerText = `❌ Produto não encontrado para o código "${decodedText}".`;
-    
+
       // Mostrar formulário para adicionar novo produto
       formAdd.style.display = "block";
-    
+
       // Preenche automaticamente o código no formulário (opcional)
       ultimoCodigoDetectado = decodedText;
-    
+
       // Dar foco no primeiro campo do formulário para facilitar
       document.getElementById("newName").focus();
     });
@@ -109,8 +131,12 @@ function tratarCodigoLido(decodedText) {
 
 function closeDialog() {
   document.getElementById('form-add').style.display = 'none';
+  document.getElementById('resultado').innerText = '';
 
-  location.reload()
+  // **RESTART**: Recomeçar o scanner corretamente após salvar produto
+  setTimeout(() => {
+    iniciarScanner(); // Reinicia o scanner após 500ms para garantir que a câmera esteja ativada
+  }, 500);
 }
 
 function adicionarProduto() {
@@ -146,6 +172,9 @@ function adicionarProduto() {
       document.getElementById("newName").value = "";
       document.getElementById("newClass").value = "";
       ultimoCodigoDetectado = "";
+
+      // Reinicia o scanner corretamente após a adição
+      closeDialog(); // Fecha o formulário e reinicia a câmera
     })
     .catch(err => {
       resultadoDiv.innerText = `Erro: ${err.message}`;
