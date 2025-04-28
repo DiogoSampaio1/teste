@@ -100,15 +100,16 @@
       products.forEach(product => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${product.product_id}</td>
-          <td>${product.product_name}</td>
-          <td>${product.product_code}</td>
-          <td>${product.product_class}</td>
-          <td><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
+          <td data-label="ID">${product.product_id}</td>
+          <td data-label="Nome">${product.product_name}</td>
+          <td data-label="Código">${product.product_code}</td>
+          <td data-label="Tipo">${product.product_class}</td>
+          <td data-label="Ações"><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
         `;
         tableBody.appendChild(row);
       });
     }
+
 
     // Filtro ao digitar
     document.getElementById("searchbar").addEventListener("input", (e) => {
@@ -134,7 +135,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -45%);
-    width: 1000px;
+    width: 70%;
     height: 80vh;
     z-index: 0;
   }
@@ -142,7 +143,7 @@
 
   /* Searchbar */
   .searchbar{
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #fff;
     background-color: #1f1f1f9d;
     padding: 10px 20px;
     border-top-left-radius: 5px;
@@ -206,6 +207,55 @@
     padding: 15px;
     text-align: center;
   }
+
+  @media (max-width: 768px) {
+  .container {
+    width: 95%;
+    height: auto;
+    top: 10%;
+    transform: translateX(-50%);
+  }
+
+  .searchbar{
+    margin-bottom: 10px;
+  }
+
+  .searchbar input {
+    font-size: 1em;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none; /* esconde cabeçalho para layout mobile */
+  }
+
+  tr {
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+  }
+}
+
   </style>
 
 </body>

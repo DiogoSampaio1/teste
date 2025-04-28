@@ -9,262 +9,265 @@
     <title>ScanWhitMe - Salas</title>
 </head>
 <body>
-    <header>
-        <div class="cont-left-side-header">
-          <div class="icon-menu-and-sidebar">
-            <div class="menu" id="menu-burguer" onclick="openSidebar()"><i id="ham-men" class="fa-solid fa-bars"></i></div>
-            <aside class="nav" id="nav">
-              <div class="products-menu-txt"><a href="Produtos.html">Produtos</a></div>
-              <div class="rooms-menu-txt"><a href="">Salas</a></div>
-              <div class="access-menu-txt"><a href="Utilizadores.html">Utilizadores</a></div>
-              <div class="scan-menu-txt"><a href="../../scanpage.html">Scan</a></div>
-            </aside>
-          </div>
-          <div class="tittle">ScanWhitMe</div>
-        </div>
-        <div class="cont-right-side-header">
-          <div class="user" id="user-name">Isaac</div>
-        </div>
-      </header>
-    
-      <div class="container">
-        <button class="add-nt-btn" id="add-note" onclick="openAddDialog()">+ CRIAR SALA</button>
-        <div class="searchbar">
-          <label>
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="search" id="searchbar" autocomplete="off" maxlength="25">
-          </label>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Nome da Sala</th>
-            </tr>
-          </thead>
-          <tbody id="items-table">
-          </tbody>
-        </table>
+  <header>
+    <div class="cont-left-side-header">
+      <div class="icon-menu-and-sidebar">
+        <div class="menu" id="menu-burguer" onclick="openSidebar()"><i id="ham-men" class="fa-solid fa-bars"></i></div>
+        <aside class="nav" id="nav">
+          <div class="products-menu-txt"><a href="Produtos.html">Produtos</a></div>
+          <div class="rooms-menu-txt"><a href="">Salas</a></div>
+          <div class="access-menu-txt"><a href="Utilizadores.html">Utilizadores</a></div>
+          <div class="scan-menu-txt"><a href="../../scanpage.html">Scan</a></div>
+        </aside>
       </div>
+      <div class="tittle">ScanWhitMe</div>
+    </div>
+    <div class="cont-right-side-header">
+      <div class="user" id="user-name">Isaac</div>
+    </div>
+  </header>
 
-      <!-- Dialog -->
-      <div id="dialog-overlay" class="dialog-overlay">
-        <div class="dialog-box">
-          <h1>Criar Sala</h1>
-          <input type="text" id="istInput" maxlength="12" placeholder="Digite o IST Number" autocomplete="off"/>
-          <div class="dialog-actions">
-            <button onclick="closeDialog()">Cancelar</button>
-            <button onclick="addRoom()">Criar</button>
-          </div>
-        </div>
+  <div class="container">
+    <button class="add-nt-btn" id="add-note" onclick="openAddDialog()">+ CRIAR SALA</button>
+    <div class="searchbar">
+      <label>
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="search" id="searchbar" autocomplete="off" maxlength="25">
+      </label>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome da Sala</th>
+        </tr>
+      </thead>
+      <tbody id="items-table">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Dialog -->
+  <div id="dialog-overlay" class="dialog-overlay">
+    <div class="dialog-box">
+      <h1>Criar Sala</h1>
+      <input type="text" id="roomInput" maxlength="12" placeholder="Insira o nome da sala" autocomplete="off"/>
+      <div class="dialog-actions">
+        <button onclick="closeDialog()">Cancelar</button>
+        <button onclick="addRoom()">Criar</button>
       </div>
+    </div>
+  </div>
 
-      <!-- Confirm Alert -->
-      <div class="confirm-alert" id="confirm-alert" style="display: none;">
-        <div class="confirm-alert-box">
-          <h1>Alerta!</h1>
-          <span id="confirm-message"></span>
-          <div class="btn">
-            <button onclick="closeAlertConfirm()">Cancelar</button>
-            <button>Ok</button>
-          </div>
-        </div>
+  <!-- Confirm Alert -->
+  <div class="confirm-alert" id="confirm-alert" style="display: none;">
+    <div class="confirm-alert-box">
+      <h1>Alerta!</h1>
+      <span id="confirm-message"></span>
+      <div class="btn">
+        <button onclick="closeAlertConfirm()">Cancelar</button>
+        <button>Ok</button>
       </div>
+    </div>
+  </div>
 
-      <!-- Alert -->
-      <div class="alert" id="alert" style="display: none;">
-        <div class="alert-box">
-          <h1>Houve um problema:</h1>
-          <span id="alert-message"></span>
-          <div class="btn">
-            <button onclick="closeAlert()">Ok</button>
-          </div>
-        </div>
+  <!-- Alert -->
+  <div class="alert" id="alert" style="display: none;">
+    <div class="alert-box">
+      <h1>Houve um problema:</h1>
+      <span id="alert-message"></span>
+      <div class="btn">
+        <button onclick="closeAlert()">Ok</button>
       </div>
+    </div>
+  </div>
 
-    <!-- Main Script -->
-     <script src="../script/mainScript.js"></script>
+<!-- Main Script -->
+  <script src="../script/mainScript.js"></script>
 
-     <script>
-     let allRooms = []; // global
-     
-     document.addEventListener("DOMContentLoaded", () => {
-       fetch('http://127.0.0.1:5000/room')
-         .then(response => response.json())
-         .then(data => {
-            allRooms = data;
-           renderTable(allRooms);
-           document.getElementById('items-table').addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-icon')) {
-              const row = e.target.closest('tr');
-              const roomName = row.children[0].textContent;
-
-              showAlertConfirm(`Deseja deletar a sala "${roomName}"?`, () => {
-                fetch(`http://127.0.0.1:5000/room?room_name=${encodeURIComponent(roomName)}`, {
-                  method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                  console.log(data.message || data.error);
-                  return fetch('http://127.0.0.1:5000/room');
-                })
-                .then(response => response.json())
-                .then(data => {
-                  allRooms = data;
-                  renderTable(allRooms);
-                })
-                .catch(error => console.error('Erro ao deletar:', error));
-              });
-            }
-           });
-         })
-         .catch(error => console.error('Erro:', error));
-     });
-     
-     function renderTable(room) {
-       const tableBody = document.getElementById('items-table');
-       tableBody.innerHTML = '';
-     
-       room.forEach(Rooms => {
-         const row = document.createElement('tr');
-         row.innerHTML = `
-           <td>${Rooms.room_name}</td>
-           <td><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
-         `;
-         tableBody.appendChild(row);
-       });
-     }
-     
-     // Filtro ao digitar
-     document.getElementById("searchbar").addEventListener("input", (e) => {
-       const searchTerm = e.target.value.toLowerCase();
-       
-       const filtered = allRooms.filter(p =>
-       p.room_name.toLowerCase().includes(searchTerm)
-      );
-      
-      renderTable(filtered);
-    });
-
-    function showAlert(message) {
-      document.getElementById('alert-message').textContent = message;
-      document.getElementById('alert').style.display = 'block';
-    }
-
-    function showAlertConfirm(message, callback){
-      document.getElementById('confirm-message').textContent = message;
-      document.getElementById('confirm-alert').style.display = 'block';
-      confirmCallback = callback;
-    }
-
-    document.querySelector('#confirm-alert .btn button:last-child').addEventListener('click', () => {
-      if (confirmCallback) confirmCallback();
-      closeAlertConfirm();
-    });
-
-    function closeAlert(){
-      document.getElementById('alert').style.display = 'none';
-    }
-
-    function closeAlertConfirm(){
-      document.getElementById('confirm-alert').style.display = 'none';
-      confirmCallback = null;
-    }
-    
-    function openAddDialog() {
-      document.getElementById("dialog-overlay").style.display = "flex";
-    }
-    
-    function closeDialog() {
-      document.getElementById("dialog-overlay").style.display = "none";
-    }
-
-    function addRoom() {
-      const roomName = document.getElementById("istInput").value.trim();
-      if (roomName.length === 0) {
-        showAlert("Digite uma sala válida.");
-        return;
-      }
-
-      fetch('http://127.0.0.1:5000/room', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ room_name: roomName })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data.message || data.error);
-
-        // Atualiza tabela após adicionar
-        return fetch('http://127.0.0.1:5000/room');
-      })
+<script>
+  let allRooms = []; // global
+  
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch('http://127.0.0.1:5000/room')
       .then(response => response.json())
       .then(data => {
         allRooms = data;
         renderTable(allRooms);
-        closeDialog(); // Fecha o modal após adicionar
+        document.getElementById('items-table').addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-icon')) {
+          const row = e.target.closest('tr');
+          const roomName = row.children[0].textContent;
+
+          showAlertConfirm(`Deseja deletar a sala "${roomName}"?`, () => {
+            fetch(`http://127.0.0.1:5000/room?room_name=${encodeURIComponent(roomName)}`, {
+              method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log(data.message || data.error);
+              return fetch('http://127.0.0.1:5000/room');
+            })
+            .then(response => response.json())
+            .then(data => {
+              allRooms = data;
+              renderTable(allRooms);
+            })
+            .catch(error => console.error('Erro ao deletar:', error));
+          });
+        }
+        });
       })
-      .catch(error => {
-        console.error('Erro ao criar sala:', error);
-      });
+      .catch(error => console.error('Erro:', error));
+  });
+  
+  function renderTable(room) {
+    const tableBody = document.getElementById('items-table');
+    tableBody.innerHTML = '';
+  
+    room.forEach(Rooms => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td data-label="Nome da Sala">${Rooms.room_name}</td>
+        <td data-label="Ações"><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+  
+  // Filtro ao digitar
+  document.getElementById("searchbar").addEventListener("input", (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    const filtered = allRooms.filter(p =>
+    p.room_name.toLowerCase().includes(searchTerm)
+    );
+
+    renderTable(filtered);
+  });
+
+  function showAlert(message) {
+    document.getElementById('alert-message').textContent = message;
+    document.getElementById('alert').style.display = 'block';
+  }
+
+  function showAlertConfirm(message, callback){
+    document.getElementById('confirm-message').textContent = message;
+    document.getElementById('confirm-alert').style.display = 'block';
+    confirmCallback = callback;
+  }
+
+  document.querySelector('#confirm-alert .btn button:last-child').addEventListener('click', () => {
+    if (confirmCallback) confirmCallback();
+    closeAlertConfirm();
+  });
+
+  function closeAlert(){
+    document.getElementById('alert').style.display = 'none';
+  }
+
+  function closeAlertConfirm(){
+    document.getElementById('confirm-alert').style.display = 'none';
+    confirmCallback = null;
+  }
+
+  function openAddDialog() {
+    document.getElementById("dialog-overlay").style.display = "flex";
+  }
+
+  function closeDialog() {
+    document.getElementById("dialog-overlay").style.display = "none";
+  }
+
+  function addRoom() {
+    let roomName = document.getElementById("roomInput").value.trim();
+    if (roomName.length === 0) {
+        showAlert("Insira uma sala válida.");
+        return;
     }
+
+    // Aqui substituímos toda vírgula por ponto
+    roomName = roomName.replace(/,/g, '.');
+
+    fetch('http://127.0.0.1:5000/room', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ room_name: roomName })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.message || data.error);
+
+      return fetch('http://127.0.0.1:5000/room');
+    })
+    .then(response => response.json())
+    .then(data => {
+      allRooms = data;
+      renderTable(allRooms);
+      closeDialog(); 
+    })
+    .catch(error => {
+      console.error('Erro ao criar sala:', error);
+    });
+}
+
 
 </script>
 
 <style>
 /* Main Container */
 .container{
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -45%);
-    width: 1000px;
-    height: 80vh;
-    z-index: 0;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+  width: 1000px;
+  height: 80vh;
+  z-index: 0;
 }
 /* ========== */
 
 /* Searchbar */
 .searchbar{
-    border-bottom: 1px solid #ccc;
-    background-color: #1f1f1f9d;
-    padding: 10px 20px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    transition: .3s ease;
+  border-bottom: 1px solid #ccc;
+  background-color: #1f1f1f9d;
+  padding: 10px 20px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  transition: .3s ease;
 }
 
 .searchbar:hover{
-    background-color: #2c2c2c8c;
+  background-color: #2c2c2c8c;
 }
 
 .searchbar:has(input:focus){
-    background-color: #2e2e2e;
+  background-color: #2e2e2e;
 }
 
 label{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
 }
 
 .searchbar input{
-    width: 100%;
-    color: #ccc;
-    background: transparent;
-    border: none;
-    font-size: 1.2em;
-    padding: 10px;
-    outline: none;
+  width: 100%;
+  color: #ccc;
+  background: transparent;
+  border: none;
+  font-size: 1.2em;
+  padding: 10px;
+  outline: none;
 }
 
 .searchbar i{
-    color: #ccc;
-    cursor: text;
+  color: #ccc;
+  cursor: text;
 }
 
 input[type="search"]::-webkit-search-decoration,
@@ -295,21 +298,21 @@ input[type="search"]::-webkit-search-results-decoration {
 /* ========== */
 
 table{
-    background-color: var(--sec-bg);
-    width: 100%;
-    border-collapse: collapse;
-    color: #fff;
+  background-color: var(--sec-bg);
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
 }
 
 td{
-    border-top: 1px solid #cccccc70;
-    padding: 15px;
-    text-align: left;
+  border-top: 1px solid #cccccc70;
+  padding: 15px;
+  text-align: left;
 }
 
 th{
-    padding: 15px;
-    text-align: left;
+  padding: 15px;
+  text-align: left;
 }
 
 .dialog-overlay {
@@ -478,6 +481,54 @@ th{
 
 .alert-box .btn button:hover{
   background-color: #2c2c2c8c;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    height: auto;
+    top: 10%;
+    transform: translateX(-50%);
+  }
+
+  .searchbar{
+    margin-bottom: 10px;
+  }
+
+  .searchbar input {
+    font-size: 1em;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none; /* esconde cabeçalho para layout mobile */
+  }
+
+  tr {
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+  }
 }
 </style>
 </body>
