@@ -128,3 +128,9 @@ button:hover {
   padding: 20px;
   width: 300px;
 }
+
+@media (min-width: 360px) and (max-width: 768px){
+  .dialog-box{
+    width: 300px;
+  }
+}
