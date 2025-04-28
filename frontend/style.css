@@ -32,8 +32,8 @@ button:hover {
 #reader {
   width: 300px;
   margin: 30px auto;
+  height: 200px;
   display: none;
-  border: 1px solid #ccc;
   padding: 10px;
   background-color: white;
 }
