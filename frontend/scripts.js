@@ -4,11 +4,11 @@ let ultimoCodigoProcessado = null;  // Controla se o código foi processado ante
 let html5QrCode = null;
 let scannerTravado = false;  // Bloqueia o scanner por 1 segundo após cada leitura
 
-// Função para iniciar o scanner (câmera)
 function iniciarScanner() {
   const readerDiv = document.getElementById("reader");
   const resultadoDiv = document.getElementById("resultado");
 
+  // Verifica se o scanner já está ativo, para não iniciar novamente
   if (scannerAtivo) return;
 
   if (!html5QrCode) {
@@ -43,6 +43,7 @@ function iniciarScanner() {
 
       tratarCodigoLido(decodedText);
 
+      // Parar o scanner após a leitura do código
       html5QrCode.stop().then(() => {
         scannerAtivo = false;
         readerDiv.style.display = "none";
@@ -133,12 +134,10 @@ function closeDialog() {
   document.getElementById('form-add').style.display = 'none';
   document.getElementById('resultado').innerText = '';
 
-  // **RESTART**: Recomeçar o scanner corretamente após salvar produto
-  setTimeout(() => {
-    iniciarScanner(); // Reinicia o scanner após 500ms para garantir que a câmera esteja ativada
-  }, 500);
+  location.reload();
 }
 
+// Função para adicionar o produto após o preenchimento do formulário
 function adicionarProduto() {
   const nome = document.getElementById("newName").value.trim();
   const classe = document.getElementById("newClass").value.trim();
@@ -173,10 +172,12 @@ function adicionarProduto() {
       document.getElementById("newClass").value = "";
       ultimoCodigoDetectado = "";
 
-      // Reinicia o scanner corretamente após a adição
-      closeDialog(); // Fecha o formulário e reinicia a câmera
+      // Não reiniciar o scanner automaticamente após a adição
     })
     .catch(err => {
       resultadoDiv.innerText = `Erro: ${err.message}`;
     });
+
+    location.reload();
+
 }
