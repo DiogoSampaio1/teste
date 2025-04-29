@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../css/mainCss.css">
   <link rel="shortcut icon" href="../image/QRCODE.png">
-  <title>ScanWhitMe - Geral</title>
+  <title>ScanWhitMe - Produtos</title>
 </head>
 <body>
 
@@ -57,6 +57,17 @@
       <div class="btn">
         <button onclick="closeAlertConfirm()">Cancelar</button>
         <button onclick="confirmOk()">Ok</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  <div class="alert" id="alert" style="display: none;">
+    <div class="alert-box">
+      <h1>Houve um problema:</h1>
+      <span id="alert-message"></span>
+      <div class="btn">
+        <button onclick="closeAlert()">Ok</button>
       </div>
     </div>
   </div>
@@ -112,7 +123,10 @@
             }
           });
         })
-        .catch(error => console.error('Erro:', error));
+        .catch(error => {
+          console.error('Erro:', error)
+          showAlert("Erro ao carregar produtos")
+        });
     });
 
     function renderTable(products) {
@@ -130,6 +144,15 @@
         `;
         tableBody.appendChild(row);
       });
+    }
+
+    function showAlert(message) {
+      document.getElementById('alert-message').textContent = message;
+      document.getElementById('alert').style.display = 'block';
+    }
+
+    function closeAlert(){
+      document.getElementById('alert').style.display = 'none';
     }
 
     function showAlertConfirm(message, callback){
@@ -348,8 +371,59 @@ td {
 .confirm-alert-box .btn button:hover {
   background-color: #2c2c2c8c;
 }
+/* ========= */
 
-  /* Toast Notification */
+/* Alert */
+.alert{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.582);
+  z-index: 1000;
+}
+
+.alert-box{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1f1f1f;
+  color: #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.alert-box .btn{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.alert-box .btn button{
+  background-color: transparent;
+  color: rgb(40, 132, 224);
+  border: none;
+  align-self: self-endbtn;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  transition: .3s ease;
+  padding: 10px;
+  width: 100px;
+}
+
+.alert-box .btn button:hover{
+  background-color: #2c2c2c8c;
+}
+/* ========= */
+
+/* Toast Notification */
 #toast-container {
   position: fixed;
   bottom: 30px;
@@ -377,6 +451,12 @@ td {
 
 .toast.error {
   background-color: #ff0000;
+}
+
+@media (min-width: 360px) and (max-width: 768px){
+  .alert-box,.confirm-alert-box{
+    width: 300px;
+  }
 }
   </style>
 

@@ -121,7 +121,10 @@
           }
         });
       })
-      .catch(error => console.error('Erro:', error));
+      .catch(error => {
+        console.error('Erro:', error)
+        showAlert("Erro ao carregar Utilizadores")
+      });
   });
   
   function renderTable(users) {
@@ -594,6 +597,12 @@ th{
 
 .toast.error {
   background-color: #ff0000;
+}
+
+@media (min-width: 360px) and (max-width: 768px){
+  .alert-box,.confirm-alert-box, .dialog-box{
+    width: 300px;
+  }
 }
 </style>
 </body>
