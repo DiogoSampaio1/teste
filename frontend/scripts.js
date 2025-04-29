@@ -137,6 +137,15 @@ function closeDialog() {
   location.reload();
 }
 
+function showAlert(message) {
+  document.getElementById('alert-message').textContent = message;
+  document.getElementById('alert').style.display = 'block';
+}
+
+function closeAlert(){
+  document.getElementById('alert').style.display = 'none';
+}
+
 // Função para adicionar o produto após o preenchimento do formulário
 function adicionarProduto() {
   const nome = document.getElementById("newName").value.trim();
@@ -144,7 +153,7 @@ function adicionarProduto() {
   const resultadoDiv = document.getElementById("resultado");
 
   if (!nome || !classe || !ultimoCodigoDetectado) {
-    alert("Preencha todos os campos.");
+    showAlert("Preencha todos os campos.");
     return;
   }
 

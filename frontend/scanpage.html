@@ -37,7 +37,7 @@
     <div id="reader" style="display:none;"></div>
     <!-- Campo invisível para o leitor USB -->
     <input type="text" id="usb-scanner" placeholder="Escaneie com leitor USB" style="position: absolute; width: 1px; height: 1px; opacity: 0;" autofocus>
-    <div id="resultado" style="display: none;"></div>
+    <div id="resultado"></div>
   </div>
 
   <!-- dialog -->
@@ -49,6 +49,17 @@
       <div class="btns">
         <button onclick="closeDialog()">Cancelar</button>
         <button onclick="adicionarProduto()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  <div class="alert" id="alert" style="display: none;">
+    <div class="alert-box">
+      <h1>Houve um problema:</h1>
+      <span id="alert-message"></span>
+      <div class="btn">
+        <button onclick="closeAlert()">Ok</button>
       </div>
     </div>
   </div>

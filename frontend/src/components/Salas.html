@@ -81,45 +81,56 @@
     </div>
   </div>
 
+  <!-- Toast -->
+   <div id="toast-container" class="toast"></div>
+
 <!-- Main Script -->
   <script src="../script/mainScript.js"></script>
 
 <script>
   let allRooms = []; // global
-  
+  let confirmCallback = null;
+
   document.addEventListener("DOMContentLoaded", () => {
     fetch('http://127.0.0.1:5000/room')
       .then(response => response.json())
       .then(data => {
         allRooms = data;
         renderTable(allRooms);
-        document.getElementById('items-table').addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-icon')) {
-          const row = e.target.closest('tr');
-          const roomName = row.children[0].textContent;
 
-          showAlertConfirm(`Deseja deletar a sala "${roomName}"?`, () => {
-            fetch(`http://127.0.0.1:5000/room?room_name=${encodeURIComponent(roomName)}`, {
-              method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-              console.log(data.message || data.error);
-              return fetch('http://127.0.0.1:5000/room');
-            })
-            .then(response => response.json())
-            .then(data => {
-              allRooms = data;
-              renderTable(allRooms);
-            })
-            .catch(error => console.error('Erro ao deletar:', error));
-          });
-        }
+        document.getElementById('items-table').addEventListener('click', (e) => {
+          if (e.target.classList.contains('delete-icon')) {
+            const row = e.target.closest('tr');
+            const roomName = row.children[0].textContent;
+
+            showAlertConfirm(`Deseja deletar a sala "${roomName}"?`, () => {
+              fetch(`http://127.0.0.1:5000/room?room_name=${encodeURIComponent(roomName)}`, {
+                method: 'DELETE'
+              })
+              .then(response => response.json())
+              .then(data => {
+                showToast(`Sala "${roomName}" removida com sucesso!`);
+                return fetch('http://127.0.0.1:5000/room');
+              })
+              .then(response => response.json())
+              .then(data => {
+                allRooms = data;
+                renderTable(allRooms);
+              })
+              .catch(error => {
+                console.error('Erro ao deletar:', error);
+                showAlert("Erro ao deletar sala.");
+              });
+            });
+          }
         });
       })
-      .catch(error => console.error('Erro:', error));
+      .catch(error => {
+        console.error('Erro:', error);
+        showAlert("Erro ao carregar salas.");
+      });
   });
-  
+
   function renderTable(room) {
     const tableBody = document.getElementById('items-table');
     tableBody.innerHTML = '';
@@ -133,15 +144,10 @@
       tableBody.appendChild(row);
     });
   }
-  
-  // Filtro ao digitar
+
   document.getElementById("searchbar").addEventListener("input", (e) => {
     const searchTerm = e.target.value.toLowerCase();
-    
-    const filtered = allRooms.filter(p =>
-    p.room_name.toLowerCase().includes(searchTerm)
-    );
-
+    const filtered = allRooms.filter(p => p.room_name.toLowerCase().includes(searchTerm));
     renderTable(filtered);
   });
 
@@ -176,6 +182,7 @@
 
   function closeDialog() {
     document.getElementById("dialog-overlay").style.display = "none";
+    document.getElementById("roomInput").value = "";
   }
 
   function addRoom() {
@@ -185,7 +192,6 @@
         return;
     }
 
-    // Aqui substituímos toda vírgula por ponto
     roomName = roomName.replace(/,/g, '.');
 
     fetch('http://127.0.0.1:5000/room', {
@@ -197,23 +203,49 @@
     })
     .then(response => response.json())
     .then(data => {
-      console.log(data.message || data.error);
-
-      return fetch('http://127.0.0.1:5000/room');
-    })
-    .then(response => response.json())
-    .then(data => {
-      allRooms = data;
-      renderTable(allRooms);
-      closeDialog(); 
+      if (data.error) {
+        showAlert(data.error);
+      } else {
+        showToast("Sala criada com sucesso!");
+        return fetch('http://127.0.0.1:5000/room')
+          .then(response => response.json())
+          .then(data => {
+            allRooms = data;
+            renderTable(allRooms);
+            closeDialog();
+          });
+      }
     })
     .catch(error => {
       console.error('Erro ao criar sala:', error);
+      showAlert("Erro ao criar sala.");
     });
-}
+  }
 
+  function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toast-container');
 
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = 1;
+      toast.style.transform = 'translateY(0)';
+    }, 100);
+
+    setTimeout(() => {
+      toast.style.opacity = 0;
+      toast.style.transform = 'translateY(100px)';
+      setTimeout(() => {
+        toast.remove();
+      }, 500);
+    }, 3000);
+  }
 </script>
+  
 
 <style>
 /* Main Container */
@@ -529,6 +561,37 @@ th{
     text-align: left;
     font-weight: bold;
   }
+}
+
+  /* Toast Notification */
+  #toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column-reverse; /* troca para 'column' se quiser novos em cima */
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  min-width: 250px;
+  color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.5s ease;
+}
+
+.toast.success {
+  background-color: #28a745;
+}
+
+.toast.error {
+  background-color: #dc3545;
 }
 </style>
 </body>

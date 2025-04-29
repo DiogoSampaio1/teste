@@ -53,7 +53,7 @@
       <span id="confirm-message"></span>
       <div class="btn">
         <button onclick="closeAlertConfirm()">Cancelar</button>
-        <button>Ok</button>
+        <button onclick="confirm()">Ok</button>
       </div>
     </div>
   </div>
@@ -81,11 +81,15 @@
     </div>
   </div>
 
+  <!-- Toast -->
+  <div id="toast-container" class="toast"></div>
+
 <!-- Main Script -->
   <script src="../script/mainScript.js"></script>
 
 <script>
   let allUsers = []; // global
+  let confirmCallback = null;
   
   document.addEventListener("DOMContentLoaded", () => {
     fetch('http://127.0.0.1:5000/user')
@@ -98,15 +102,13 @@
             const row = e.target.closest('tr');
             const istNumber = row.children[0].textContent; // Coluna do nome
   
-            if (showAlertConfirm(`Deseja deletar o IST Number "${istNumber}"?`)) {
+            if (showAlertConfirm(`Deseja deletar o IST Number "${istNumber}"?`, () => {
               fetch(`http://127.0.0.1:5000/user?ist_number=${encodeURIComponent(istNumber)}`, {
                 method: 'DELETE'
               })
               .then(response => response.json())
               .then(data => {
-                console.log(data.message || data.error);
-  
-                // Recarrega os produtos após deletar
+                showToast(`Utilizador "${istNumber}" deletado com sucesso!`)
                 return fetch('http://127.0.0.1:5000/user');
               })
               .then(response => response.json())
@@ -115,7 +117,7 @@
                 renderTable(allUsers);
               })
               .catch(error => console.error('Erro ao deletar:', error));
-            }
+            }));
           }
         });
       })
@@ -146,6 +148,13 @@
   
     renderTable(filtered);
   });
+
+  function confirm() {
+    if (typeof confirmCallback === "function") {
+      confirmCallback();
+    }
+    closeAlertConfirm(); 
+  }
 
   function showAlertConfirm(message, callback){
     document.getElementById('confirm-message').textContent = message;
@@ -180,32 +189,57 @@
     if (istNumber.length === 0) {
       showAlert("Insira um IST number válido.");
       return;
+    }
+
+    fetch('http://127.0.0.1:5000/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ist_number: istNumber })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        showAlert(data.error);
+      } else {
+        showToast("Utilizador criado com sucesso!");
+        return fetch('http://127.0.0.1:5000/user')
+          .then(response => response.json())
+          .then(data => {
+            allUsers = data;
+            renderTable(allUsers);
+            closeDialog();
+          });
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao adicionar usuário:', error);
+    });
   }
 
-  fetch('http://127.0.0.1:5000/user', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ ist_number: istNumber })
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log(data.message || data.error);
+  function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toast-container');
 
-    // Atualiza tabela após adicionar
-    return fetch('http://127.0.0.1:5000/user');
-  })
-  .then(response => response.json())
-  .then(data => {
-    allUsers = data;
-    renderTable(allUsers);
-    closeDialog(); // Fecha o modal após adicionar
-  })
-  .catch(error => {
-    console.error('Erro ao adicionar usuário:', error);
-  });
-}
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = 1;
+      toast.style.transform = 'translateY(0)';
+    }, 100);
+
+    setTimeout(() => {
+      toast.style.opacity = 0;
+      toast.style.transform = 'translateY(100px)';
+      setTimeout(() => {
+        toast.remove();
+      }, 500);
+    }, 3000);
+  }
 
 </script>
      
@@ -526,6 +560,37 @@ th{
     font-weight: bold;
   }
 }
-  </style>
+
+  /* Toast Notification */
+  #toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column-reverse; /* troca para 'column' se quiser novos em cima */
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  min-width: 250px;
+  color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.5s ease;
+}
+
+.toast.success {
+  background-color: #28a745;
+}
+
+.toast.error {
+  background-color: #dc3545;
+}
+</style>
 </body>
 </html>

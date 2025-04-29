@@ -62,7 +62,7 @@
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="toast"></div>
+  <div id="toast-container" class="toast"></div>
 
   <!-- Main Script -->
   <script src="../script/mainScript.js"></script>
@@ -152,13 +152,14 @@
 
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
-      toast.className = `toast show ${type}`; // show só aqui
+      toast.className = `toast ${type}`;
       toast.textContent = message;
 
-      document.body.appendChild(toast);
+      const container = document.getElementById('toast-container');
+      container.appendChild(toast);
 
       setTimeout(() => {
-        toast.classList.remove('show');
+        toast.style.opacity = '0';
       }, 3000);
 
       setTimeout(() => {
@@ -349,36 +350,35 @@
   }
 
   /* Toast Notification */
-  .toast {
-    display: none;
-    min-width: 250px;
-    background-color: #333;
-    color: #fff;
-    text-align: left;
-    border-radius: 8px;
-    padding: 16px;
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 9999;
-    font-size: 14px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    transition: all 0.5s ease;
-  }
+  #toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column-reverse; /* troca para 'column' se quiser novos em cima */
+  gap: 10px;
+  z-index: 9999;
+}
 
-  .toast.show {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0);
-  }
+.toast {
+  min-width: 250px;
+  color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.5s ease;
+}
 
-  .toast.success {
-    background-color: #28a745;
-  }
+.toast.success {
+  background-color: #28a745;
+}
 
-  .toast.error {
-    background-color: #dc3545;
-  }
+.toast.error {
+  background-color: #dc3545;
+}
   </style>
 
 </body>
