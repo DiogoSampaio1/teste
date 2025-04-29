@@ -182,4 +182,5 @@ function adicionarProduto() {
       location.reload()
     }, 500);
 
+    scannerAtivo = false;
 }
