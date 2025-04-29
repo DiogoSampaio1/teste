@@ -567,11 +567,11 @@ th{
 }
 
   /* Toast Notification */
-  #toast-container {
+#toast-container {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  display: flex;
+  pointer-events: none;
   flex-direction: column-reverse; /* troca para 'column' se quiser novos em cima */
   gap: 10px;
   z-index: 9999;
@@ -583,7 +583,6 @@ th{
   border-radius: 8px;
   padding: 16px;
   font-size: 14px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
   opacity: 1;
   transform: translateY(0);
   transition: all 0.5s ease;
