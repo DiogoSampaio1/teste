@@ -87,4 +87,9 @@ header{
 .nav a:hover{
     background-color: #30303083;
 }
+
+.nav a .foucus{
+    font-weight: bold;
+    color: rgb(40, 132, 224);
+} 
 /* ======== */
