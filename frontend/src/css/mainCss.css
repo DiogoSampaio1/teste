@@ -84,12 +84,15 @@ header{
     transition: .1s ease;
 }
 
-.nav a:hover{
+.nav a:hover:not(.foucus){
     background-color: #30303083;
 }
 
-.nav a .foucus{
+.nav .foucus{
     font-weight: bold;
     color: rgb(40, 132, 224);
+    background-color: #30303083;
+    width: 100%;
+    padding: 20px 0;
 } 
 /* ======== */
