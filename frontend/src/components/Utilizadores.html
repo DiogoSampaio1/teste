@@ -198,25 +198,31 @@
       },
       body: JSON.stringify({ ist_number: istNumber })
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        showAlert(data.error);
-      } else {
-        showToast("Utilizador criado com sucesso!");
-        return fetch('http://127.0.0.1:5000/user')
-          .then(response => response.json())
-          .then(data => {
-            allUsers = data;
-            renderTable(allUsers);
-            closeDialog();
-          });
+    .then(async response => {
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Erros tratados aqui
+        const errorMessage = data.message || data.error || "Erro desconhecido";
+        showToast(errorMessage, 'error');
+        return;
       }
+
+      showToast("Utilizador criado com sucesso!", 'success');
+      return fetch('http://127.0.0.1:5000/user')
+        .then(response => response.json())
+        .then(data => {
+          allUsers = data;
+          renderTable(allUsers);
+          closeDialog();
+        });
     })
     .catch(error => {
       console.error('Erro ao adicionar usuário:', error);
+      showToast("Erro na comunicação com o servidor", 'error');
     });
   }
+
 
   function showToast(message, type = 'success') {
     const toastContainer = document.getElementById('toast-container');
@@ -240,7 +246,6 @@
       }, 500);
     }, 3000);
   }
-
 </script>
      
 <style>
@@ -589,7 +594,7 @@ th{
 }
 
 .toast.error {
-  background-color: #dc3545;
+  background-color: #ff0000;
 }
 </style>
 </body>

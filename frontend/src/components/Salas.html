@@ -201,24 +201,27 @@
       },
       body: JSON.stringify({ room_name: roomName })
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        showAlert(data.error);
-      } else {
-        showToast("Sala criada com sucesso!");
-        return fetch('http://127.0.0.1:5000/room')
-          .then(response => response.json())
-          .then(data => {
-            allRooms = data;
-            renderTable(allRooms);
-            closeDialog();
-          });
+    .then(async response => {
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Exibe mensagem de erro no toast com estilo de erro
+        showToast(data.message || data.error || "Erro ao criar sala.", "error");
+        return;
       }
+
+      showToast("Sala criada com sucesso!", "success");
+      return fetch('http://127.0.0.1:5000/room')
+        .then(response => response.json())
+        .then(data => {
+          allRooms = data;
+          renderTable(allRooms);
+          closeDialog();
+        });
     })
     .catch(error => {
       console.error('Erro ao criar sala:', error);
-      showAlert("Erro ao criar sala.");
+      showToast("Erro ao criar sala.", "error");
     });
   }
 
@@ -591,7 +594,7 @@ th{
 }
 
 .toast.error {
-  background-color: #dc3545;
+  background-color: #ff0000;
 }
 </style>
 </body>
