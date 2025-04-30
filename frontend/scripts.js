@@ -1,4 +1,4 @@
-const NGROK_URL = 'https://667e-193-136-166-20.ngrok-free.app';
+const NGROK_URL = 'http://127.0.0.1:5000';
 let scannerAtivo = false;
 let ultimoCodigoDetectado = "";
 let ultimoCodigoProcessado = null;  // Controla se o código foi processado anteriormente
@@ -164,7 +164,7 @@ function adicionarProduto() {
     product_class: classe
   };
 
-  fetch("${NGROK_URL}/products", {
+  fetch(`${NGROK_URL}/products`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

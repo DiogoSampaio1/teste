@@ -80,12 +80,12 @@
 
   <!-- Own Script -->
   <script>
-    const NGROK_URL = 'https://667e-193-136-166-20.ngrok-free.app';
+    const NGROK_URL = 'http://127.0.0.1:5000';
     let allProducts = []; 
     let confirmCallback = null;
 
     document.addEventListener("DOMContentLoaded", () => {
-      fetch('${NGROK_URL}/products')
+      fetch(`${NGROK_URL}/products`)
         .then(response => response.json())
         .then(data => {
           allProducts = data;
@@ -109,7 +109,7 @@
                     showToast(data.error || "Erro desconhecido", 'error');
                   }
 
-                  return fetch('${NGROK_URL}/products');
+                  return fetch(`${NGROK_URL}/products`);
                 })
                 .then(response => response.json())
                 .then(data => {

@@ -88,12 +88,12 @@
   <script src="../script/mainScript.js"></script>
 
 <script>
-  const NGROK_URL = 'https://667e-193-136-166-20.ngrok-free.app';
+  const NGROK_URL = 'http://127.0.0.1:5000';
   let allUsers = []; // global
   let confirmCallback = null;
   
   document.addEventListener("DOMContentLoaded", () => {
-    fetch('${NGROK_URL}/user')
+    fetch(`${NGROK_URL}/user`)
       .then(response => response.json())
       .then(data => {
         allUsers = data;
@@ -110,7 +110,7 @@
               .then(response => response.json())
               .then(data => {
                 showToast(`Utilizador "${istNumber}" deletado com sucesso!`)
-                return fetch('${NGROK_URL}/user');
+                return fetch(`${NGROK_URL}/user`);
               })
               .then(response => response.json())
               .then(data => {
@@ -195,7 +195,7 @@
       return;
     }
 
-    fetch('${NGROK_URL}/user', {
+    fetch(`${NGROK_URL}/user`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -213,7 +213,7 @@
       }
 
       showToast("Utilizador criado com sucesso!", 'success');
-      return fetch('${NGROK_URL}/user')
+      return fetch(`${NGROK_URL}/user`)
         .then(response => response.json())
         .then(data => {
           allUsers = data;
