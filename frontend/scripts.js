@@ -1,3 +1,4 @@
+const NGROK_URL = 'https://667e-193-136-166-20.ngrok-free.app';
 let scannerAtivo = false;
 let ultimoCodigoDetectado = "";
 let ultimoCodigoProcessado = null;  // Controla se o código foi processado anteriormente
@@ -101,7 +102,7 @@ function tratarCodigoLido(decodedText) {
   const formAdd = document.getElementById("form-add");
 
   // Não mostrar o decodedText diretamente ao usuário
-  fetch(`http://127.0.0.1:5000/products_scan?product_code=${decodedText}`)
+  fetch(`${NGROK_URL}/products_scan?product_code=${decodedText}`)
     .then(res => {
       if (!res.ok) throw new Error("Produto não encontrado");
       return res.json();
@@ -163,7 +164,7 @@ function adicionarProduto() {
     product_class: classe
   };
 
-  fetch("http://127.0.0.1:5000/products", {
+  fetch("${NGROK_URL}/products", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

@@ -88,11 +88,12 @@
   <script src="../script/mainScript.js"></script>
 
 <script>
+  const NGROK_URL = 'https://667e-193-136-166-20.ngrok-free.app';
   let allRooms = []; // global
   let confirmCallback = null;
 
   document.addEventListener("DOMContentLoaded", () => {
-    fetch('http://127.0.0.1:5000/room')
+    fetch('${NGROK_URL}/room')
       .then(response => response.json())
       .then(data => {
         allRooms = data;
@@ -104,13 +105,13 @@
             const roomName = row.children[0].textContent;
 
             showAlertConfirm(`Deseja deletar a sala "${roomName}"?`, () => {
-              fetch(`http://127.0.0.1:5000/room?room_name=${encodeURIComponent(roomName)}`, {
+              fetch(`${NGROK_URL}/room?room_name=${encodeURIComponent(roomName)}`, {
                 method: 'DELETE'
               })
               .then(response => response.json())
               .then(data => {
                 showToast(`Sala "${roomName}" removida com sucesso!`);
-                return fetch('http://127.0.0.1:5000/room');
+                return fetch('${NGROK_URL}/room');
               })
               .then(response => response.json())
               .then(data => {
@@ -194,7 +195,7 @@
 
     roomName = roomName.replace(/,/g, '.');
 
-    fetch('http://127.0.0.1:5000/room', {
+    fetch('${NGROK_URL}/room', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -211,7 +212,7 @@
       }
 
       showToast("Sala criada com sucesso!", "success");
-      return fetch('http://127.0.0.1:5000/room')
+      return fetch('${NGROK_URL}/room')
         .then(response => response.json())
         .then(data => {
           allRooms = data;

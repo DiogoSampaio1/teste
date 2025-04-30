@@ -13,7 +13,7 @@ CONFIG_PATH = ''
 app = Flask(__name__)
 CORS(app)
 
-engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
+engine = create_engine("mysql://diogo123:diogo123@localhost/Scan")
     
 # ===================================== PRODUCTS ======================================= #
 
