@@ -1,3 +1,5 @@
+USE Scan;
+
 CREATE TABLE Products (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     product_name VARCHAR(255),
