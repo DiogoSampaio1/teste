@@ -29,7 +29,6 @@ function iniciarScanner() {
     (decodedText) => {
       // Evita leituras duplicadas rapidamente
       if (decodedText === ultimoCodigoProcessado || scannerTravado) {
-        console.log("Código repetido ou scanner travado, ignorando:", decodedText);
         return;
       }
 
@@ -68,7 +67,6 @@ function focusInput() {
   usbScannerInput.style.border = "1px solid red";
   usbScannerInput.focus();
 
-  console.log("Campo de entrada USB focado (com visual)");
 
   setTimeout(() => {
     usbScannerInput.style.display = "none";
@@ -88,7 +86,6 @@ document.getElementById("usb-scanner").addEventListener("input", (e) => {
   // Espera 300ms sem digitação pra processar
   timeoutScanner = setTimeout(() => {
     if (codigoAtual.length >= 10) {
-      console.log("Chamando tratarCodigoLido com:", codigoAtual);
       tratarCodigoLido(codigoAtual);
       e.target.value = '';
       codigoAtual = '';
