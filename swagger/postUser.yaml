@@ -1,0 +1,22 @@
+tags:
+  - 'User'
+summary: 'Create User'
+parameters:
+  - in: 'body'
+    name: 'body'
+    required:
+        - ist_number
+    schema:
+      properties:
+        ist_number:
+          type: string
+          maxLength: 255
+
+      
+responses:
+  200:
+    description: 'User created successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'not found'

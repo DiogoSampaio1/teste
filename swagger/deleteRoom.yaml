@@ -1,0 +1,15 @@
+tags:
+  - 'Room'
+summary: 'Delete Room'
+parameters:
+  - in: 'query'
+    name: 'room_name'
+    required: true
+    type: 'string'
+responses:
+  200:
+    description: 'Room deleted successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'Room does not exist or is deleted'

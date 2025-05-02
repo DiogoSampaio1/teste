@@ -1,0 +1,15 @@
+tags:
+  - 'Products'
+summary: 'Delete Products'
+parameters:
+  - in: 'query'
+    name: 'product_code'
+    required: true
+    type: 'string'
+responses:
+  200:
+    description: 'Product deleted successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'Product does not exist or is deleted'

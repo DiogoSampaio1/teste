@@ -1,0 +1,15 @@
+tags:
+  - 'User'
+summary: 'Delete User'
+parameters:
+  - in: 'query'
+    name: 'ist_number'
+    required: true
+    type: 'string'
+responses:
+  200:
+    description: 'User deleted successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'User does not exist or is deleted'

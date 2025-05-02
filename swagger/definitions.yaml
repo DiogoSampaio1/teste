@@ -1,0 +1,49 @@
+swagger: '2.0'
+info:
+  title: ScanWithMe 
+  version: '1.0'
+  author:
+    name: 'Diogo Sampaio'
+tags:
+  - name: Products
+    description: Products operations
+  - name: Room
+    description: Room operations
+  - name: User
+    description: User operations
+
+
+definitions:
+  Products:
+    type: object
+    properties:
+      product_id:
+        type: integer
+      product_name:
+        type: string
+        maxLength: 255
+        minLength: 1
+      product_code:
+        type: string
+        maxLength: 255
+      product_class:
+        type: string
+        maxLength: 255
+
+  Room:
+    type: object
+    properties:
+      room_id:
+        type: integer
+      room_name:
+        type: string
+        maxLength: 255
+
+  User:
+    type: object
+    properties:
+      ist_number:
+        type: string
+        maxLength: 255
+
+

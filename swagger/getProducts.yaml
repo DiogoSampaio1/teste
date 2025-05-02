@@ -1,0 +1,10 @@
+tags:
+  - 'Products'
+summary: 'Get Products'
+responses: 
+  200:
+    description: 'Successful operation'
+    schema: 
+      type: 'array'
+      items: 
+        $ref: '#definitions/Products' 

@@ -1,0 +1,22 @@
+tags:
+  - 'Room'
+summary: 'Create Room'
+parameters:
+  - in: 'body'
+    name: 'body'
+    required:
+        - room_name
+    schema:
+      properties:
+        room_name:
+          type: string
+          maxLength: 255
+
+      
+responses:
+  200:
+    description: 'Room created successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'not found'
