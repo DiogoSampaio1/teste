@@ -283,7 +283,6 @@ def get_products_scan():
     try:
         with engine.connect() as con:
             if product_code:
-                # Busca específica por código
                 query = text("SELECT * FROM Products WHERE product_code = :code")
                 result = con.execute(query, {"code": product_code})
                 row = result.fetchone()
@@ -300,7 +299,6 @@ def get_products_scan():
                     return jsonify({'error': 'Produto não encontrado'}), 404
 
             else:
-                # Retorna todos os produtos
                 query = text("SELECT * FROM Products")
                 result = con.execute(query)
 
