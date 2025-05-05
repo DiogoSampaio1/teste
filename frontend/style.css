@@ -24,6 +24,7 @@ button {
   cursor: pointer;
   width: 200px;
   margin-bottom: 20px;
+  transition: .3s ease;
 }
 
 button:hover {
@@ -131,12 +132,37 @@ button:hover {
   width: 300px;
 }
 
+#resultado h2{
+  margin-bottom: 10px;
+}
+
 #resultado div{
   font-weight: lighter;
+  margin-bottom: 5px;
+}
+
+i{
+  font-weight: 300;
 }
 
 #resultado span{
   font-weight: bold;
+}
+
+.product-container{
+  display: flex;
+  flex-direction: row;
+}
+
+.info{
+  padding: 10px;
+}
+
+.icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
 }
 
 /* Alert */
@@ -188,8 +214,85 @@ button:hover {
   background-color: #2c2c2c8c;
 }
 
+/* Edit Dialog */
+.edit-alert{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.582);
+  z-index: 1000;
+}
+
+.edit-alert-box{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1f1f1f;
+  color: #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.edit-alert-box input {
+  color: #ccc;
+  background: transparent;
+  border: none;
+  font-size: 1.2em;
+  appearance: textfield;
+  padding: 10px;
+  outline: none;
+  transition: .3s ease;
+  border-bottom: 1px solid #fff;
+  border-radius: 5px 5px 0 0 ;
+}
+
+.edit-alert-box .btn{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.edit-alert-box .btn button{
+  background-color: transparent;
+  color: rgb(40, 132, 224);
+  border: none;
+  align-self: self-endbtn;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  transition: .3s ease;
+  padding: 10px;
+  width: 100px;
+}
+
+.edit-alert-box .btn button:hover{
+  background-color: #2c2c2c8c;
+}
+
+.amount-btns{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
 @media (min-width: 360px) and (max-width: 768px){
   .dialog-box{
     width: 300px;
+  }
+
+  .edit-alert-box{
+    width: 250px;
+  }
+
+  .amount-btns{
+    flex-direction: column-reverse;
   }
 }

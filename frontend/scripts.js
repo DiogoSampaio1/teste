@@ -1,9 +1,28 @@
 const NGROK_URL = 'http://127.0.0.1:5000';
 let scannerAtivo = false;
 let ultimoCodigoDetectado = "";
-let ultimoCodigoProcessado = null;  // Controla se o código foi processado anteriormente
+let ultimoCodigoProcessado = null;
+let currentEditCode = null;
 let html5QrCode = null;
 let scannerTravado = false;  // Bloqueia o scanner por 1 segundo após cada leitura
+
+document.getElementById('editAmount').addEventListener('keypress', function(event) {
+  if (!/[0-9,.]/.test(event.key)) {
+    event.preventDefault();
+  }
+});
+
+document.getElementById('editAmount').addEventListener('keypress', function(event) {
+  if (event.key < "0" || event.key > "9") {
+    event.preventDefault();
+  }
+});
+
+document.getElementById('editAmount').addEventListener('input', function() {
+  if (this.value.length > 5) {
+      this.value = this.value.slice(0, 5);
+  }
+});
 
 function iniciarScanner() {
   const readerDiv = document.getElementById("reader");
@@ -53,7 +72,7 @@ function iniciarScanner() {
       // Ignora erros de leitura
     }
   ).catch(err => {
-    resultadoDiv.innerText = "Erro ao acessar a câmera";
+    resultadoDiv.innerText = "Erro ao aceder à câmara";
     scannerAtivo = false;
   });
 }
@@ -107,11 +126,30 @@ function tratarCodigoLido(decodedText) {
     .then(produto => {
       resultadoDiv.style.display = 'flex';
       resultadoDiv.innerHTML = `
-      <h2>Produto encontrado:</h2>
-      <div><span>Nome:</span> <i>${produto.product_name}</i></div>
-      <div><span>Código:</span> <i>${produto.product_code}</i></div>
-      <div><span>Classe:</span> <i>${produto.product_class}</i></div>
+      <h2>✅Produto encontrado:</h2>
+      <div class="product-container">
+        <section class="info">
+          <div><span>Nome:</span> <i>${produto.product_name}</i></div>
+          <div><span>Código:</span> <i>${produto.product_code}</i></div>
+          <div><span>Classe:</span> <i>${produto.product_class}</i></div>
+          <div><span>Quantidade:</span> <i>${produto.product_amount}</i></div>
+        </section>
+        <hr>
+        <section class="icon">
+          <i class="fa-solid fa-pencil edit-icon" style="cursor: pointer;"></i>
+        </section>
+      </div>
       `;
+      document.querySelector('.edit-icon').addEventListener('click', () => {
+        const amountInput = document.getElementById('editAmount');
+        if (!amountInput) {
+          console.error("Elemento editAmount não encontrado");
+          return;
+        }
+        amountInput.value = produto.product_amount;
+        currentEditCode = produto.product_code;
+        document.getElementById('edit-alert').style.display = 'block';
+      });
     })
     .catch(() => {
       // Produto não encontrado
@@ -128,6 +166,42 @@ function tratarCodigoLido(decodedText) {
     });
 }
 
+function confirmOk() {
+  const novoAmount = document.getElementById("editAmount")?.value.trim();
+
+  if (!novoAmount || !currentEditCode) {
+    showAlert("Preencha a quantidade corretamente.");
+    return;
+  }
+
+  fetch(`${NGROK_URL}/products_scan`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      product_code: currentEditCode,
+      product_amount: novoAmount
+    })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao atualizar produto");
+      return res.json();
+    })
+    .then(() => {
+      document.getElementById("edit-alert").style.display = "none";
+      location.reload();
+    })
+    .catch(err => {
+      showAlert("Erro ao atualizar produto: " + err.message);
+    });
+}
+
+function closeEditDialog() {
+  document.getElementById('edit-alert').style.display = 'none';
+  currentEditCode = null;
+}
+
 function closeDialog() {
   document.getElementById('form-add').style.display = 'none';
   document.getElementById('resultado').innerText = '';
@@ -142,6 +216,15 @@ function showAlert(message) {
 
 function closeAlert(){
   document.getElementById('alert').style.display = 'none';
+}
+
+function alterarQuantia(delta){
+  const input = document.getElementById('editAmount');
+  let valorAtual = parseInt(input.value, 10) || 0;
+  let novoValor = valorAtual + delta;
+
+  if(novoValor < 0) novoValor = 0
+  input.value = novoValor;
 }
 
 // Função para adicionar o produto após o preenchimento do formulário
