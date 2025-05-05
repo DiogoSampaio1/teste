@@ -148,9 +148,10 @@ function closeAlert(){
 function adicionarProduto() {
   const nome = document.getElementById("newName").value.trim();
   const classe = document.getElementById("newClass").value.trim();
+  const amount = document.getElementById("placeAmount").value.trim();
   const resultadoDiv = document.getElementById("resultado");
 
-  if (!nome || !classe || !ultimoCodigoDetectado) {
+  if (!nome || !classe || !amount || !ultimoCodigoDetectado) {
     showAlert("Preencha todos os campos.");
     return;
   }
@@ -158,7 +159,8 @@ function adicionarProduto() {
   const novoProduto = {
     product_name: nome,
     product_code: ultimoCodigoDetectado,
-    product_class: classe
+    product_class: classe,
+    product_amount: amount
   };
 
   fetch(`${NGROK_URL}/products`, {
@@ -177,6 +179,7 @@ function adicionarProduto() {
       document.getElementById("form-add").style.display = "none";
       document.getElementById("newName").value = "";
       document.getElementById("newClass").value = "";
+      document.getElementById("placeAmount").value = "";
       ultimoCodigoDetectado = "";
 
       // Não reiniciar o scanner automaticamente após a adição

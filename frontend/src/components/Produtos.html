@@ -38,10 +38,10 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Nome</th>
           <th>Código</th>
-          <th>Tipo</th>
+          <th>Nome</th>
+          <th>Classe</th>
+          <th>Quantidade</th>
         </tr>
       </thead>
       <tbody id="items-table">
@@ -94,8 +94,8 @@
           document.getElementById('items-table').addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-icon')) {
               const row = e.target.closest('tr');
+              const productCode = row.children[0].textContent;
               const productName = row.children[1].textContent;
-              const productCode = row.children[2].textContent;
 
               showAlertConfirm(`Deseja deletar o produto "${productName}"?`, () => {
                 fetch(`${NGROK_URL}/products?product_code=${encodeURIComponent(productCode)}`, {
@@ -137,10 +137,10 @@
       products.forEach(product => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td data-label="ID">${product.product_id}</td>
-          <td data-label="Nome">${product.product_name}</td>
           <td data-label="Código">${product.product_code}</td>
-          <td data-label="Tipo">${product.product_class}</td>
+          <td data-label="Nome">${product.product_name}</td>
+          <td data-label="Classe">${product.product_class}</td>
+          <td data-label="Quantidade">${product.product_amount}</td>
           <td data-label="Ações"><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
         `;
         tableBody.appendChild(row);
