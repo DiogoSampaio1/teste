@@ -352,6 +352,29 @@ def get_products_scan():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+#PUT PRODUCTS?BY?SCAN
+@app.route
+@app.route('/products_scan', methods=['PUT'])
+def put_products_scan():
+     with engine.connect() as con:
+        data = request.get_json()
+        product_amount = data.get('product_amount', None)
+        product_code = data.get('product_code')
+        
+        if not product_amount:
+            return jsonify({'message': 'Por favor adicione a quantidade que deseja colocar'}), 400
+        
+        query = text("SELECT * FROM Products WHERE product_code =  :product_code ;").bindparams(product_code=product_code)
+        if  con.execute(query).fetchone() is None:
+            return jsonify({'message': 'Produto não encontrado'}), 404
+        
+        update = text("UPDATE Products SET product_amount = :product_amount WHERE product_code = :product_code ;").bindparams(product_amount=product_amount, product_code=product_code)
+
+        con.execute(update)
+        con.commit()
+        
+     return jsonify({'message': 'Produto atualizado!'}), 200
 
 # ===================================== ROUTE ======================================= #   
     
