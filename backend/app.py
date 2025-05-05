@@ -327,10 +327,10 @@ def get_products_scan():
 
                 if row:
                     produto = {
-                        'product_id': row[0],
+                        'product_code': row[0],
                         'product_name': row[1],
-                        'product_code': row[2],
-                        'product_class': row[3],
+                        'product_class': row[2],
+                        'product_amount': row[3]
                     }
                     return jsonify(produto), 200
                 else:
@@ -343,10 +343,10 @@ def get_products_scan():
                 products = []
                 for row in result:
                     products.append({
-                        'product_id': row[0],
+                        'product_code': row[0],
                         'product_name': row[1],
-                        'product_code': row[2],
-                        'product_class': row[3],
+                        'product_class': row[2],
+                        'product_amount': row[3],
                     })
                 return jsonify(products), 200
 
