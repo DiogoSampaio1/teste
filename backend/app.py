@@ -15,7 +15,7 @@ CORS(app)
 
 Swagger(app, template_file='../swagger/definitions.yaml')
 
-engine = create_engine("mysql://diogo123:diogo123@localhost/Scan")
+engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
     
 # ===================================== PRODUCTS ======================================= #
 
