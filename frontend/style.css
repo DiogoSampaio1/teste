@@ -86,6 +86,7 @@ button:hover {
   padding: 10px;
   outline: none;
   transition: .3s ease;
+  appearance: textfield;
   border-bottom: 1px solid #fff;
   border-radius: 5px 5px 0 0 ;
 }
@@ -128,6 +129,14 @@ button:hover {
   background-color: #1f1f1f;
   padding: 20px;
   width: 300px;
+}
+
+#resultado div{
+  font-weight: lighter;
+}
+
+#resultado span{
+  font-weight: bold;
 }
 
 /* Alert */

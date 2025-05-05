@@ -107,10 +107,10 @@ function tratarCodigoLido(decodedText) {
     .then(produto => {
       resultadoDiv.style.display = 'flex';
       resultadoDiv.innerHTML = `
-    ✅ Produto encontrado:<br><br>
-      Nome: <i>${produto.product_name}</i><br>
-      Código: <i>${produto.product_code}</i><br>
-      Classe: <i>${produto.product_class}</i>
+      <h2>Produto encontrado:</h2>
+      <div><span>Nome:</span> <i>${produto.product_name}</i></div>
+      <div><span>Código:</span> <i>${produto.product_code}</i></div>
+      <div><span>Classe:</span> <i>${produto.product_class}</i></div>
       `;
     })
     .catch(() => {
@@ -179,7 +179,6 @@ function adicionarProduto() {
       document.getElementById("form-add").style.display = "none";
       document.getElementById("newName").value = "";
       document.getElementById("newClass").value = "";
-      document.getElementById("placeAmount").value = "";
       ultimoCodigoDetectado = "";
 
       // Não reiniciar o scanner automaticamente após a adição

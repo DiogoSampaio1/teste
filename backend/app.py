@@ -74,7 +74,7 @@ def add_product():
             """)
 
             con.execute(query_insert, {
-                product_amount: 'product_amount','product_code': product_code, 'product_name': product_name, 'product_class': product_class
+                'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'product_class': product_class
             })
 
         return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
