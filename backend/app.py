@@ -358,7 +358,6 @@ def get_products_scan():
 #PUT PRODUCTS?BY?SCAN
 @app.route
 @app.route('/products_scan', methods=['PUT'])
-@swag_from('../swagger/putProducts_scan.yaml')
 def put_products_scan():
      with engine.connect() as con:
         data = request.get_json()
