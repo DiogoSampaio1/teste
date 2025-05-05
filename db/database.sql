@@ -1,7 +1,6 @@
 CREATE TABLE Products (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_code VARCHAR(255) PRIMARY KEY,
     product_name VARCHAR(255),
-    product_code VARCHAR(255),
     product_class VARCHAR(50)
 );
 
