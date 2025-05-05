@@ -1,0 +1,21 @@
+tags:
+  - 'Products'
+summary: 'Update Product'
+parameters:
+  - in: 'body'
+    name: 'body'
+    schema:
+      properties:
+        product_code:
+          type: string
+          maxLength: 255
+        product_amount:
+          type: number
+          
+responses:
+  200:
+    description: 'Product updated successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'not found'
