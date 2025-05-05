@@ -1,7 +1,8 @@
 CREATE TABLE Products (
     product_code VARCHAR(255) PRIMARY KEY,
     product_name VARCHAR(255),
-    product_class VARCHAR(50)
+    product_class VARCHAR(50),
+    product_amount INT
 );
 
 CREATE TABLE Access (
