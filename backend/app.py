@@ -52,9 +52,10 @@ def get_products():
 def add_product():
     data = request.json
 
-    product_name = data.get('product_name')
     product_code = data.get('product_code')
+    product_name = data.get('product_name')
     product_class = data.get('product_class')
+    product_amount = data.get('product_amount')
 
     if not product_name or not product_code or not product_class:
         return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
@@ -68,12 +69,12 @@ def add_product():
                 return jsonify({'message': 'Este produto já existe'}), 409
 
             query_insert = text("""
-                INSERT INTO Products (product_name, product_code, product_class)
-                VALUES (:product_name, :product_code, :product_class)
+                INSERT INTO Products (product_code, product_name, product_class, product_amount)
+                VALUES (:product_code, :product_name, :product_class, :product_amount)
             """)
 
             con.execute(query_insert, {
-                'product_name': product_name, 'product_code': product_code, 'product_class': product_class
+                product_amount: 'product_amount','product_code': product_code, 'product_name': product_name, 'product_class': product_class
             })
 
         return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
