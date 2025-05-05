@@ -13,7 +13,7 @@ parameters:
           type: string
           maxLenght: 255
         product_amount:
-          type: int
+          type: number
 
 responses:
   200:
