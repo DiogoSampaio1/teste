@@ -14,11 +14,11 @@ CREATE TABLE Rooms (
     room_name VARCHAR(15)
 );
 
-INSERT INTO Products (product_id, product_name, product_code, product_class)
+INSERT INTO Products (product_code, product_name, product_class, product_amount)
 VALUES 
-  (1001, 'Cabos Rede Red', 1032131232132, 'ms'),
-  (10, 'ARROXZ', 'CZC3298D83', 'ABOBORA'),
-  (23, 'werfjo', '201044G010006126', 'arroz');
+  (1032131232132, 'Cabos Rede Red', 'ms', 3),
+  ('CZC3298D83', 'ARROXZ','ABOBORA', 1),
+  ('201044G010006126', 'werfjo', 'arroz', 2);
 
 INSERT INTO Access (ist_number)
 VALUES
