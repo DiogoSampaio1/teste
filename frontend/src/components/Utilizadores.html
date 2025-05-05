@@ -181,6 +181,7 @@
   }
 
   function openAddDialog() {
+    document.getElementById('istInput').value = ""
     document.getElementById("dialog-overlay").style.display = "flex";
   }
 
@@ -603,6 +604,10 @@ th{
 @media (min-width: 360px) and (max-width: 768px){
   .alert-box,.confirm-alert-box, .dialog-box{
     width: 300px;
+  }
+
+  .container{
+    margin-top: 25px;
   }
 }
 </style>

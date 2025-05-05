@@ -47,6 +47,10 @@
       <input type="text" id="newName" placeholder="Nome do produto" autocomplete="off">
       <input type="text" id="newClass" placeholder="Classe do produto" autocomplete="off">
       <input type="number" min="0" max="5" id="placeAmount" placeholder="Quantidade do produto" autocomplete="off">
+      <div class="amount-btns">
+        <button onclick="alterarQuantia(-1)">-</button>
+        <button onclick="alterarQuantia(1)">+</button>
+      </div>
       <div class="btns">
         <button onclick="closeDialog()">Cancelar</button>
         <button onclick="adicionarProduto()">Salvar</button>
@@ -60,8 +64,8 @@
       <h1>Editar:</h1>
       <input type="number" min="0" max="5" id="editAmount" placeholder="Quantidade do produto" autocomplete="off">
       <div class="amount-btns">
-        <button onclick="alterarQuantia(-1)">-</button>
-        <button onclick="alterarQuantia(1)">+</button>
+        <button onclick="alterarEditQuantia(-1)">-</button>
+        <button onclick="alterarEditQuantia(1)">+</button>
       </div>
       <div class="btn">
         <button onclick="closeEditDialog()">Cancelar</button>

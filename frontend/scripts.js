@@ -219,11 +219,20 @@ function closeAlert(){
 }
 
 function alterarQuantia(delta){
+  const input = document.getElementById('placeAmount');
+  let valorAtual = parseInt(input.value, 10) || 0;
+  let novoValor = valorAtual + delta;
+
+  if (novoValor < 0) novoValor = 0
+  input.value = novoValor;
+}
+
+function alterarEditQuantia(delta){
   const input = document.getElementById('editAmount');
   let valorAtual = parseInt(input.value, 10) || 0;
   let novoValor = valorAtual + delta;
 
-  if(novoValor < 0) novoValor = 0
+  if (novoValor < 0) novoValor = 0
   input.value = novoValor;
 }
 

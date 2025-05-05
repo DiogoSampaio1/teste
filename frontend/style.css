@@ -66,7 +66,7 @@ button:hover {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -90%);
+  transform: translate(-50%, -50%);
   background-color: #1f1f1f;
   width: 400px;
   padding: 30px;
@@ -284,15 +284,17 @@ i{
 }
 
 @media (min-width: 360px) and (max-width: 768px){
-  .dialog-box{
-    width: 300px;
-  }
-
-  .edit-alert-box{
+  .edit-alert-box, .dialog-box{
     width: 250px;
   }
 
   .amount-btns{
     flex-direction: column-reverse;
+  }
+}
+
+@media (min-width: 1024px){
+  .container button{
+    display: none;
   }
 }
