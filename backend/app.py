@@ -313,6 +313,8 @@ def delete_users():
         return jsonify({'error': str(e)}), 500
 
 
+# ===================================== PRODUCTS?BY?SCAN ======================================= #
+
 # GET PRODUCTS?BY?SCAN
 @app.route('/products_scan', methods=['GET'])
 def get_products_scan():
