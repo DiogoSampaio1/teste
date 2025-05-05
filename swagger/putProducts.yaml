@@ -6,6 +6,9 @@ parameters:
     name: 'body'
     schema:
       properties:
+        product_code:
+          type: string
+          maxLength: 255
         product_name:
           type: string
           maxLength: 255
@@ -14,7 +17,6 @@ parameters:
           maxLenght: 255
         product_amount:
           type: number
-
 responses:
   200:
     description: 'Product updated successfully'
