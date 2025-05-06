@@ -39,6 +39,7 @@
       <thead>
         <tr>
           <th>IST Number</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody id="items-table">
@@ -136,7 +137,11 @@
       const row = document.createElement('tr');
       row.innerHTML = `
         <td data-label="IST Number">${Access.ist_number}</td>
-        <td data-label="Ações"><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
+        <td data-label="Ações">
+          <div class="action">
+            <i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i>
+          </div>
+        </td>
       `;
       tableBody.appendChild(row);
     });

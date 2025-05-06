@@ -106,22 +106,22 @@
     let confirmCallback = null;
 
     document.getElementById('editAmount').addEventListener('keypress', function(event) {
-        if (!/[0-9,.]/.test(event.key)) {
-          event.preventDefault();
-        }
+      if (!/[0-9,.]/.test(event.key)) {
+        event.preventDefault();
+      }
     });
 
     document.getElementById('editAmount').addEventListener('keypress', function(event) {
-        if (event.key < "0" || event.key > "9") {
-          event.preventDefault();
-        }
+      if (event.key < "0" || event.key > "9") {
+        event.preventDefault();
+      }
     });
 
     document.getElementById('editAmount').addEventListener('input', function() {
-    if (this.value.length > 5) {
-        this.value = this.value.slice(0, 5);
-    }
-});
+      if (this.value.length > 5) {
+          this.value = this.value.slice(0, 5);
+      }
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
       fetch(`${NGROK_URL}/products`)
@@ -308,8 +308,7 @@
       const filtered = allProducts.filter(p =>
         p.product_name.toLowerCase().includes(searchTerm) ||
         p.product_code.toLowerCase().includes(searchTerm) ||
-        p.product_class.toLowerCase().includes(searchTerm) ||
-        p.product_id.toString().includes(searchTerm)
+        p.product_class.toLowerCase().includes(searchTerm)
       );
       renderTable(filtered);
     });

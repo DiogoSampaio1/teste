@@ -39,6 +39,7 @@
       <thead>
         <tr>
           <th>Nome da Sala</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody id="items-table">
@@ -140,7 +141,11 @@
       const row = document.createElement('tr');
       row.innerHTML = `
         <td data-label="Nome da Sala">${Rooms.room_name}</td>
-        <td data-label="Ações"><i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i></td>
+        <td data-label="Ações">
+          <div class="action">
+            <i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i>
+          </div>
+        </td>
       `;
       tableBody.appendChild(row);
     });
@@ -351,6 +356,10 @@ th{
   text-align: left;
 }
 
+.delete-icon{
+  align-self: center;
+}
+
 .dialog-overlay {
   position: fixed;
   inset: 0;
@@ -541,7 +550,7 @@ th{
   }
 
   thead {
-    display: none; /* esconde cabeçalho para layout mobile */
+    display: none;
   }
 
   tr {
@@ -574,7 +583,7 @@ th{
   bottom: 30px;
   right: 30px;
   pointer-events: none;
-  flex-direction: column-reverse; /* troca para 'column' se quiser novos em cima */
+  flex-direction: column-reverse;
   gap: 10px;
   z-index: 9999;
 }
