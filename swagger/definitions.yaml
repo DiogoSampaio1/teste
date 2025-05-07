@@ -29,6 +29,9 @@ definitions:
         maxLength: 255
       product_amount:
         type: number
+      room_name:
+        type: string
+        maxLength: 255
 
   Room:
     type: object

@@ -21,6 +21,9 @@ parameters:
           maxLength: 255
         product_amount:
           type: number
+        product_name:
+          type: string
+          maxLength: 255
 
       
 responses:
