@@ -73,13 +73,21 @@ def add_product():
             if result:
                 return jsonify({'message': 'Este produto já existe'}), 409
 
+            query_room = text("SELECT room_id FROM Rooms WHERE room_name = :room_name")
+            room_result = con.execute(query_room, {'room_name': room_name}).fetchone()
+
+            if not room_result:
+                return jsonify({'message': 'Sala não encontrada'}), 404
+            
+            room_id = room_result['room_id']
+
             query_insert = text("""
-                INSERT INTO Products (product_code, product_name, product_class, product_amount, room_name)
-                VALUES (:product_code, :product_name, :product_class, :product_amount, :room_name)
+                INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id)
+                VALUES (:product_code, :product_name, :product_class, :product_amount, :room_id)
             """)
 
             con.execute(query_insert, {
-                'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'product_class': product_class, 'room_name': room_name
+                'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'product_class': product_class, 'room_id': room_id
             })
 
         return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
