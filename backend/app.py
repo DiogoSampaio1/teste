@@ -42,7 +42,7 @@ def get_products():
                     'product_name': row[1],
                     'product_class': row[2],
                     'product_amount': row[3],
-                    'room_name': row[4],
+                    'room_name': row[5],
                 })
 
         return jsonify(products), 200
