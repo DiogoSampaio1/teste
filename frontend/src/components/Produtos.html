@@ -42,6 +42,7 @@
           <th>Código</th>
           <th>Nome</th>
           <th>Classe</th>
+          <th>Localização</th>
           <th>Quantidade</th>
           <th>Ações</th>
         </tr>
@@ -69,6 +70,7 @@
       <h1>Editar:</h1>
       <input type="text" id="editName" placeholder="Nome do produto" autocomplete="off">
       <input type="text" id="editClass" placeholder="Classe do produto" autocomplete="off">
+      <input type="text" id="editLocation" placeholder="Localização" autocomplete="off">
       <input type="number" min="0" max="5" id="editAmount" placeholder="Quantidade do produto" autocomplete="off">
       <div class="amount-btns">
         <button onclick="alterarQuantia(-1)">-</button>
@@ -168,12 +170,14 @@
               currentEditCode = row.children[0].textContent; // Código
               const name = row.children[1].textContent;
               const prodClass = row.children[2].textContent;
-              const amount = row.children[3].textContent;
+              const location = row.children[3].textContent;
+              const amount = row.children[4].textContent;
 
               // Preencher os inputs
               document.getElementById('editName').value = name;
               document.getElementById('editClass').value = prodClass;
               document.getElementById('editAmount').value = amount;
+              document.getElementById('editLocation').value = location;
 
               // Mostrar modal de edição
               document.getElementById('edit-alert').style.display = 'block';
@@ -184,11 +188,13 @@
             const updatedName = document.getElementById('editName').value.trim();
             const updatedClass = document.getElementById('editClass').value.trim();
             const updatedAmount = parseInt(document.getElementById('editAmount').value);
+            const updatedRoomName = document.getElementById('editLocation').value.trim();
 
             const payload = {
               product_code: currentEditCode,
               product_name: updatedName,
               product_class: updatedClass,
+              room_name: updatedRoomName,
               product_amount: updatedAmount
             };
 
@@ -234,13 +240,14 @@
           <td data-label="Código">${product.product_code}</td>
           <td data-label="Nome">${product.product_name}</td>
           <td data-label="Classe">${product.product_class}</td>
+          <td data-label="Localização">${product.room_name}</td>
           <td data-label="Quantidade">${product.product_amount}</td>
           <td data-label="Ações">
             <div class="actions">
               <i class="fa-solid fa-pencil edit-icon" style="cursor: pointer;"></i>
               <i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i>
             </div>
-            </td>
+          </td>
         `;
         tableBody.appendChild(row);
       });
@@ -309,7 +316,8 @@
       const filtered = allProducts.filter(p =>
         p.product_name.toLowerCase().includes(searchTerm) ||
         p.product_code.toLowerCase().includes(searchTerm) ||
-        p.product_class.toLowerCase().includes(searchTerm)
+        p.product_class.toLowerCase().includes(searchTerm) ||
+        p.room_name.toLowerCase().includes(searchTerm)
       );
       renderTable(filtered);
     });
