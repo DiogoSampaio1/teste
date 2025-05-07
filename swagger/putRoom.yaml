@@ -9,7 +9,7 @@ parameters:
         old_room_name:
           type: string
           maxLength: 255
-        new_room_name:
+        room_name:
           type: string
           maxLength: 255
 
