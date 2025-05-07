@@ -60,8 +60,9 @@ def add_product():
     product_name = data.get('product_name')
     product_class = data.get('product_class')
     product_amount = data.get('product_amount')
+    room_name = data.get('room_name')
 
-    if not product_name or not product_code or not product_class:
+    if not product_name or not product_code or not product_class or not room_name:
         return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
 
     try:
@@ -73,12 +74,12 @@ def add_product():
                 return jsonify({'message': 'Este produto já existe'}), 409
 
             query_insert = text("""
-                INSERT INTO Products (product_code, product_name, product_class, product_amount)
-                VALUES (:product_code, :product_name, :product_class, :product_amount)
+                INSERT INTO Products (product_code, product_name, product_class, product_amount, room_name)
+                VALUES (:product_code, :product_name, :product_class, :product_amount, :room_name)
             """)
 
             con.execute(query_insert, {
-                'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'product_class': product_class
+                'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'product_class': product_class, 'room_name': room_name
             })
 
         return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
@@ -97,15 +98,16 @@ def update_products():
         product_class = data.get('product_class', None)
         product_amount = data.get('product_amount', None)
         product_code = data.get('product_code')
+        room_name = data.get('room_name')
         
-        if not product_name and not product_class and not product_amount:
+        if not product_name and not product_class and not product_amount or not room_name:
             return jsonify({'message': 'Por favor adicione pelo menos um campo para mudar'}), 400
         
         query = text("SELECT * FROM Products WHERE product_code =  :product_code ;").bindparams(product_code=product_code)
         if  con.execute(query).fetchone() is None:
             return jsonify({'message': 'Produto não encontrado'}), 404
         
-        update = text("UPDATE Products SET product_name = :product_name, product_class = :product_class, product_amount = :product_amount WHERE product_code = :product_code ;").bindparams(product_name=product_name, product_class=product_class, product_amount=product_amount, product_code=product_code)
+        update = text("UPDATE Products SET product_name = :product_name, product_class = :product_class, product_amount = :product_amount, room_name = :room_name WHERE product_code = :product_code ;").bindparams(product_name=product_name, product_class=product_class, product_amount=product_amount, room_name=room_name,product_code=product_code)
 
         con.execute(update)
         con.commit()
