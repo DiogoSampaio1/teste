@@ -17,6 +17,10 @@ parameters:
           maxLenght: 255
         product_amount:
           type: number
+        room_name:
+          type: string
+          maxLenght: 255
+
 responses:
   200:
     description: 'Product updated successfully'
