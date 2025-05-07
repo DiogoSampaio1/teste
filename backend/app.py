@@ -115,7 +115,15 @@ def update_products():
         if  con.execute(query).fetchone() is None:
             return jsonify({'message': 'Produto não encontrado'}), 404
         
-        update = text("UPDATE Products SET product_name = :product_name, product_class = :product_class, product_amount = :product_amount, room_name = :room_name WHERE product_code = :product_code ;").bindparams(product_name=product_name, product_class=product_class, product_amount=product_amount, room_name=room_name,product_code=product_code)
+        query_room = text("SELECT room_id FROM Rooms WHERE room_name = :room_name")
+        room_result = con.execute(query_room, {'room_name': room_name}).fetchone()
+
+        if not room_result:
+            return jsonify({'message': 'Sala não encontrada'}), 404
+        
+        room_id = room_result[0]
+        
+        update = text("UPDATE Products SET product_name = :product_name, product_class = :product_class, product_amount = :product_amount, room_id = :room_id WHERE product_code = :product_code ;").bindparams(product_name=product_name, product_class=product_class, product_amount=product_amount, room_id=room_id,product_code=product_code)
 
         con.execute(update)
         con.commit()
@@ -395,7 +403,15 @@ def put_products_scan():
         if  con.execute(query).fetchone() is None:
             return jsonify({'message': 'Produto não encontrado'}), 404
         
-        update = text("UPDATE Products SET product_amount = :product_amount, room_name = :room_name WHERE product_code = :product_code ;").bindparams(product_amount=product_amount, room_name=room_name,product_code=product_code)
+        query_room = text("SELECT room_id FROM Rooms WHERE room_name = :room_name")
+        room_result = con.execute(query_room, {'room_name': room_name}).fetchone()
+
+        if not room_result:
+            return jsonify({'message': 'Sala não encontrada'}), 404
+        
+        room_id = room_result[0]
+
+        update = text("UPDATE Products SET product_amount = :product_amount, room_id = :room_id WHERE product_code = :product_code ;").bindparams(product_amount=product_amount, room_id=room_id,product_code=product_code)
 
         con.execute(update)
         con.commit()
