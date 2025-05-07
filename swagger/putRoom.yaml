@@ -6,7 +6,10 @@ parameters:
     name: 'body'
     schema:
       properties:
-        room_name:
+        old_room_name:
+          type: string
+          maxLength: 255
+        new_room_name:
           type: string
           maxLength: 255
 
