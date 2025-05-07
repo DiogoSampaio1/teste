@@ -25,7 +25,10 @@ engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
 def get_products():
     query = text("""
     SELECT 
-        * FROM Products
+        Products.*,
+        Rooms.room_name
+    FROM Products
+    JOIN Rooms ON Products.room_id = Rooms.room_id
      """)
     
     try:
@@ -39,6 +42,7 @@ def get_products():
                     'product_name': row[1],
                     'product_class': row[2],
                     'product_amount': row[3],
+                    'room_name': row[4],
                 })
 
         return jsonify(products), 200

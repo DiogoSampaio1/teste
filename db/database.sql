@@ -2,7 +2,9 @@ CREATE TABLE Products (
     product_code VARCHAR(255) PRIMARY KEY,
     product_name VARCHAR(255),
     product_class VARCHAR(50),
-    product_amount INT
+    product_amount INT,
+    room_id INT,
+    FOREIGN KEY (room_id) REFERENCES Rooms(room_id)
 );
 
 CREATE TABLE Access (
