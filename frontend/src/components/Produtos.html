@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../css/mainCss.css">
   <link rel="shortcut icon" href="../image/QRCODE.png">
-  <title>ScanWhitMe - Produtos</title>
+  <title>ScanWithMe - Produtos</title>
 </head>
 <body>
 
@@ -16,12 +16,12 @@
         <div class="menu" id="menu-burguer" onclick="openSidebar()"><i id="ham-men" class="fa-solid fa-bars"></i></div>
         <aside class="nav" id="nav">
           <a href="" class="foucus"><i class="fa-solid fa-box-open"></i> Produtos</a>
-          <a href="Salas.html"><i class="fa-solid fa-house"></i> Salas</a>
+          <a href="Localizacao.html"><i class="fa-solid fa-house"></i> Localização</a>
           <a href="Utilizadores.html"><i class="fa-solid fa-user"></i> Utilizadores</a>
           <a href="../../scanpage.html"><i class="fa-solid fa-barcode"></i> Scan</a>
         </aside>
       </div>
-      <div class="tittle">ScanWhitMe | Produtos</div>
+      <div class="tittle">ScanWithMe | Produtos</div>
     </div>
     <div class="cont-right-side-header">
       <div class="user" id="user-name">Isaac</div>
@@ -29,6 +29,7 @@
   </header>
 
   <div class="container">
+    <a href="../../scanpage.html"><button class="add-pr-btn">+ ADICIONAR PRODUTO</button></a>
     <div class="searchbar">
       <label>
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -326,6 +327,27 @@
   width: 70%;
   height: 80vh;
   z-index: 0;
+}
+
+.container > a{
+  position: relative;
+  align-self: self-end;
+}
+
+.add-pr-btn{
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.1rem;
+  background-color: rgb(40, 132, 224);
+  color: #fff;
+  cursor: pointer;
+  transition: .3s ease;
+  margin-bottom: 16px;
+}
+
+.add-pr-btn:hover{
+  background-color: rgb(37, 122, 206);
 }
 
 .searchbar {
