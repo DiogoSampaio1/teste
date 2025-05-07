@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="shortcut icon" href="../image/QRCODE.png">
     <link rel="stylesheet" href="../css/mainCss.css">
-    <title>ScanWithMe - Salas</title>
+    <title>ScanWithMe - Localização</title>
 </head>
 <body>
   <header>
@@ -28,7 +28,7 @@
   </header>
 
   <div class="container">
-    <button class="add-nt-btn" id="add-note" onclick="openAddDialog()">+ CRIAR SALA</button>
+    <button class="add-nt-btn" id="add-note" onclick="openAddDialog()">+ CRIAR LOCALIZAÇÃO</button>
     <div class="searchbar">
       <label>
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -51,10 +51,22 @@
   <div id="dialog-overlay" class="dialog-overlay">
     <div class="dialog-box">
       <h1>Criar Sala</h1>
-      <input type="text" id="roomInput" maxlength="12" placeholder="Insira o nome da sala" autocomplete="off"/>
+      <input type="text" id="roomInput" maxlength="12" placeholder="Insira o nome da Localização" autocomplete="off"/>
       <div class="dialog-actions">
         <button onclick="closeDialog()">Cancelar</button>
         <button onclick="addRoom()">Criar</button>
+      </div>
+    </div>
+  </div>
+
+   <!-- Edidt Dialog -->
+   <div class="edit-alert" id="edit-alert" style="display: none;">
+    <div class="edit-alert-box">
+      <h1>Editar:</h1>
+      <input type="text" id="editLocation" placeholder="Localização" autocomplete="off">
+      <div class="btn">
+        <button onclick="closeEditDialog()">Cancelar</button>
+        <button onclick="confirmOk()" id="edit-confirm-btn">Ok</button>
       </div>
     </div>
   </div>
@@ -92,6 +104,7 @@
   const NGROK_URL = 'http://127.0.0.1:5000';
   let allRooms = []; // global
   let confirmCallback = null;
+  let oldRoomName = '';
 
   document.addEventListener("DOMContentLoaded", () => {
     fetch(`${NGROK_URL}/room`)
@@ -125,7 +138,53 @@
               });
             });
           }
+          if (e.target.classList.contains('edit-icon')) {
+            const row = e.target.closest('tr');
+            const location = row.children[0].textContent;
+
+            document.getElementById('editLocation').value = location;
+            oldRoomName = location; // <<< armazenando o nome antigo
+
+            document.getElementById('edit-alert').style.display = 'block';
+          }
         });
+        document.getElementById('edit-confirm-btn').addEventListener('click', () => {
+          const updatedRoomName = document.getElementById('editLocation').value.trim();
+
+          if (!updatedRoomName) {
+            showAlert("Nome da sala não pode estar vazio.");
+            return;
+          }
+
+          const payload = {
+            old_room_name: oldRoomName, // <<< nome original
+            room_name: updatedRoomName  // <<< novo nome
+          };
+
+          fetch(`${NGROK_URL}/room`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          })
+          .then(res => res.json())
+          .then(data => {
+            showToast(data.message || "Atualizado com sucesso!", 'success');
+            closeEditDialog();
+            return fetch(`${NGROK_URL}/room`);
+          })
+          .then(res => res.json())
+          .then(data => {
+            allRooms = data;
+            renderTable(allRooms);
+          })
+          .catch(err => {
+            console.error(err);
+            showToast("Erro ao atualizar sala", 'error');
+          });
+        });
+
       })
       .catch(error => {
         console.error('Erro:', error);
@@ -142,7 +201,8 @@
       row.innerHTML = `
         <td data-label="Nome da Sala">${Rooms.room_name}</td>
         <td data-label="Ações">
-          <div class="action">
+          <div class="actions">
+            <i class="fa-solid fa-pencil edit-icon" style="cursor: pointer;"></i>
             <i class="fa-solid fa-trash delete-icon" style="cursor: pointer;"></i>
           </div>
         </td>
@@ -156,6 +216,11 @@
     const filtered = allRooms.filter(p => p.room_name.toLowerCase().includes(searchTerm));
     renderTable(filtered);
   });
+
+  function closeEditDialog() {
+    document.getElementById('edit-alert').style.display = 'none';
+    currentEditCode = null;
+  }
 
   function showAlert(message) {
     document.getElementById('alert-message').textContent = message;
@@ -189,6 +254,13 @@
   function closeDialog() {
     document.getElementById("dialog-overlay").style.display = "none";
     document.getElementById("roomInput").value = "";
+  }
+
+  function confirmOk(){
+    if (confirmCallback) {
+      confirmCallback();
+    }
+    closeAlertConfirm();
   }
 
   function addRoom() {
@@ -354,6 +426,13 @@ td{
 th{
   padding: 15px;
   text-align: left;
+}
+
+.actions{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
 
 .delete-icon{
@@ -529,6 +608,75 @@ th{
 }
 /* ========== */
 
+.edit-alert{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.582);
+  z-index: 1000;
+}
+
+.edit-alert-box{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1f1f1f;
+  color: #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.edit-alert-box .btn{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.edit-alert-box input {
+  color: #ccc;
+  background: transparent;
+  border: none;
+  font-size: 1.2em;
+  padding: 10px;
+  appearance: textfield;
+  outline: none;
+  transition: .3s ease;
+  border-bottom: 1px solid #fff;
+  border-radius: 5px 5px 0 0 ;
+}
+
+.edit-alert-box input:hover{
+  background-color: #2c2c2c8c;
+}
+
+.edit-alert-box input:focus {
+  background-color: #333;
+}
+
+.edit-alert-box .btn button{
+  background-color: transparent;
+  color: rgb(40, 132, 224);
+  border: none;
+  align-self: self-endbtn;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  transition: .3s ease;
+  padding: 10px;
+  width: 100px;
+}
+
+.edit-alert-box .btn button:hover{
+  background-color: #2c2c2c8c;
+}
+
 @media (max-width: 768px) {
   .container {
     width: 95%;
@@ -543,6 +691,10 @@ th{
 
   .searchbar input {
     font-size: 1em;
+  }
+
+  .actions{
+    justify-content: flex-end;
   }
 
   table, thead, tbody, th, td, tr {

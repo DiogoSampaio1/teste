@@ -33,7 +33,8 @@
 
   <div class="container">
     <h1>Leitor de Código de Barras</h1>
-    <button onclick="iniciarScanner()"><i class="fa-solid fa-camera"></i> Usar Câmera</button>
+    <button onclick="iniciarScanner()" class="camera-btn"><i class="fa-solid fa-camera"></i> Usar Câmera</button>
+    <button onclick="openDialog()" class="add-pr-btn">Criar produto manualmente</button>
     <div id="reader" style="display:none;"></div>
     <!-- Campo invisível para o leitor USB -->
     <input type="text" id="usb-scanner" placeholder="Escaneie com leitor USB" style="position: absolute; width: 1px; height: 1px; opacity: 0;" autofocus>
@@ -44,8 +45,10 @@
   <div id="form-add" class="dialog-container" style="display:none;">
     <div class="dialog-box">
       <h1>Adicionar novo produto</h1>
+      <input type="text" id="newCode" placeholder="Código do produto" autocomplete="off">
       <input type="text" id="newName" placeholder="Nome do produto" autocomplete="off">
       <input type="text" id="newClass" placeholder="Classe do produto" autocomplete="off">
+      <input type="text" id="newLocation" placeholder="Localização do produto" autocomplete="off">
       <input type="number" min="0" max="5" value="1" id="placeAmount" placeholder="Quantidade do produto" autocomplete="off">
       <div class="amount-btns">
         <button onclick="alterarQuantia(-1)">-</button>
@@ -62,6 +65,7 @@
   <div class="edit-alert" id="edit-alert" style="display: none;">
     <div class="edit-alert-box">
       <h1>Editar:</h1>
+      <input type="text" id="editLocation" placeholder="Localização" autocomplete="off">
       <input type="number" min="0" max="5" id="editAmount" placeholder="Quantidade do produto" autocomplete="off">
       <div class="amount-btns">
         <button onclick="alterarEditQuantia(-1)">-</button>

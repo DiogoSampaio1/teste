@@ -220,27 +220,36 @@ def add_room():
         return jsonify({'error': str(e)}), 500
 
 #PUT ROOMS
-@app.route('/room', methods =['PUT'])
+@app.route('/room', methods=['PUT'])
 @swag_from('../swagger/putRoom.yaml')
 def update_room():
-
     with engine.connect() as con:
         data = request.get_json()
-        room_name = data.get('room_name')
-        
-        if not room_name:
-            return jsonify({'message': 'Por favor adicione uma nova localização'}), 400
-        
-        query = text("SELECT * FROM Rooms WHERE room_name =  :room_name ;").bindparams(room_name=room_name)
-        if  con.execute(query).fetchone() is None:
-            return jsonify({'message': 'Sala não encontrada'}), 404
-        
-        update = text("UPDATE Rooms SET room_name = :room_name WHERE room_name = :room_name ;").bindparams(room_name = room_name)
+        old_room_name = data.get('old_room_name')
+        new_room_name = data.get('room_name')
+
+        if not old_room_name or not new_room_name:
+            return jsonify({'message': 'Nome antigo e novo são obrigatórios.'}), 400
+
+        # Verifica se a sala antiga existe
+        query = text("SELECT * FROM Rooms WHERE room_name = :old_room_name").bindparams(old_room_name=old_room_name)
+        if con.execute(query).fetchone() is None:
+            return jsonify({'message': 'Sala original não encontrada.'}), 404
+
+        # Verifica se já existe uma sala com o novo nome
+        check_new_name = text("SELECT * FROM Rooms WHERE room_name = :new_room_name").bindparams(new_room_name=new_room_name)
+        if con.execute(check_new_name).fetchone():
+            return jsonify({'message': 'Já existe uma sala com esse nome.'}), 409
+
+        # Atualiza o nome da sala
+        update = text("UPDATE Rooms SET room_name = :new_room_name WHERE room_name = :old_room_name") \
+            .bindparams(new_room_name=new_room_name, old_room_name=old_room_name)
 
         con.execute(update)
         con.commit()
-        
-    return jsonify({'message': 'Sala atualizada!'}), 200
+
+    return jsonify({'message': 'Sala atualizada com sucesso!'}), 200
+
 
 #DELETE ROOMS
 @app.route('/room', methods=['DELETE'])

@@ -294,7 +294,7 @@ i{
 }
 
 @media (min-width: 1024px){
-  .container button{
+  .container .camera-btn{
     display: none;
   }
 }

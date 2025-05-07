@@ -132,6 +132,7 @@ function tratarCodigoLido(decodedText) {
           <div><span>Nome:</span> <i>${produto.product_name}</i></div>
           <div><span>Código:</span> <i>${produto.product_code}</i></div>
           <div><span>Classe:</span> <i>${produto.product_class}</i></div>
+          <div><span>Localização:</span> <i>${produto.room_name}</i></div>
           <div><span>Quantidade:</span> <i>${produto.product_amount}</i></div>
         </section>
         <hr>
@@ -142,13 +143,18 @@ function tratarCodigoLido(decodedText) {
       `;
       document.querySelector('.edit-icon').addEventListener('click', () => {
         const amountInput = document.getElementById('editAmount');
-        if (!amountInput) {
-          console.error("Elemento editAmount não encontrado");
-          return;
-        }
-        amountInput.value = produto.product_amount;
-        currentEditCode = produto.product_code;
-        document.getElementById('edit-alert').style.display = 'block';
+        const locationInput = document.getElementById('editLocation');
+      
+          if (!amountInput || !locationInput) {
+            console.error("Elemento editAmount ou editLocation não encontrado");
+            return;
+          }
+        
+          amountInput.value = produto.product_amount;
+          locationInput.value = produto.room_name; // <- esta linha preenche a localização atual
+        
+          currentEditCode = produto.product_code;
+          document.getElementById('edit-alert').style.display = 'block';
       });
     })
     .catch(() => {
@@ -158,8 +164,12 @@ function tratarCodigoLido(decodedText) {
       // Mostrar formulário para adicionar novo produto
       formAdd.style.display = "block";
 
-      // Preenche automaticamente o código no formulário (opcional)
-      ultimoCodigoDetectado = decodedText;
+      // Preenche o campo do código manualmente
+      const codeInput = document.getElementById("newCode");
+      if (codeInput) {
+        codeInput.value = decodedText;
+        codeInput.readOnly = true; // evita edição se o código foi escaneado
+      }
 
       // Dar foco no primeiro campo do formulário para facilitar
       document.getElementById("newName").focus();
@@ -167,10 +177,11 @@ function tratarCodigoLido(decodedText) {
 }
 
 function confirmOk() {
-  const novoAmount = document.getElementById("editAmount")?.value.trim();
+  const newAmount = document.getElementById("editAmount")?.value.trim();
+  const newLocation = document.getElementById("editLocation")?.value.trim();
 
-  if (!novoAmount || !currentEditCode) {
-    showAlert("Preencha a quantidade corretamente.");
+  if (!newAmount || !newLocation || !currentEditCode) {
+    showAlert("Preencha os campos corretamente.");
     return;
   }
 
@@ -181,7 +192,8 @@ function confirmOk() {
     },
     body: JSON.stringify({
       product_code: currentEditCode,
-      product_amount: novoAmount
+      room_name: newLocation,
+      product_amount: newAmount
     })
   })
     .then(res => {
@@ -200,6 +212,15 @@ function confirmOk() {
 function closeEditDialog() {
   document.getElementById('edit-alert').style.display = 'none';
   currentEditCode = null;
+}
+
+function openDialog(){
+  document.getElementById('form-add').style.display = 'block';
+
+  const codeInput = document.getElementById("newCode");
+  codeInput.value = '';
+  codeInput.readOnly = false;
+  ultimoCodigoDetectado = '';
 }
 
 function closeDialog() {
@@ -238,20 +259,23 @@ function alterarEditQuantia(delta){
 
 // Função para adicionar o produto após o preenchimento do formulário
 function adicionarProduto() {
+  const code = document.getElementById("newCode").value.trim()
   const nome = document.getElementById("newName").value.trim();
   const classe = document.getElementById("newClass").value.trim();
   const amount = document.getElementById("placeAmount").value.trim();
+  const locations = document.getElementById("newLocation").value.trim();
   const resultadoDiv = document.getElementById("resultado");
 
-  if (!nome || !classe || !amount || !ultimoCodigoDetectado) {
+  if (!code || !nome || !classe || !amount || !locations) {
     showAlert("Preencha todos os campos.");
     return;
   }
 
   const novoProduto = {
+    product_code: code,
     product_name: nome,
-    product_code: ultimoCodigoDetectado,
     product_class: classe,
+    room_name: locations,
     product_amount: amount
   };
 
@@ -262,26 +286,30 @@ function adicionarProduto() {
     },
     body: JSON.stringify(novoProduto)
   })
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao adicionar produto");
-      return res.json();
+    .then(async res => {
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Erro ao adicionar produto.");
+      }
+      return data;
     })
     .then(() => {
       resultadoDiv.innerText = "✅ Produto adicionado com sucesso!";
       document.getElementById("form-add").style.display = "none";
       document.getElementById("newName").value = "";
       document.getElementById("newClass").value = "";
+      document.getElementById("newLocation").value = "";
       ultimoCodigoDetectado = "";
+      scannerAtivo = false;
 
-      // Não reiniciar o scanner automaticamente após a adição
+      // Só recarrega a página se tudo deu certo
+      setTimeout(() => {
+        location.reload();
+      }, 500);
     })
     .catch(err => {
-      resultadoDiv.innerText = `Erro: ${err.message}`;
+      showAlert(err.message);
+      scannerAtivo = false;
     });
-
-    setTimeout(() => {
-      location.reload()
-    }, 500);
-
-    scannerAtivo = false;
 }
+
