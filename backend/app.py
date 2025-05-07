@@ -329,7 +329,12 @@ def get_products_scan():
     try:
         with engine.connect() as con:
             if product_code:
-                query = text("SELECT * FROM Products WHERE product_code = :code")
+                query = text("""
+                SELECT Products.*, Rooms.room_name
+                FROM Products
+                JOIN Rooms ON Products.room_id = Rooms.room_id
+                WHERE Products.product_code = :code
+                """)
                 result = con.execute(query, {"code": product_code})
                 row = result.fetchone()
 
@@ -338,7 +343,8 @@ def get_products_scan():
                         'product_code': row[0],
                         'product_name': row[1],
                         'product_class': row[2],
-                        'product_amount': row[3]
+                        'product_amount': row[3],
+                        'room_name': row[5],
                     }
                     return jsonify(produto), 200
                 else:
@@ -355,6 +361,7 @@ def get_products_scan():
                         'product_name': row[1],
                         'product_class': row[2],
                         'product_amount': row[3],
+                        'room_name': row[5],
                     })
                 return jsonify(products), 200
 
@@ -369,15 +376,16 @@ def put_products_scan():
         data = request.get_json()
         product_amount = data.get('product_amount', None)
         product_code = data.get('product_code')
+        room_name = data.get('room_name')
         
-        if not product_amount:
-            return jsonify({'message': 'Por favor adicione a quantidade que deseja colocar'}), 400
+        if not product_amount or not room_name:
+            return jsonify({'message': 'Por favor altere um dos campos para avançar'}), 400
         
         query = text("SELECT * FROM Products WHERE product_code =  :product_code ;").bindparams(product_code=product_code)
         if  con.execute(query).fetchone() is None:
             return jsonify({'message': 'Produto não encontrado'}), 404
         
-        update = text("UPDATE Products SET product_amount = :product_amount WHERE product_code = :product_code ;").bindparams(product_amount=product_amount, product_code=product_code)
+        update = text("UPDATE Products SET product_amount = :product_amount, room_name = :room_name WHERE product_code = :product_code ;").bindparams(product_amount=product_amount, room_name=room_name,product_code=product_code)
 
         con.execute(update)
         con.commit()
