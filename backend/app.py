@@ -79,7 +79,7 @@ def add_product():
             if not room_result:
                 return jsonify({'message': 'Sala não encontrada'}), 404
             
-            room_id = room_result['room_id']
+            room_id = room_result[0]
 
             query_insert = text("""
                 INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id)
