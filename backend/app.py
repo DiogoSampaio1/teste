@@ -219,6 +219,29 @@ def add_room():
         print("Erro ao criar sala:", e)
         return jsonify({'error': str(e)}), 500
 
+#PUT ROOMS
+@app.route('/room', methods =['PUT'])
+@swag_from('../swagger/putRoom.yaml')
+def update_room():
+
+    with engine.connect() as con:
+        data = request.get_json()
+        room_name = data.get('room_name')
+        
+        if not room_name:
+            return jsonify({'message': 'Por favor adicione uma nova localização'}), 400
+        
+        query = text("SELECT * FROM Rooms WHERE room_name =  :room_name ;").bindparams(room_name=room_name)
+        if  con.execute(query).fetchone() is None:
+            return jsonify({'message': 'Sala não encontrada'}), 404
+        
+        update = text("UPDATE Rooms SET room_name = :room_name WHERE room_name = :room_name ;").bindparams(room_name = room_name)
+
+        con.execute(update)
+        con.commit()
+        
+    return jsonify({'message': 'Sala atualizada!'}), 200
+
 #DELETE ROOMS
 @app.route('/room', methods=['DELETE'])
 @swag_from('../swagger/deleteRoom.yaml')

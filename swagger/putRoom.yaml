@@ -1,0 +1,19 @@
+tags:
+  - 'Room'
+summary: 'Update Room'
+parameters:
+  - in: 'body'
+    name: 'body'
+    schema:
+      properties:
+        room_name:
+          type: string
+          maxLength: 255
+
+responses:
+  200:
+    description: 'Room updated successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'not found'
