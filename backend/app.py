@@ -359,7 +359,9 @@ def get_products_scan():
                     return jsonify({'error': 'Produto não encontrado'}), 404
 
             else:
-                query = text("SELECT * FROM Products")
+                query = text("""SELECT Products.*, Rooms.room_name
+                FROM Products
+                JOIN Rooms ON Products.room_id = Rooms.room_id """)
                 result = con.execute(query)
 
                 products = []
