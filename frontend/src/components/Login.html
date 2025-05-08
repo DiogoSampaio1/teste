@@ -30,8 +30,9 @@
     <div class="container">
         <div class="login-box">
             <h1>Login</h1>
-            <input type="text" id="user-name" placeholder="Utilizador" autocomplete="off" required>
-            <input type="text" id="user-password" placeholder="Password" autocomplete="off" required>
+            <input type="text" id="login-user-name" placeholder="Utilizador" autocomplete="off" required>
+            <input type="password" id="login-user-password" placeholder="Password" autocomplete="off" required>
+
             <div class="login-btns">
                 <button class="cancel-btn">Cancel</button>
                 <button class="confirm-btn">Ok</button>
@@ -43,8 +44,44 @@
     <script src="../script/mainScript.js"></script>
 
     <script>
+        document.querySelector(".confirm-btn").addEventListener("click", async () => {
+            const username = document.querySelector("#login-user-name").value.trim();
+            const password = document.querySelector("#login-user-password").value.trim();
         
+            if (!username || !password) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+        
+            try {
+                const response = await fetch("http://127.0.0.1:5000/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        ist_number: username,
+                        passphrase: password
+                    })
+                });
+        
+                const result = await response.json();
+        
+                if (response.ok) {
+                    alert("Login bem-sucedido!");
+                    localStorage.setItem("token", result.access_token);
+                    localStorage.setItem("user", result.ist_number);
+                    window.location.href = "Produtos.html"; // redireciona para página protegida
+                } else {
+                    alert(result.message || "Falha no login.");
+                }
+            } catch (error) {
+                console.error("Erro de conexão:", error);
+                alert("Erro ao conectar ao servidor.");
+            }
+        });
     </script>
+        
 
     <style>
         .container{
