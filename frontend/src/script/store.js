@@ -16,58 +16,58 @@ axios.interceptors.request.use(
 export default createStore({
   state: {
     loggedIn: localStorage.getItem('loggedIn') === 'true',
-    user_id: localStorage.getItem('user_id'),
+    ist_number: localStorage.getItem('ist_number'),
     token: localStorage.getItem('token') || '',
     error: null,
   },
   mutations: {
-    loginSuccess(state, { user_id, token }) {
+    loginSuccess(state, { ist_number, token }) {
       state.loggedIn = true;
-      state.user_id = user_id;
+      state.ist_number = ist_number;
       state.token = token;
       state.error = null;
 
       localStorage.setItem('loggedIn', 'true');
-      localStorage.setItem('user_id', user_id);
+      localStorage.setItem('ist_number', ist_number);
       localStorage.setItem('token', token);
     },
     loginFailure(state, error) {
       state.loggedIn = false;
-      state.user_id = '';
+      state.ist_number = '';
       state.token = '';
       state.error = error;
 
       localStorage.removeItem('loggedIn');
-      localStorage.removeItem('user_id');
+      localStorage.removeItem('ist_number');
       localStorage.removeItem('token');
     },
     logout(state) {
       state.loggedIn = false;
-      state.user_id = '';
+      state.ist_number = '';
       state.token = '';
       state.error = null;
 
       localStorage.removeItem('loggedIn');
-      localStorage.removeItem('user_id');
+      localStorage.removeItem('ist_number');
       localStorage.removeItem('token');
     },
   },
   actions: {
-    async login({ commit }, { user_id, passphrase }) {
+    async login({ commit }, { ist_number, passphrase }) {
       try {
         const response = await axios.post('/login', {
-          user_id,
+          ist_number,
           passphrase,
         });
 
-        const { user_id: uid, access_token } = response.data;
+        const { ist_number: uid, access_token } = response.data;
 
         commit('loginSuccess', {
-          user_id: uid,
+          ist_number: uid,
           token: access_token,
         });
 
-        return { user_id: uid, access_token };
+        return { ist_number: uid, access_token };
       } catch (error) {
         const message =
           error.response?.data?.message || 'Erro ao efetuar login';

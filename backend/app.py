@@ -489,11 +489,12 @@ def login():
     data = request.get_json()
     ist_number = data.get('ist_number')
     passphrase = data.get('passphrase')
+    salt = Column(String, nullable=False)
 
     with SessionLocal() as session:
         Access = session.query(Access).filter(Access.ist_number == ist_number).first()
         if Access:
-            if verify_password(Access.passphrase, passphrase):
+            if verify_password(Access.passphrase, passphrase, Access.salt):
                 access_token = create_access_token(identity=Access.ist_number)
                 app.logger.info(f"Utilizador {Access.ist_number} autenticado com sucesso.")
                 return jsonify({'access_token': access_token, 'ist_number': Access.ist_number}), 200
