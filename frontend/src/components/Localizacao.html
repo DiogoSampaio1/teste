@@ -21,7 +21,7 @@
           <a href="Login.html"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a>
         </aside>
       </div>
-      <div class="tittle">ScanWithMe | Salas</div>
+      <div class="tittle">ScanWithMe | Localização</div>
     </div>
     <div class="cont-right-side-header">
       <div class="user" id="user-name">Isaac</div>
@@ -51,7 +51,7 @@
   <!-- Dialog -->
   <div id="dialog-overlay" class="dialog-overlay">
     <div class="dialog-box">
-      <h1>Criar Sala</h1>
+      <h1>Criar Localização</h1>
       <input type="text" id="roomInput" maxlength="12" placeholder="Insira o nome da Localização" autocomplete="off"/>
       <div class="dialog-actions">
         <button onclick="closeDialog()">Cancelar</button>
@@ -111,7 +111,7 @@
     fetch(`${NGROK_URL}/room`)
       .then(response => response.json())
       .then(data => {
-        allRooms = data;
+        allRooms = data.sort((a, b) => a.room_name.localeCompare(b.room_name));
         renderTable(allRooms);
 
         document.getElementById('items-table').addEventListener('click', (e) => {
@@ -130,7 +130,7 @@
               })
               .then(response => response.json())
               .then(data => {
-                allRooms = data;
+                allRooms = data.sort((a, b) => a.room_name.localeCompare(b.room_name));
                 renderTable(allRooms);
               })
               .catch(error => {
@@ -177,7 +177,7 @@
           })
           .then(res => res.json())
           .then(data => {
-            allRooms = data;
+            allRooms = data.sort((a, b) => a.room_name.localeCompare(b.room_name));
             renderTable(allRooms);
           })
           .catch(err => {
@@ -293,7 +293,7 @@
       return fetch(`${NGROK_URL}/room`)
         .then(response => response.json())
         .then(data => {
-          allRooms = data;
+          allRooms = data.sort((a, b) => a.room_name.localeCompare(b.room_name));
           renderTable(allRooms);
           closeDialog();
         });

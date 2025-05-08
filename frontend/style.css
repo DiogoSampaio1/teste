@@ -282,6 +282,7 @@ i{
   align-items: center;
   gap: 8px;
 }
+/* ========= */
 
 @media (min-width: 360px) and (max-width: 768px){
   .edit-alert-box, .dialog-box{

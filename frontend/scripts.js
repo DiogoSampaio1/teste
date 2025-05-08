@@ -257,6 +257,25 @@ function alterarEditQuantia(delta){
   input.value = novoValor;
 }
 
+function carregarLocalizacoes() {
+  fetch('http://127.0.0.1:5000/room')
+    .then(response => response.json())
+    .then(data => {
+      const datalist = document.getElementById('location-list');
+      datalist.innerHTML = ''; // limpa opções anteriores
+      const nomesUnicos = [...new Set(data.map(room => room.room_name))].sort((a, b) => a.localeCompare(b));
+      nomesUnicos.forEach(nome => {
+        const option = document.createElement('option');
+        option.value = nome;
+        datalist.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Erro ao carregar localizações:', error);
+    });
+}
+
+
 // Função para adicionar o produto após o preenchimento do formulário
 function adicionarProduto() {
   const code = document.getElementById("newCode").value.trim()
@@ -313,3 +332,6 @@ function adicionarProduto() {
     });
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  carregarLocalizacoes();
+});
