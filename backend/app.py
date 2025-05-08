@@ -7,9 +7,11 @@ import argparse
 import secrets
 import json
 import os
+import hashlib
 from flask_bcrypt import Bcrypt, check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
+from sqlalchemy import Column, Integer, String, Boolean
 
 
 CONFIG_PATH = ''
@@ -472,6 +474,16 @@ def put_products_scan():
         
      return jsonify({'message': 'Produto atualizado!'}), 200
 
+######################################################################## LOGIN ######################################################################## 
+#Cria todas as tabelas 
+Base.metadata.create_all(engine)
+    
+# Definição das colunas da tabela 'Access'
+class Access(Base):
+    __tablename__ = 'Access'
+    ist_number = Column(String, primary_key=True)
+    passphrase = Column(String, nullable=False)
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -479,7 +491,7 @@ def login():
     passphrase = data.get('passphrase')
 
     with SessionLocal() as session:
-        user = session.query(Users).filter(Users.user_id == user_id, Users.deleted_user == 0).first()
+        user = session.query(Access).filter(Access.user_id == user_id, Access.deleted_user == 0).first()
         if user:
             if verify_password(user.passphrase, passphrase, user.salt):
                 access_token = create_access_token(identity=user.user_id)
@@ -498,12 +510,12 @@ def login():
 @jwt_required()
 def userinfo():
     current_user_id = get_jwt_identity() # Vai obter o ID do utilizador atual a partir do token JWT
-    user = Users.query.filter_by(user_id=current_user_id, deleted_user=0).first()
+    user = Access.query.filter_by(user_id=current_user_id, deleted_user=0).first()
 
     if not user:
         return jsonify({'message': 'Utilizador não encontrado'}), 404
 
-    return jsonify({'user': {'user_id': user.user_id, 'is_admin': user.is_admin, 'deleted_user':0}}), 200
+    return jsonify({'Access': {'ist_number': Access.ist_number}}), 200
 
 # ===================================== ROUTE ======================================= #   
     
