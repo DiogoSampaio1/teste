@@ -487,21 +487,21 @@ class Access(Base):
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    user_id = data.get('user_id')
+    ist_number = data.get('ist_number')
     passphrase = data.get('passphrase')
 
     with SessionLocal() as session:
-        user = session.query(Access).filter(Access.user_id == user_id, Access.deleted_user == 0).first()
-        if user:
-            if verify_password(user.passphrase, passphrase, user.salt):
-                access_token = create_access_token(identity=user.user_id)
-                app.logger.info(f"Utilizador {user.user_id} autenticado com sucesso.")
-                return jsonify({'access_token': access_token, 'user_id': user.user_id, 'is_admin': user.is_admin}), 200
+        Access = session.query(Access).filter(Access.ist_number == ist_number).first()
+        if Access:
+            if verify_password(Access.passphrase, passphrase):
+                access_token = create_access_token(identity=Access.ist_number)
+                app.logger.info(f"Utilizador {Access.ist_number} autenticado com sucesso.")
+                return jsonify({'access_token': access_token, 'ist_number': Access.ist_number}), 200
             else:
-                app.logger.warning(f"Tentativa de login falhou para o Utilizador {user.user_id}. Senha incorreta.")
+                app.logger.warning(f"Tentativa de login falhou para o Utilizador {Access.ist_number}. Senha incorreta.")
                 return jsonify({'message': 'Credenciais inválidas'}), 401
         else:
-            app.logger.warning(f"Tentativa de login falhou. Utilizador {user_id} não encontrado.")
+            app.logger.warning(f"Tentativa de login falhou. Utilizador {ist_number} não encontrado.")
             return jsonify({'message': 'Credenciais inválidas'}), 401
 
 # Rota protegida para obter informações do Utilizador
@@ -510,9 +510,9 @@ def login():
 @jwt_required()
 def userinfo():
     current_user_id = get_jwt_identity() # Vai obter o ID do utilizador atual a partir do token JWT
-    user = Access.query.filter_by(user_id=current_user_id, deleted_user=0).first()
+    Access = Access.query.filter_by(ist_number=current_user_id).first()
 
-    if not user:
+    if not Access:
         return jsonify({'message': 'Utilizador não encontrado'}), 404
 
     return jsonify({'Access': {'ist_number': Access.ist_number}}), 200
