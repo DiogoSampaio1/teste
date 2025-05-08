@@ -7,16 +7,41 @@ import argparse
 import secrets
 import json
 import os
+from flask_bcrypt import Bcrypt, check_password_hash
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
+
 
 CONFIG_PATH = ''
 #creating app
 app = Flask(__name__)
 CORS(app)
 
+app.config['JWT_SECRET_KEY'] = 'teste'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 28800
+jwt = JWTManager(app)
+bcrypt = Bcrypt()
+
 Swagger(app, template_file='../swagger/definitions.yaml')
 
-engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
-    
+engine = create_engine("mysql://diogo123:diogo123@localhost/Scan")
+
+
+SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+Base = declarative_base()
+
+#area for hash
+def hash_password(password, salt=None):
+    if not salt:
+        salt = os.urandom(16) 
+    hashed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+    return salt, hashed
+
+def verify_password(stored_password, providded_password, salt):
+    hashed = hashlib.pbkdf2_hmac('sha256', providded_password.encode('utf-8'), bytes.fromhex(salt), 100000)
+    return stored_password == hashed.hex()
+
+
 # ===================================== PRODUCTS ======================================= #
 
 #GET PRODUCTS
@@ -446,6 +471,39 @@ def put_products_scan():
         con.commit()
         
      return jsonify({'message': 'Produto atualizado!'}), 200
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    passphrase = data.get('passphrase')
+
+    with SessionLocal() as session:
+        user = session.query(Users).filter(Users.user_id == user_id, Users.deleted_user == 0).first()
+        if user:
+            if verify_password(user.passphrase, passphrase, user.salt):
+                access_token = create_access_token(identity=user.user_id)
+                app.logger.info(f"Utilizador {user.user_id} autenticado com sucesso.")
+                return jsonify({'access_token': access_token, 'user_id': user.user_id, 'is_admin': user.is_admin}), 200
+            else:
+                app.logger.warning(f"Tentativa de login falhou para o Utilizador {user.user_id}. Senha incorreta.")
+                return jsonify({'message': 'Credenciais inválidas'}), 401
+        else:
+            app.logger.warning(f"Tentativa de login falhou. Utilizador {user_id} não encontrado.")
+            return jsonify({'message': 'Credenciais inválidas'}), 401
+
+# Rota protegida para obter informações do Utilizador
+#functionality check:  tested passes
+@app.route('/Users', methods=['GET'])
+@jwt_required()
+def userinfo():
+    current_user_id = get_jwt_identity() # Vai obter o ID do utilizador atual a partir do token JWT
+    user = Users.query.filter_by(user_id=current_user_id, deleted_user=0).first()
+
+    if not user:
+        return jsonify({'message': 'Utilizador não encontrado'}), 404
+
+    return jsonify({'user': {'user_id': user.user_id, 'is_admin': user.is_admin, 'deleted_user':0}}), 200
 
 # ===================================== ROUTE ======================================= #   
     
