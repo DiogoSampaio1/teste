@@ -43,6 +43,13 @@ def hash_password(password, salt=None):
 
 def verify_password(stored_password, provided_password, salt):
     hashed = hashlib.pbkdf2_hmac('sha256', provided_password.encode('utf-8'), bytes.fromhex(salt), 100000)
+
+    print("Senha fornecida (plaintext):", provided_password)
+    print("Salt usado:", salt)
+    print("Hash armazenado:", stored_password)
+    print("Hash gerado:", hashed.hex())
+
+
     return stored_password == hashed.hex()
 
 
@@ -503,6 +510,11 @@ def login():
     with SessionLocal() as session:
         access = session.query(Access).filter(Access.ist_number == ist_number).first()
         if access:
+            # LOG: Mostrar dados do utilizador encontrado
+            print("Utilizador encontrado no banco:", access.ist_number)
+            print("Senha (hash) armazenada:", access.passphrase)
+            print("Salt armazenado:", access.salt)
+
             if verify_password(access.passphrase, passphrase, access.salt):
                 access_token = create_access_token(identity=access.ist_number)
                 app.logger.info(f"Utilizador {access.ist_number} autenticado com sucesso.")
