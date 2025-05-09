@@ -501,7 +501,6 @@ def login():
     passphrase = data.get('passphrase')
 
     with SessionLocal() as session:
-<<<<<<< Updated upstream
         access = session.query(Access).filter(Access.ist_number == ist_number).first()
         if access:
             if verify_password(access.passphrase, passphrase, access.salt):
@@ -510,20 +509,11 @@ def login():
                 return jsonify({'access_token': access_token, 'ist_number': access.ist_number}), 200
             else:
                 app.logger.warning(f"Tentativa de login falhou para o Utilizador {access.ist_number}. Senha incorreta.")
-=======
-        user = session.query(Access).filter(Access.ist_number == ist_number).first()
-        if user:
-            if verify_password(user.passphrase, passphrase, user.salt):
-                access_token = create_access_token(identity=user.ist_number)
-                app.logger.info(f"Utilizador {user.ist_number} autenticado com sucesso.")
-                return jsonify({'access_token': access_token, 'ist_number': user.ist_number}), 200
-            else:
-                app.logger.warning(f"Tentativa de login falhou para o Utilizador {user.ist_number}. Senha incorreta.")
->>>>>>> Stashed changes
                 return jsonify({'message': 'Credenciais inválidas'}), 401
         else:
             app.logger.warning(f"Tentativa de login falhou. Utilizador {ist_number} não encontrado.")
             return jsonify({'message': 'Credenciais inválidas'}), 401
+
 
         
 
@@ -533,7 +523,6 @@ def login():
 @jwt_required()
 def userinfo():
     current_user_id = get_jwt_identity()
-<<<<<<< Updated upstream
     with SessionLocal() as session:
         access = session.query(Access).filter_by(ist_number=current_user_id).first()
 
@@ -541,16 +530,6 @@ def userinfo():
             return jsonify({'message': 'Utilizador não encontrado'}), 404
 
         return jsonify({'Access': {'ist_number': access.ist_number}}), 200
-=======
-
-    with SessionLocal() as session:
-        user = session.query(Access).filter_by(ist_number=current_user_id).first()
-
-        if not user:
-            return jsonify({'message': 'Utilizador não encontrado'}), 404
-
-        return jsonify({'Access': {'ist_number': user.ist_number}}), 200
->>>>>>> Stashed changes
 
 
 # ===================================== ROUTE ======================================= #   
