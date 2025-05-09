@@ -501,14 +501,14 @@ def login():
     passphrase = data.get('passphrase')
 
     with SessionLocal() as session:
-        Access = session.query(Access).filter(Access.ist_number == ist_number).first()
-        if Access:
-            if verify_password(Access.passphrase, passphrase, Access.salt):
-                access_token = create_access_token(identity=Access.ist_number)
-                app.logger.info(f"Utilizador {Access.ist_number} autenticado com sucesso.")
-                return jsonify({'access_token': access_token, 'ist_number': Access.ist_number}), 200
+        access = session.query(Access).filter(Access.ist_number == ist_number).first()
+        if access:
+            if verify_password(access.passphrase, passphrase, access.salt):
+                access_token = create_access_token(identity=access.ist_number)
+                app.logger.info(f"Utilizador {access.ist_number} autenticado com sucesso.")
+                return jsonify({'access_token': access_token, 'ist_number': access.ist_number}), 200
             else:
-                app.logger.warning(f"Tentativa de login falhou para o Utilizador {Access.ist_number}. Senha incorreta.")
+                app.logger.warning(f"Tentativa de login falhou para o Utilizador {access.ist_number}. Senha incorreta.")
                 return jsonify({'message': 'Credenciais inválidas'}), 401
         else:
             app.logger.warning(f"Tentativa de login falhou. Utilizador {ist_number} não encontrado.")
@@ -521,12 +521,14 @@ def login():
 @jwt_required()
 def userinfo():
     current_user_id = get_jwt_identity()
-    Access = Access.query.filter_by(ist_number=current_user_id).first()
+    with SessionLocal() as session:
+        access = session.query(Access).filter_by(ist_number=current_user_id).first()
 
-    if not Access:
-        return jsonify({'message': 'Utilizador não encontrado'}), 404
+        if not access:
+            return jsonify({'message': 'Utilizador não encontrado'}), 404
 
-    return jsonify({'Access': {'ist_number': Access.ist_number}}), 200
+        return jsonify({'Access': {'ist_number': access.ist_number}}), 200
+
 
 # ===================================== ROUTE ======================================= #   
     
