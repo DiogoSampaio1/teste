@@ -34,15 +34,15 @@ engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
-#area for hash
+# área para hash
 def hash_password(password, salt=None):
     if not salt:
-        salt = os.urandom(16) 
+        salt = os.urandom(16)
     hashed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-    return salt, hashed
+    return salt.hex(), hashed.hex()
 
-def verify_password(stored_password, providded_password, salt):
-    hashed = hashlib.pbkdf2_hmac('sha256', providded_password.encode('utf-8'), bytes.fromhex(salt), 100000)
+def verify_password(stored_password, provided_password, salt):
+    hashed = hashlib.pbkdf2_hmac('sha256', provided_password.encode('utf-8'), bytes.fromhex(salt), 100000)
     return stored_password == hashed.hex()
 
 
@@ -331,7 +331,7 @@ def get_users():
         return jsonify({'error': str(e)}), 500
 
     
-#POST USERS
+# POST USERS
 @app.route('/user', methods=['POST'])
 @swag_from('../swagger/postUser.yaml')
 def add_user():
@@ -343,11 +343,13 @@ def add_user():
     if not ist_number:
         return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
 
+    # Gera senha se não enviada
     if not passphrase:
         alphabet = string.ascii_letters + string.digits
         passphrase = ''.join(secrets.choice(alphabet) for _ in range(28))
 
-        salt, hashed_password = hash_password(passphrase)
+    # Sempre gera hash e salt
+    salt, hashed_password = hash_password(passphrase)
 
     try:
         with engine.begin() as con:
@@ -363,7 +365,9 @@ def add_user():
             """)
 
             con.execute(query_insert, {
-                'ist_number': ist_number, 'passphrase': passphrase, 'salt': salt
+                'ist_number': ist_number,
+                'passphrase': hashed_password,
+                'salt': salt
             })
 
         return jsonify({'message': 'Utilizador adicionado com sucesso!'}), 201
