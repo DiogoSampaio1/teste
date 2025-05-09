@@ -11,6 +11,9 @@ parameters:
         ist_number:
           type: string
           maxLength: 255
+        passphrase:
+          type: string
+          maxLength: 255
 
       
 responses:
