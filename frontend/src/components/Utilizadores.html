@@ -64,7 +64,15 @@
   <div id="dialog-overlay" class="dialog-overlay">
     <div class="dialog-box">
       <h2>Adicionar Utilizador</h2>
-      <input type="text" id="istInput" autocomplete="off" maxlength="12" placeholder="Insira o IST Number"/>
+      <input type="text" id="istInput" class="typeInput" autocomplete="off" maxlength="12" placeholder="Identidicação da pessoa"/>
+      <input type="password" id="password" class="typeInput" autocomplete="off" placeholder="Palavra-Passe" style="display: none;">
+      <div class="checkbox">
+        <label class="custom-checkbox">
+          <input type="checkbox" id="showPassword" onclick="showPassword()">
+          <span class="checkmark"></span>
+          Password
+        </label>
+      </div>
       <div class="dialog-actions">
         <button onclick="closeDialog()">Cancelar</button>
         <button onclick="addUser()">Adicionar</button>
@@ -93,6 +101,12 @@
   const NGROK_URL = 'http://127.0.0.1:5000';
   let allUsers = []; // global
   let confirmCallback = null;
+
+  function showPassword() {
+    const checkbox = document.getElementById('showPassword');
+    const passwordField = document.getElementById('password');
+    passwordField.style.display = checkbox.checked ? 'block' : 'none';
+  }
   
   document.addEventListener("DOMContentLoaded", () => {
     fetch(`${NGROK_URL}/user`)
@@ -187,7 +201,14 @@
   }
 
   function openAddDialog() {
-    document.getElementById('istInput').value = ""
+    const checkbox = document.getElementById('showPassword');
+    const passwordInput = document.getElementById('password');
+    const istInput = document.getElementById('istInput');
+
+    checkbox.checked = false;
+    passwordInput.style.display = 'none';
+    passwordInput.value = '';
+    istInput.value = '';
     document.getElementById("dialog-overlay").style.display = "flex";
   }
 
@@ -197,9 +218,16 @@
 
   function addUser() {
     const istNumber = document.getElementById("istInput").value.trim();
+    const password = document.getElementById("password").value.trim();
+
     if (istNumber.length === 0) {
       showAlert("Insira um IST number válido.");
       return;
+    }
+
+    const payload = { ist_number: istNumber };
+    if (password.length > 0) {
+      payload.password = password;
     }
 
     fetch(`${NGROK_URL}/user`, {
@@ -207,7 +235,7 @@
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ ist_number: istNumber })
+      body: JSON.stringify(payload)
     })
     .then(async response => {
       const data = await response.json();
@@ -486,7 +514,7 @@ th{
   color: #fff;
 }
 
-.dialog-box input {
+.dialog-box .typeInput {
   color: #ccc;
   background: transparent;
   border: none;
@@ -498,11 +526,11 @@ th{
   border-radius: 5px 5px 0 0 ;
 }
 
-.dialog-box input:hover{
+.dialog-box .typeInput:hover{
   background-color: #2c2c2c8c;
 }
 
-.dialog-box input:focus {
+.dialog-box .typeInput:focus {
   background-color: #333;
 }
 
@@ -527,6 +555,56 @@ th{
 
 .dialog-box button:hover{
   background-color: #2c2c2c8c;
+}
+
+/* Custom Checkbox */
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1em;
+  user-select: none;
+  color: #ccc;
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-checkbox .checkmark {
+  height: 15px;
+  width: 15px;
+  background-color: transparent;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+  position: relative;
+  transition: .3s ease;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: rgb(40, 132, 224);
+  border-color: rgb(40, 132, 224);
+}
+
+.custom-checkbox .checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 4px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-checkbox input:checked ~ .checkmark::after {
+  display: block;
 }
 
 @media (max-width: 768px) {

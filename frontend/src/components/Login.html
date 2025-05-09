@@ -47,12 +47,8 @@
         document.querySelector(".confirm-btn").addEventListener("click", async () => {
             const username = document.querySelector("#login-user-name").value.trim();
             const password = document.querySelector("#login-user-password").value.trim();
-        
-            if (!username || !password) {
-                alert("Por favor, preencha todos os campos.");
-                return;
-            }
-        
+
+            
             try {
                 const response = await fetch("http://127.0.0.1:5000/login", {
                     method: "POST",

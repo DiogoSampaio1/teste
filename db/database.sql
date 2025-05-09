@@ -1,7 +1,7 @@
 CREATE TABLE Access (
     ist_number VARCHAR(255) PRIMARY KEY,
     passphrase VARCHAR(255) NULL,
-    salt VARCHAR(255) DEFAULT NULL,
+    salt VARCHAR(255) DEFAULT NULL
 );
 
 CREATE TABLE Rooms (
