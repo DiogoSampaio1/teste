@@ -37,20 +37,20 @@ Base = declarative_base()
 # área para hash
 def hash_password(password, salt=None):
     if not salt:
-        salt = os.urandom(16)
-    hashed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-    return salt.hex(), hashed.hex()
+        salt = os.urandom(16)  # Gera um salt aleatório
+    hashed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)  # Gera o hash da senha
+    return salt.hex(), hashed.hex()  # Retorna o salt e o hash da senha
 
+# Função para verificar senha
 def verify_password(stored_password, provided_password, salt):
-    hashed = hashlib.pbkdf2_hmac('sha256', provided_password.encode('utf-8'), bytes.fromhex(salt), 100000)
+    salt_bytes = bytes.fromhex(salt)  # Converte o salt de volta para bytes
+    hashed = hashlib.pbkdf2_hmac('sha256', provided_password.encode('utf-8'), salt_bytes, 100000)  # Gera o hash da senha fornecida
+    return stored_password == hashed.hex()  # Compara os hashes
 
-    print("Senha fornecida (plaintext):", provided_password)
-    print("Salt usado:", salt)
-    print("Hash armazenado:", stored_password)
-    print("Hash gerado:", hashed.hex())
-
-
-    return stored_password == hashed.hex()
+# Função para criar uma senha aleatória (se não fornecida)
+def generate_random_password(length=28):
+    alphabet = string.ascii_letters + string.digits  # Caracteres permitidos para a senha
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
 
 
 # ===================================== PRODUCTS ======================================= #
@@ -340,30 +340,37 @@ def get_users():
     
 # POST USERS
 @app.route('/user', methods=['POST'])
-@swag_from('../swagger/postUser.yaml')
 def add_user():
     data = request.json
 
     ist_number = data.get('ist_number')
-    passphrase = data.get('passphrase')
+    passphrase = data.get('passphrase')  # Senha fornecida pelo usuário (pode ser vazia)
 
     if not ist_number:
-        return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
+        return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400  # Caso o número IST não seja fornecido
 
-    if not passphrase:
+    salt = None
+    hashed_password = None
+
+    if passphrase:
+        # Se uma senha foi fornecida, gera o hash dela
+        salt, hashed_password = hash_password(passphrase)  # Gera o salt e o hash da senha
+    else:
+        # Caso não tenha senha fornecida, gera uma senha aleatória
         alphabet = string.ascii_letters + string.digits
-        passphrase = ''.join(secrets.choice(alphabet) for _ in range(28))
-
-    salt, hashed_password = hash_password(passphrase)
+        passphrase = ''.join(secrets.choice(alphabet) for _ in range(28))  # Gera uma senha aleatória
+        salt, hashed_password = hash_password(passphrase)  # Gera o hash dessa senha aleatória
 
     try:
         with engine.begin() as con:
+            # Verifica se o usuário já existe
             query_check = text("SELECT * FROM Access WHERE ist_number = :ist_number")
             result = con.execute(query_check, {'ist_number': ist_number}).fetchone()
 
             if result:
-                return jsonify({'message': 'O Utilizador já tem acesso'}), 409
+                return jsonify({'message': 'O Utilizador já tem acesso'}), 409  # Caso o usuário já exista
 
+            # Insere o novo usuário no banco de dados
             query_insert = text("""
                 INSERT INTO Access (ist_number, passphrase, salt)
                 VALUES (:ist_number, :passphrase, :salt)
@@ -371,15 +378,15 @@ def add_user():
 
             con.execute(query_insert, {
                 'ist_number': ist_number,
-                'passphrase': hashed_password,
-                'salt': salt
+                'passphrase': hashed_password,  # Armazena o hash da senha
+                'salt': salt  # Armazena o salt da senha
             })
 
-        return jsonify({'message': 'Utilizador adicionado com sucesso!'}), 201
+        return jsonify({'message': 'Utilizador adicionado com sucesso!'}), 201  # Retorna o sucesso da criação do usuário
 
     except Exception as e:
         print("Erro ao adicionar Utilizador:", e)
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500 
     
 #DELETE USERS
 @app.route('/user', methods=['DELETE'])
@@ -507,24 +514,34 @@ def login():
     ist_number = data.get('ist_number')
     passphrase = data.get('passphrase')
 
-    with SessionLocal() as session:
-        access = session.query(Access).filter(Access.ist_number == ist_number).first()
-        if access:
-            # LOG: Mostrar dados do utilizador encontrado
-            print("Utilizador encontrado no banco:", access.ist_number)
-            print("Senha (hash) armazenada:", access.passphrase)
-            print("Salt armazenado:", access.salt)
+    if not ist_number or not passphrase:
+        return jsonify({'message': 'IST Number e Senha são obrigatórios'}), 400  # Se a senha ou o IST Number não for fornecido
 
-            if verify_password(access.passphrase, passphrase, access.salt):
-                access_token = create_access_token(identity=access.ist_number)
-                app.logger.info(f"Utilizador {access.ist_number} autenticado com sucesso.")
-                return jsonify({'access_token': access_token, 'ist_number': access.ist_number}), 200
+    try:
+        with engine.connect() as con:
+            query = text("SELECT * FROM Access WHERE ist_number = :ist_number")
+            user = con.execute(query, {'ist_number': ist_number}).fetchone()
+
+            if not user:
+                return jsonify({'message': 'Utilizador não encontrado'}), 404  # Caso o usuário não exista
+
+            stored_password = user[1]
+            salt = user[2]
+
+            if not stored_password or not salt:
+                return jsonify({'message': 'Usuário não tem senha definida'}), 401  # Se não houver senha ou salt, login não permitido
+
+            # Verifica se a senha fornecida é válida
+            if verify_password(stored_password, passphrase, salt):  
+                access_token = create_access_token(identity=ist_number)
+                return jsonify({'message': 'Login bem-sucedido', 'access_token': access_token}), 200
             else:
-                app.logger.warning(f"Tentativa de login falhou para o Utilizador {access.ist_number}. Senha incorreta.")
-                return jsonify({'message': 'Credenciais inválidas'}), 401
-        else:
-            app.logger.warning(f"Tentativa de login falhou. Utilizador {ist_number} não encontrado.")
-            return jsonify({'message': 'Credenciais inválidas'}), 401
+                return jsonify({'message': 'Senha incorreta'}), 401  # Senha incorreta
+
+    except Exception as e:
+        print(f"Erro no login: {e}")
+        return jsonify({'error': str(e)}), 500  # Caso ocorra algum erro
+
 
 
         
