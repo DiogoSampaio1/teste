@@ -343,12 +343,10 @@ def add_user():
     if not ist_number:
         return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
 
-    # Gera senha se não enviada
     if not passphrase:
         alphabet = string.ascii_letters + string.digits
         passphrase = ''.join(secrets.choice(alphabet) for _ in range(28))
 
-    # Sempre gera hash e salt
     salt, hashed_password = hash_password(passphrase)
 
     try:
@@ -494,13 +492,13 @@ class Access(Base):
     __tablename__ = 'Access'
     ist_number = Column(String, primary_key=True)
     passphrase = Column(String, nullable=True)
+    salt = Column(String, nullable=True)
 
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     ist_number = data.get('ist_number')
     passphrase = data.get('passphrase')
-    salt = Column(String, nullable=False)
 
     with SessionLocal() as session:
         Access = session.query(Access).filter(Access.ist_number == ist_number).first()
@@ -515,13 +513,14 @@ def login():
         else:
             app.logger.warning(f"Tentativa de login falhou. Utilizador {ist_number} não encontrado.")
             return jsonify({'message': 'Credenciais inválidas'}), 401
+        
 
 # Rota protegida para obter informações do Utilizador
 #functionality check:  tested passes
 @app.route('/Users', methods=['GET'])
 @jwt_required()
 def userinfo():
-    current_user_id = get_jwt_identity() # Vai obter o ID do utilizador atual a partir do token JWT
+    current_user_id = get_jwt_identity()
     Access = Access.query.filter_by(ist_number=current_user_id).first()
 
     if not Access:
