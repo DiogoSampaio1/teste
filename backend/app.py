@@ -12,6 +12,8 @@ from flask_bcrypt import Bcrypt, check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 from sqlalchemy import Column, Integer, String, Boolean
+import string
+import secrets
 
 
 CONFIG_PATH = ''
@@ -336,9 +338,16 @@ def add_user():
     data = request.json
 
     ist_number = data.get('ist_number')
+    passphrase = data.get('passphrase')
 
     if not ist_number:
         return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
+
+    if not passphrase:
+        alphabet = string.ascii_letters + string.digits
+        passphrase = ''.join(secrets.choice(alphabet) for _ in range(28))
+
+        salt, hashed_password = hash_password(passphrase)
 
     try:
         with engine.begin() as con:
@@ -349,12 +358,12 @@ def add_user():
                 return jsonify({'message': 'O Utilizador já tem acesso'}), 409
 
             query_insert = text("""
-                INSERT INTO Access (ist_number)
-                VALUES (:ist_number)
+                INSERT INTO Access (ist_number, passphrase, salt)
+                VALUES (:ist_number, :passphrase, :salt)
             """)
 
             con.execute(query_insert, {
-                'ist_number': ist_number
+                'ist_number': ist_number, 'passphrase': passphrase, 'salt': salt
             })
 
         return jsonify({'message': 'Utilizador adicionado com sucesso!'}), 201
@@ -475,14 +484,12 @@ def put_products_scan():
      return jsonify({'message': 'Produto atualizado!'}), 200
 
 ######################################################################## LOGIN ######################################################################## 
-#Cria todas as tabelas 
 Base.metadata.create_all(engine)
     
-# Definição das colunas da tabela 'Access'
 class Access(Base):
     __tablename__ = 'Access'
     ist_number = Column(String, primary_key=True)
-    passphrase = Column(String, nullable=False)
+    passphrase = Column(String, nullable=True)
 
 @app.route('/login', methods=['POST'])
 def login():

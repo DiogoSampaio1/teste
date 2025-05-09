@@ -1,6 +1,6 @@
 CREATE TABLE Access (
     ist_number VARCHAR(255) PRIMARY KEY,
-    passphrase VARCHAR(255) NOT NULL,
+    passphrase VARCHAR(255) NULL,
     salt VARCHAR(255) DEFAULT NULL,
 );
 
