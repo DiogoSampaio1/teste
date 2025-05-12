@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const userNameElement = document.getElementById('user-name');
-    const loggedInUser = localStorage.getItem('user');
+    const loggedInUser = localStorage.getItem('ist_number');
   
     if (userNameElement && loggedInUser) {
       userNameElement.textContent = loggedInUser;

@@ -529,7 +529,7 @@ def login():
             if bcrypt.check_password_hash(stored_password, passphrase):
                 access_token = create_access_token(identity=ist_number)
                 print("Login bem-sucedido")
-                return jsonify({'message': 'Login bem-sucedido', 'access_token': access_token}), 200
+                return jsonify({'message': 'Login bem-sucedido', 'ist_number': ist_number,'access_token': access_token}), 200
             else:
                 print("Erro: Senha incorreta")
                 return jsonify({'message': 'Senha incorreta'}), 401
