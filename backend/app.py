@@ -14,7 +14,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 from sqlalchemy import Column, Integer, String, Boolean
 import string
 import secrets
-
+from datetime import timedelta
 
 CONFIG_PATH = ''
 #creating app
@@ -22,7 +22,8 @@ app = Flask(__name__)
 CORS(app)
 
 app.config['JWT_SECRET_KEY'] = 'teste'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 28800
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=20)
+
 jwt = JWTManager(app)
 bcrypt = Bcrypt()
 
@@ -527,7 +528,7 @@ def login():
             print(f"Hash da senha armazenada (login): {stored_password}")
 
             if bcrypt.check_password_hash(stored_password, passphrase):
-                access_token = create_access_token(identity=ist_number)
+                access_token = create_access_token(identity=ist_number, expires_delta=timedelta(seconds=20))
                 print("Login bem-sucedido")
                 return jsonify({'message': 'Login bem-sucedido', 'ist_number': ist_number,'access_token': access_token}), 200
             else:
