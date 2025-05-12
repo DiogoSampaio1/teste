@@ -67,7 +67,7 @@
                     alert("Login bem-sucedido!");
                     localStorage.setItem("token", result.access_token);
                     localStorage.setItem("user", result.ist_number);
-                    window.location.href = "Produtos.html"; // redireciona para página protegida
+                    window.location.href = "Produtos.html";
                 } else {
                     alert(result.message || "Falha no login.");
                 }

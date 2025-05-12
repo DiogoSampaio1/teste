@@ -227,7 +227,7 @@
 
     const payload = { ist_number: istNumber };
     if (password.length > 0) {
-      payload.password = password;
+      payload.passphrase = password;
     }
 
     fetch(`${NGROK_URL}/user`, {

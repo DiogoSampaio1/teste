@@ -1,4 +1,3 @@
-import { createStore } from 'vuex';
 import axios from 'axios';
 
 // Interceptor para incluir token em todas as requisições

@@ -1,3 +1,14 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const userNameElement = document.getElementById('user-name');
+    const loggedInUser = localStorage.getItem('user');
+  
+    if (userNameElement && loggedInUser) {
+      userNameElement.textContent = loggedInUser;
+    } else {
+      console.log("Elemento 'user-name' não encontrado ou usuário não logado.");
+    }
+  });
+  
 // Sidebar
 function openSidebar() {
     let icon = document.getElementById('ham-men');

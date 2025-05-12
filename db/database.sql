@@ -1,7 +1,6 @@
 CREATE TABLE Access (
     ist_number VARCHAR(255) PRIMARY KEY,
-    passphrase VARCHAR(255) NULL,
-    salt VARCHAR(255) DEFAULT NULL
+    passphrase VARCHAR(64) NULL
 );
 
 CREATE TABLE Rooms (
@@ -19,10 +18,10 @@ CREATE TABLE Products (
 );
 
 
-INSERT INTO Access (ist_number, passphrase, salt)
+INSERT INTO Access (ist_number, passphrase)
 VALUES
-  (430453, 'teste', NULL),
-  (430452, 'teste', NULL);
+  (430453, 'teste'),
+  (430452, 'teste');
 
 INSERT INTO Rooms (room_id, room_name)
 VALUES

@@ -28,29 +28,26 @@ bcrypt = Bcrypt()
 
 Swagger(app, template_file='../swagger/definitions.yaml')
 
-engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
+engine = create_engine("mysql://diogo123:diogo123@localhost/Scan")
 
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
 # área para hash
-def hash_password(password, salt=None):
-    if not salt:
-        salt = os.urandom(16)  # Gera um salt aleatório
-    hashed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)  # Gera o hash da senha
-    return salt.hex(), hashed.hex()  # Retorna o salt e o hash da senha
+def hash_password(password):
+    return bcrypt.generate_password_hash(password).decode('utf-8')
 
-# Função para verificar senha
-def verify_password(stored_password, provided_password, salt):
-    salt_bytes = bytes.fromhex(salt)  # Converte o salt de volta para bytes
-    hashed = hashlib.pbkdf2_hmac('sha256', provided_password.encode('utf-8'), salt_bytes, 100000)  # Gera o hash da senha fornecida
-    return stored_password == hashed.hex()  # Compara os hashes
+# Função para verificar se a senha fornecida corresponde ao hash armazenado
+def verify_password(stored_password, provided_password):
+    return check_password_hash(stored_password, provided_password)
+
+
 
 # Função para criar uma senha aleatória (se não fornecida)
 def generate_random_password(length=28):
-    alphabet = string.ascii_letters + string.digits  # Caracteres permitidos para a senha
-    return ''.join(secrets.choice(alphabet) for _ in range(length))
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(secrets.choice(characters) for _ in range(length))
 
 
 # ===================================== PRODUCTS ======================================= #
@@ -337,56 +334,54 @@ def get_users():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-    
 # POST USERS
 @app.route('/user', methods=['POST'])
+@swag_from('../swagger/postUser.yaml')
 def add_user():
     data = request.json
 
     ist_number = data.get('ist_number')
-    passphrase = data.get('passphrase')  # Senha fornecida pelo usuário (pode ser vazia)
+    passphrase = data.get('passphrase')
+
+    print(f"Tentativa de criar usuário com IST Number: {ist_number}")
+    print(f"Senha fornecida na criação: {passphrase}")
 
     if not ist_number:
-        return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400  # Caso o número IST não seja fornecido
-
-    salt = None
-    hashed_password = None
+        return jsonify({'message': 'O IST Number é obrigatório'}), 400
 
     if passphrase:
-        # Se uma senha foi fornecida, gera o hash dela
-        salt, hashed_password = hash_password(passphrase)  # Gera o salt e o hash da senha
+        hashed_password = hash_password(passphrase)
+        print(f"Senha hasheada na criação: {hashed_password}")
     else:
-        # Caso não tenha senha fornecida, gera uma senha aleatória
-        alphabet = string.ascii_letters + string.digits
-        passphrase = ''.join(secrets.choice(alphabet) for _ in range(28))  # Gera uma senha aleatória
-        salt, hashed_password = hash_password(passphrase)  # Gera o hash dessa senha aleatória
+        passphrase = generate_random_password()
+        hashed_password = hash_password(passphrase)
+        print(f"Senha aleatória gerada: {passphrase}")
+        print(f"Senha aleatória hasheada: {hashed_password}")
 
     try:
         with engine.begin() as con:
-            # Verifica se o usuário já existe
             query_check = text("SELECT * FROM Access WHERE ist_number = :ist_number")
             result = con.execute(query_check, {'ist_number': ist_number}).fetchone()
 
             if result:
-                return jsonify({'message': 'O Utilizador já tem acesso'}), 409  # Caso o usuário já exista
+                return jsonify({'message': 'O Utilizador já tem acesso'}), 409
 
-            # Insere o novo usuário no banco de dados
             query_insert = text("""
-                INSERT INTO Access (ist_number, passphrase, salt)
-                VALUES (:ist_number, :passphrase, :salt)
+                INSERT INTO Access (ist_number, passphrase)
+                VALUES (:ist_number, :passphrase)
             """)
 
             con.execute(query_insert, {
                 'ist_number': ist_number,
-                'passphrase': hashed_password,  # Armazena o hash da senha
-                'salt': salt  # Armazena o salt da senha
+                'passphrase': hashed_password
             })
 
-        return jsonify({'message': 'Utilizador adicionado com sucesso!'}), 201  # Retorna o sucesso da criação do usuário
+        return jsonify({'message': 'Utilizador adicionado com sucesso!', 'passphrase': passphrase}), 201
 
     except Exception as e:
         print("Erro ao adicionar Utilizador:", e)
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
+
     
 #DELETE USERS
 @app.route('/user', methods=['DELETE'])
@@ -506,7 +501,6 @@ class Access(Base):
     __tablename__ = 'Access'
     ist_number = Column(String, primary_key=True)
     passphrase = Column(String, nullable=True)
-    salt = Column(String, nullable=True)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -514,8 +508,11 @@ def login():
     ist_number = data.get('ist_number')
     passphrase = data.get('passphrase')
 
+    print(f"Tentativa de login para o IST Number: {ist_number}")
+    print(f"Senha fornecida (login): {passphrase}")
+
     if not ist_number or not passphrase:
-        return jsonify({'message': 'IST Number e Senha são obrigatórios'}), 400  # Se a senha ou o IST Number não for fornecido
+        return jsonify({'message': 'IST Number e Senha são obrigatórios'}), 400
 
     try:
         with engine.connect() as con:
@@ -523,27 +520,23 @@ def login():
             user = con.execute(query, {'ist_number': ist_number}).fetchone()
 
             if not user:
-                return jsonify({'message': 'Utilizador não encontrado'}), 404  # Caso o usuário não exista
+                print("Erro: Utilizador não encontrado")
+                return jsonify({'message': 'Utilizador não encontrado'}), 404
 
-            stored_password = user[1]
-            salt = user[2]
+            stored_password = user[1]  # O hash da senha armazenada
+            print(f"Hash da senha armazenada (login): {stored_password}")
 
-            if not stored_password or not salt:
-                return jsonify({'message': 'Usuário não tem senha definida'}), 401  # Se não houver senha ou salt, login não permitido
-
-            # Verifica se a senha fornecida é válida
-            if verify_password(stored_password, passphrase, salt):  
+            if bcrypt.check_password_hash(stored_password, passphrase):
                 access_token = create_access_token(identity=ist_number)
+                print("Login bem-sucedido")
                 return jsonify({'message': 'Login bem-sucedido', 'access_token': access_token}), 200
             else:
-                return jsonify({'message': 'Senha incorreta'}), 401  # Senha incorreta
+                print("Erro: Senha incorreta")
+                return jsonify({'message': 'Senha incorreta'}), 401
 
     except Exception as e:
         print(f"Erro no login: {e}")
-        return jsonify({'error': str(e)}), 500  # Caso ocorra algum erro
-
-
-
+        return jsonify({'error': str(e)}), 500
         
 
 # Rota protegida para obter informações do Utilizador
@@ -559,7 +552,6 @@ def userinfo():
             return jsonify({'message': 'Utilizador não encontrado'}), 404
 
         return jsonify({'Access': {'ist_number': access.ist_number}}), 200
-
 
 # ===================================== ROUTE ======================================= #   
     
