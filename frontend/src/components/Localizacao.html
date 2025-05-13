@@ -24,6 +24,7 @@
       <div class="tittle">ScanWithMe | Localização</div>
     </div>
     <div class="cont-right-side-header">
+      <button class="logout-btn" id="log-btn"></button>
       <div class="user" id="user-name"></div>
     </div>
   </header>
@@ -326,6 +327,24 @@
       }, 500);
     }, 3000);
   }
+
+  document.addEventListener("DOMContentLoaded", () => {
+      const authButton = document.getElementById("log-btn");
+      const user = localStorage.getItem("ist_number");
+
+      if (user) {
+          authButton.textContent = "Logout";
+          authButton.onclick = () => {
+              localStorage.removeItem("ist_number");
+              window.location = "Login.html";
+          };
+      } else {
+          authButton.textContent = "Login";
+          authButton.onclick = () => {
+              window.location.href = "Login.html";
+          };
+      }
+    });
 </script>
   
 

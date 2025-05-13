@@ -25,6 +25,7 @@
       <div class="tittle">ScanWithMe | Produtos</div>
     </div>
     <div class="cont-right-side-header">
+      <button class="logout-btn" id="log-btn"></button>
       <div class="user" id="user-name"></div>
     </div>
   </header>
@@ -71,7 +72,8 @@
       <h1>Editar:</h1>
       <input type="text" id="editName" placeholder="Nome do produto" autocomplete="off">
       <input type="text" id="editClass" placeholder="Classe do produto" autocomplete="off">
-      <input type="text" id="editLocation" placeholder="Localização" autocomplete="off">
+      <input type="text" id="editLocation" list="location-list" placeholder="Localização" autocomplete="off">
+      <datalist id="location-list"></datalist>
       <input type="number" min="0" max="5" id="editAmount" placeholder="Quantidade do produto" autocomplete="off">
       <div class="amount-btns">
         <button onclick="alterarQuantia(-1)">-</button>
@@ -312,6 +314,28 @@
       input.value = novoValor;
     }
 
+    function carregarLocalizacoes() {
+      fetch('http://127.0.0.1:5000/room')
+        .then(response => response.json())
+        .then(data => {
+          const datalist = document.getElementById('location-list');
+          datalist.innerHTML = ''; // limpa opções anteriores
+          const nomesUnicos = [...new Set(data.map(room => room.room_name))].sort((a, b) => a.localeCompare(b));
+          nomesUnicos.forEach(nome => {
+            const option = document.createElement('option');
+            option.value = nome;
+            datalist.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error('Erro ao carregar localizações:', error);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarLocalizacoes();
+    });
+
     document.getElementById("searchbar").addEventListener("input", (e) => {
       const searchTerm = e.target.value.toLowerCase();
       const filtered = allProducts.filter(p =>
@@ -321,6 +345,24 @@
         p.room_name.toLowerCase().includes(searchTerm)
       );
       renderTable(filtered);
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const authButton = document.getElementById("log-btn");
+      const user = localStorage.getItem("ist_number");
+
+      if (user) {
+          authButton.textContent = "Logout";
+          authButton.onclick = () => {
+              localStorage.removeItem("ist_number");
+              window.location = "Login.html";
+          };
+      } else {
+          authButton.textContent = "Login";
+          authButton.onclick = () => {
+              window.location.href = "Login.html";
+          };
+      }
     });
   </script>
 

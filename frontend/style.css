@@ -14,7 +14,7 @@
   text-align: center;
 }
 
-button {
+.container button {
   padding: 12px 24px;
   font-size: 16px;
   background-color: #007bff;
@@ -27,7 +27,7 @@ button {
   transition: .3s ease;
 }
 
-button:hover {
+.container button:hover {
   background-color: #0056b3;
 }
 
@@ -201,7 +201,7 @@ i{
   background-color: transparent;
   color: rgb(40, 132, 224);
   border: none;
-  align-self: self-endbtn;
+  align-self: self-end;
   font-weight: bold;
   font-size: 1em;
   cursor: pointer;
@@ -263,7 +263,7 @@ i{
   background-color: transparent;
   color: rgb(40, 132, 224);
   border: none;
-  align-self: self-endbtn;
+  align-self: self-end;
   font-weight: bold;
   font-size: 1em;
   cursor: pointer;

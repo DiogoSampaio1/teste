@@ -335,3 +335,21 @@ function adicionarProduto() {
 document.addEventListener('DOMContentLoaded', () => {
   carregarLocalizacoes();
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const authButton = document.getElementById("log-btn");
+  const user = localStorage.getItem("ist_number");
+
+  if (user) {
+      authButton.textContent = "Logout";
+      authButton.onclick = () => {
+          localStorage.removeItem("ist_number");
+          window.location = "src/components/DLogin.html";
+      };
+  } else {
+      authButton.textContent = "Login";
+      authButton.onclick = () => {
+          window.location.href = "src/components/Login.html";
+      };
+  }
+});

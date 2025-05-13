@@ -25,7 +25,7 @@ app.config['JWT_SECRET_KEY'] = 'teste'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=20)
 
 jwt = JWTManager(app)
-bcrypt = Bcrypt()
+bcrypt = Bcrypt(app)
 
 Swagger(app, template_file='../swagger/definitions.yaml')
 
