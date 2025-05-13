@@ -298,10 +298,7 @@
               window.location = "Login.html";
           };
       } else {
-          authButton.textContent = "Login";
-          authButton.onclick = () => {
-              window.location.href = "Login.html";
-          };
+          authButton.style.display = 'none';
       }
     });
 </script>
@@ -707,10 +704,6 @@ th{
 @media (min-width: 360px) and (max-width: 768px){
   .alert-box,.confirm-alert-box, .dialog-box{
     width: 300px;
-  }
-
-  .container{
-    margin-top: 25px;
   }
 }
 </style>

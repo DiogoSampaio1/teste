@@ -344,12 +344,9 @@ document.addEventListener("DOMContentLoaded", () => {
       authButton.textContent = "Logout";
       authButton.onclick = () => {
           localStorage.removeItem("ist_number");
-          window.location = "src/components/DLogin.html";
+          window.location = "src/components/Login.html";
       };
   } else {
-      authButton.textContent = "Login";
-      authButton.onclick = () => {
-          window.location.href = "src/components/Login.html";
-      };
+      authButton.style.display = 'none';
   }
 });
