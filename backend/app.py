@@ -142,7 +142,7 @@ def update_products():
         product_code = data.get('product_code')
         room_name = data.get('room_name')
         
-        if not product_name and not product_class and not product_amount or not room_name:
+        if not product_name or not product_class or not product_amount or not room_name:
             return jsonify({'message': 'Por favor adicione pelo menos um campo para mudar'}), 400
         
         query = text("SELECT * FROM Products WHERE product_code =  :product_code ;").bindparams(product_code=product_code)
