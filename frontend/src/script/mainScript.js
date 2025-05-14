@@ -24,3 +24,18 @@ function openSidebar() {
         icon.classList.add('fa-bars');
     }
 };
+
+function userPlace() {
+  const userDiv = document.getElementById('user-name');
+  const nav = document.getElementById('nav');
+  const header = document.getElementById('cont-right-side-header');
+
+  if (window.innerWidth <= 768) {
+    nav.appendChild(userDiv);
+  } else if (window.innerWidth >= 768){
+      header.appendChild(userDiv);
+  }
+}
+
+window.addEventListener('resize', userPlace);
+window.addEventListener('load', userPlace);

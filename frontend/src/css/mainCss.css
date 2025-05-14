@@ -118,4 +118,8 @@ header{
     width: 100%;
     padding: 20px 0;
 } 
+
+header aside .user{
+    margin-top: 60px;
+}
 /* ======== */
