@@ -18,13 +18,12 @@
           <a href="Localizacao.html"><i class="fa-solid fa-house"></i> Localização</a>
           <a href="" class="foucus"><i class="fa-solid fa-user"></i> Utilizadores</a>
           <a href="../../scanpage.html"><i class="fa-solid fa-barcode"></i> Scan</a>
-          <a href="Login.html"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a>
+          <a href="Login.html" onclick="logout()"><i id="log-icon"></i> <span id="log-info"></span></a>
         </aside>
       </div>
       <div class="tittle">ScanWithMe | Utilizadores</div>
     </div>
     <div class="cont-right-side-header">
-      <button class="logout-btn" id="log-btn"></button>
       <div class="user" id="user-name"></div>
     </div>
   </header>
@@ -100,8 +99,20 @@
 
 <script>
   const NGROK_URL = 'http://127.0.0.1:5000';
-  let allUsers = []; // global
+  const user = localStorage.getItem('ist_number');
+  const logInfo = document.getElementById('log-info');
+  let icon = document.getElementById('log-icon');
+  let allUsers = []; 
   let confirmCallback = null;
+    
+
+  if(user) {
+    logInfo.textContent = "Logout";
+    icon.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i>'
+  } else {
+    logInfo.textContent = "Login";
+    icon.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i>';
+  }
 
   function showPassword() {
     const checkbox = document.getElementById('showPassword');
@@ -287,20 +298,11 @@
     }, 3000);
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-      const authButton = document.getElementById("log-btn");
-      const user = localStorage.getItem("ist_number");
-
-      if (user) {
-          authButton.textContent = "Logout";
-          authButton.onclick = () => {
-              localStorage.removeItem("ist_number");
-              window.location = "Login.html";
-          };
-      } else {
-          authButton.style.display = 'none';
-      }
-    });
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('ist_number');
+    window.location = 'Login.html';
+  }
 </script>
      
 <style>

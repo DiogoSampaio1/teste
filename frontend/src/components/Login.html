@@ -61,7 +61,6 @@
                 const result = await response.json();
         
                 if (response.ok) {
-                    alert("Login bem-sucedido!");
                     localStorage.setItem("token", result.access_token);
                     localStorage.setItem("ist_number", result.ist_number);
                     window.location.href = "Produtos.html";

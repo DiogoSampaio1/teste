@@ -1,10 +1,21 @@
 const NGROK_URL = 'http://127.0.0.1:5000';
+const user = localStorage.getItem('ist_number');
+const logInfo = document.getElementById('log-info');
+let icon = document.getElementById('log-icon');
 let scannerAtivo = false;
 let ultimoCodigoDetectado = "";
 let ultimoCodigoProcessado = null;
 let currentEditCode = null;
 let html5QrCode = null;
 let scannerTravado = false;  // Bloqueia o scanner por 1 segundo após cada leitura
+
+if(user) {
+  logInfo.textContent = "Logout";
+  icon.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i>'
+} else {
+  logInfo.textContent = "Login";
+  icon.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i>';
+}
 
 document.getElementById('editAmount').addEventListener('keypress', function(event) {
   if (!/[0-9,.]/.test(event.key)) {
@@ -336,17 +347,8 @@ document.addEventListener('DOMContentLoaded', () => {
   carregarLocalizacoes();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const authButton = document.getElementById("log-btn");
-  const user = localStorage.getItem("ist_number");
-
-  if (user) {
-      authButton.textContent = "Logout";
-      authButton.onclick = () => {
-          localStorage.removeItem("ist_number");
-          window.location = "src/components/Login.html";
-      };
-  } else {
-      authButton.style.display = 'none';
-  }
-});
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('ist_number');
+  window.location = 'Login.html';
+}
