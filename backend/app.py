@@ -29,7 +29,7 @@ bcrypt = Bcrypt(app)
 
 Swagger(app, template_file='../swagger/definitions.yaml')
 
-engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
+engine = create_engine("mysql://diogo123:diogo123@localhost/Scan")
 
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
@@ -55,6 +55,7 @@ def generate_random_password(length=28):
 
 #GET PRODUCTS
 @app.route('/products', methods=['GET'])
+@jwt_required()
 @swag_from('../swagger/getProducts.yaml')
 def get_products():
     query = text("""
@@ -86,6 +87,7 @@ def get_products():
     
 #POST PRODUCTS
 @app.route('/products', methods=['POST'])
+@jwt_required()
 @swag_from('../swagger/postProducts.yaml')
 def add_product():
     data = request.json
@@ -132,6 +134,7 @@ def add_product():
     
 #PUT PRODUCTS
 @app.route('/products', methods=['PUT'])
+@jwt_required()
 @swag_from('../swagger/putProducts.yaml')
 def update_products():
     with engine.connect() as con:
@@ -167,6 +170,7 @@ def update_products():
         
 #DELETE PRODUCTS
 @app.route('/products', methods=['DELETE'])
+@jwt_required()
 @swag_from('../swagger/deleteProducts.yaml')
 def delete_products():
     product_code = request.args.get('product_code')
@@ -196,6 +200,7 @@ def delete_products():
 
 #GET ROOMS
 @app.route('/room', methods=['GET'])
+@jwt_required()
 @swag_from('../swagger/getRoom.yaml')
 def get_room():
     query = text("""
@@ -221,6 +226,7 @@ def get_room():
     
 #POST ROOMS
 @app.route('/room', methods=['POST'])
+@jwt_required()
 @swag_from('../swagger/postRoom.yaml')
 def add_room():
     data = request.json
@@ -255,6 +261,7 @@ def add_room():
 
 #PUT ROOMS
 @app.route('/room', methods=['PUT'])
+@jwt_required()
 @swag_from('../swagger/putRoom.yaml')
 def update_room():
     with engine.connect() as con:
@@ -284,6 +291,7 @@ def update_room():
 
 #DELETE ROOMS
 @app.route('/room', methods=['DELETE'])
+@jwt_required()
 @swag_from('../swagger/deleteRoom.yaml')
 def delete_room():
     room_name = request.args.get('room_name')
@@ -313,6 +321,7 @@ def delete_room():
 
 #GET USERS
 @app.route('/user', methods=['GET'])
+@jwt_required()
 @swag_from('../swagger/getUser.yaml')
 def get_users():
     query = text("""
@@ -337,6 +346,7 @@ def get_users():
 
 # POST USERS
 @app.route('/user', methods=['POST'])
+@jwt_required()
 @swag_from('../swagger/postUser.yaml')
 def add_user():
     data = request.json
@@ -386,6 +396,7 @@ def add_user():
     
 #DELETE USERS
 @app.route('/user', methods=['DELETE'])
+@jwt_required()
 @swag_from('../swagger/deleteUser.yaml')
 def delete_users():
     ist_number = request.args.get('ist_number')
@@ -524,7 +535,7 @@ def login():
                 print("Erro: Utilizador não encontrado")
                 return jsonify({'message': 'Utilizador não encontrado'}), 404
 
-            stored_password = user[1]  # O hash da senha armazenada
+            stored_password = user[1] 
             print(f"Hash da senha armazenada (login): {stored_password}")
 
             if bcrypt.check_password_hash(stored_password, passphrase):
