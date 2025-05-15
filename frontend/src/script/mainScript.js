@@ -25,7 +25,7 @@ function openSidebar() {
     }
 };
 
-const URL = 'https://c6f8-193-136-166-20.ngrok-free.app';
+const URL = 'scanwithme.netlify.app';
 
 function userPlace() {
   const userDiv = document.getElementById('user-name');
