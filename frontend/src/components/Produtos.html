@@ -105,7 +105,6 @@
 
   <!-- Own Script -->
   <script>
-    const NGROK_URL = 'http://127.0.0.1:5000';
     const user = localStorage.getItem('ist_number');
     const logInfo = document.getElementById('log-info');
     let icon = document.getElementById('log-icon');
@@ -141,7 +140,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      fetch(`${NGROK_URL}/products`)
+      fetch(`${URL}/products`)
         .then(response => response.json())
         .then(data => {
           allProducts = data;
@@ -154,7 +153,7 @@
               const productName = row.children[1].textContent;
 
               showAlertConfirm(`Deseja deletar o produto "${productName}"?`, () => {
-                fetch(`${NGROK_URL}/products?product_code=${encodeURIComponent(productCode)}`, {
+                fetch(`${URL}/products?product_code=${encodeURIComponent(productCode)}`, {
                   method: 'DELETE'
                 })
                 .then(response => response.json())
@@ -165,7 +164,7 @@
                     showToast(data.error || "Erro desconhecido", 'error');
                   }
 
-                  return fetch(`${NGROK_URL}/products`);
+                  return fetch(`${URL}/products`);
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -211,7 +210,7 @@
               product_amount: updatedAmount
             };
 
-            fetch(`${NGROK_URL}/products`, {
+            fetch(`${URL}/products`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json'
@@ -224,7 +223,7 @@
               closeEditDialog();
 
               // Recarrega a tabela
-              return fetch(`${NGROK_URL}/products`);
+              return fetch(`${URL}/products`);
             })
             .then(res => res.json())
             .then(data => {

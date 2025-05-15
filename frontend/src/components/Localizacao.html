@@ -102,7 +102,6 @@
   <script src="../script/mainScript.js"></script>
 
 <script>
-  const NGROK_URL = 'http://127.0.0.1:5000';
   const user = localStorage.getItem('ist_number');
   const logInfo = document.getElementById('log-info');
   let icon = document.getElementById('log-icon');
@@ -120,7 +119,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    fetch(`${NGROK_URL}/room`)
+    fetch(`${URL}/room`)
       .then(response => response.json())
       .then(data => {
         allRooms = data.sort((a, b) => a.room_name.localeCompare(b.room_name));
@@ -132,13 +131,13 @@
             const roomName = row.children[0].textContent;
 
             showAlertConfirm(`Deseja deletar a sala "${roomName}"?`, () => {
-              fetch(`${NGROK_URL}/room?room_name=${encodeURIComponent(roomName)}`, {
+              fetch(`${URL}/room?room_name=${encodeURIComponent(roomName)}`, {
                 method: 'DELETE'
               })
               .then(response => response.json())
               .then(data => {
                 showToast(`Sala "${roomName}" removida com sucesso!`);
-                return fetch(`${NGROK_URL}/room`);
+                return fetch(`${URL}/room`);
               })
               .then(response => response.json())
               .then(data => {
@@ -174,7 +173,7 @@
             room_name: updatedRoomName  // <<< novo nome
           };
 
-          fetch(`${NGROK_URL}/room`, {
+          fetch(`${URL}/room`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json'
@@ -185,7 +184,7 @@
           .then(data => {
             showToast(data.message || "Atualizado com sucesso!", 'success');
             closeEditDialog();
-            return fetch(`${NGROK_URL}/room`);
+            return fetch(`${URL}/room`);
           })
           .then(res => res.json())
           .then(data => {
@@ -285,7 +284,7 @@
 
     roomName = roomName.replace(/,/g, '.');
 
-    fetch(`${NGROK_URL}/room`, {
+    fetch(`${URL}/room`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -302,7 +301,7 @@
       }
 
       showToast("Sala criada com sucesso!", "success");
-      return fetch(`${NGROK_URL}/room`)
+      return fetch(`${URL}/room`)
         .then(response => response.json())
         .then(data => {
           allRooms = data.sort((a, b) => a.room_name.localeCompare(b.room_name));
