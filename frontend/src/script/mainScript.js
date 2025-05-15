@@ -25,7 +25,7 @@ function openSidebar() {
     }
 };
 
-const URL = ' https://570a-193-136-166-20.ngrok-free.app';
+const URL = 'https://570a-193-136-166-20.ngrok-free.app';
 
 function userPlace() {
   const userDiv = document.getElementById('user-name');
