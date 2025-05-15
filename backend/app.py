@@ -19,7 +19,7 @@ from datetime import timedelta
 CONFIG_PATH = ''
 #creating app
 app = Flask(__name__)
-CORS(app, origins=["https://scanwithme.netlify.app"])
+CORS(app, supports_credentials=True, origins="*")
 
 app.config['JWT_SECRET_KEY'] = 'teste'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=20)
