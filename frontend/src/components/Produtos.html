@@ -161,7 +161,7 @@
                   if (data.message) {
                     showToast(data.message, 'success');
                   } else {
-                    showToast(data.error || "Erro desconhecido", 'error');
+                    showAlert(data.error || "Erro desconhecido", 'error');
                   }
 
                   return fetch(`${URL}/products`);
@@ -173,7 +173,7 @@
                 })
                 .catch(error => {
                   console.error('Erro ao deletar:', error);
-                  showToast("Erro ao deletar produto.", 'error');
+                  showAlert("Erro ao deletar produto.", 'error');
                 });
               });
             }
@@ -202,6 +202,12 @@
             const updatedAmount = parseInt(document.getElementById('editAmount').value);
             const updatedRoomName = document.getElementById('editLocation').value.trim();
 
+            // Validação dos campos antes do envio
+            if (!updatedName || !updatedClass || !updatedRoomName || isNaN(updatedAmount)) {
+              showAlert("Preencha todos os campos corretamente.");
+              return;
+            }
+
             const payload = {
               product_code: currentEditCode,
               product_name: updatedName,
@@ -217,23 +223,28 @@
               },
               body: JSON.stringify(payload)
             })
-            .then(res => res.json())
-            .then(data => {
-              showToast(data.message || "Atualizado com sucesso!", 'success');
-              closeEditDialog();
+              .then(res => res.json())
+              .then(data => {
+                if (data.error) {
+                  showAlert(data.error); // <-- Erro: exibe alerta vermelho
+                  return; // para aqui
+                }
 
-              // Recarrega a tabela
-              return fetch(`${URL}/products`);
-            })
-            .then(res => res.json())
-            .then(data => {
-              allProducts = data;
-              renderTable(allProducts);
-            })
-            .catch(err => {
-              console.error(err);
-              showToast("Erro ao atualizar produto", 'error');
-            });
+                showToast(data.message || "Atualizado com sucesso!", 'success'); // <-- Sucesso: exibe toast
+                closeEditDialog();
+
+                // Recarrega a tabela
+                return fetch(`${URL}/products`)
+                  .then(res => res.json())
+                  .then(data => {
+                    allProducts = data;
+                    renderTable(allProducts);
+                  });
+              })
+              .catch(err => {
+                console.error(err);
+                showAlert("Erro ao atualizar produto");
+              });
           });
         })
         .catch(error => {
