@@ -14,7 +14,7 @@
   text-align: center;
 }
 
-.container button {
+button {
   padding: 12px 24px;
   font-size: 16px;
   background-color: #007bff;
@@ -27,7 +27,7 @@
   transition: .3s ease;
 }
 
-.container button:hover {
+button:hover {
   background-color: #0056b3;
 }
 
