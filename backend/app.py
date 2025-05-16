@@ -558,11 +558,14 @@ def userinfo():
     
 @app.route('/')
 def index():
-    return send_from_directory('frontend', 'scanpage.html')
+    # Caminho absoluto para a pasta frontend
+    frontend_path = os.path.join(os.getcwd(), 'frontend')
+    return send_from_directory(frontend_path, 'scanpage.html')
 
-@app.route('/frontend/<path:filename>')
-def frontend_static(filename):
-    return send_from_directory('frontend', filename)
+@app.route('/<path:path>')
+def serve_static(path):
+    frontend_path = os.path.join(os.getcwd(), 'frontend')
+    return send_from_directory(frontend_path, path)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
