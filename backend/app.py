@@ -29,7 +29,7 @@ bcrypt = Bcrypt(app)
 
 Swagger(app, template_file='../swagger/definitions.yaml')
 
-engine = create_engine("mysql://isaaclana:lilreaper06711@localhost/Scan")
+engine = create_engine("mysql://Scan:Scan@localhost/Scan")
 
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
