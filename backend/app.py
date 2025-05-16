@@ -547,14 +547,21 @@ def userinfo():
         return jsonify({'Access': {'ist_number': access.ist_number}}), 200
 
 # ===================================== ROUTE ======================================= #   
-    
+
 @app.route('/')
 def index():
+    # Serve o index.html que está na raiz do projeto
     return send_from_directory(BASE_DIR, 'index.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
-    return send_from_directory(FRONTEND_DIR, path)
+    # Serve arquivos estáticos da pasta frontend, como src/, image/, css/, etc.
+    file_path = os.path.join(FRONTEND_DIR, path)
+    if os.path.isfile(file_path):
+        return send_from_directory(FRONTEND_DIR, path)
+    else:
+        # Se arquivo não existe, pode retornar 404 ou o index.html (pra SPA)
+        return "Arquivo não encontrado", 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
