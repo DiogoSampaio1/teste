@@ -558,7 +558,7 @@ def userinfo():
     
 @app.route('/')
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, 'scanpage.html')
 
 @app.route('/<path:path>')
 def static_files(path):
