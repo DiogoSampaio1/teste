@@ -1,4 +1,3 @@
-const NGROK_URL = 'http://127.0.0.1:5000';
 const user = localStorage.getItem('ist_number');
 const logInfo = document.getElementById('log-info');
 let icon = document.getElementById('log-icon');
@@ -129,7 +128,7 @@ function tratarCodigoLido(decodedText) {
   const formAdd = document.getElementById("form-add");
 
   // Não mostrar o decodedText diretamente ao usuário
-  fetch(`${NGROK_URL}/products_scan?product_code=${decodedText}`)
+  fetch(`${URL}/products_scan?product_code=${decodedText}`)
     .then(res => {
       if (!res.ok) throw new Error("Produto não encontrado");
       return res.json();
@@ -196,7 +195,7 @@ function confirmOk() {
     return;
   }
 
-  fetch(`${NGROK_URL}/products_scan`, {
+  fetch(`${URL}/products_scan`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json"
@@ -309,7 +308,7 @@ function adicionarProduto() {
     product_amount: amount
   };
 
-  fetch(`${NGROK_URL}/products`, {
+  fetch(`${URL}/products`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
