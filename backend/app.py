@@ -18,7 +18,7 @@ from datetime import timedelta
 
 CONFIG_PATH = ''
 #creating app
-app = Flask(__name__, static_folder='frontend')
+app = Flask(__name__)
 CORS(app, supports_credentials=True, origins="*")
 
 app.config['JWT_SECRET_KEY'] = 'teste'
@@ -560,9 +560,9 @@ def userinfo():
 def index():
     return send_from_directory('frontend', 'scanpage.html')
 
-@app.route('/<path:path>')
-def static_files(path):
-    return send_from_directory('frontend', path)
+@app.route('/frontend/<path:filename>')
+def frontend_static(filename):
+    return send_from_directory('frontend', filename)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
