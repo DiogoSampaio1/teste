@@ -37,17 +37,13 @@ engine = create_engine("mysql://Scan:Scan@localhost/Scan")
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
-# área para hash
 def hash_password(password):
     return bcrypt.generate_password_hash(password).decode('utf-8')
 
-# Função para verificar se a senha fornecida corresponde ao hash armazenado
 def verify_password(stored_password, provided_password):
     return check_password_hash(stored_password, provided_password)
 
 
-
-# Função para criar uma senha aleatória (se não fornecida)
 def generate_random_password(length=28):
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(secrets.choice(characters) for _ in range(length))
@@ -511,9 +507,6 @@ def login():
     ist_number = data.get('ist_number')
     passphrase = data.get('passphrase')
 
-    print(f"Tentativa de login para o IST Number: {ist_number}")
-    print(f"Senha fornecida (login): {passphrase}")
-
     if not ist_number or not passphrase:
         return jsonify({'message': 'IST Number e Senha são obrigatórios'}), 400
 
@@ -523,22 +516,17 @@ def login():
             user = con.execute(query, {'ist_number': ist_number}).fetchone()
 
             if not user:
-                print("Erro: Utilizador não encontrado")
                 return jsonify({'message': 'Utilizador não encontrado'}), 404
 
             stored_password = user[1] 
-            print(f"Hash da senha armazenada (login): {stored_password}")
 
             if bcrypt.check_password_hash(stored_password, passphrase):
                 access_token = create_access_token(identity=ist_number, expires_delta=timedelta(seconds=20))
-                print("Login bem-sucedido")
                 return jsonify({'message': 'Login bem-sucedido', 'ist_number': ist_number,'access_token': access_token}), 200
             else:
-                print("Erro: Senha incorreta")
                 return jsonify({'message': 'Senha incorreta'}), 401
 
     except Exception as e:
-        print(f"Erro no login: {e}")
         return jsonify({'error': str(e)}), 500
         
 
