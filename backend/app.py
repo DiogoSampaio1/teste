@@ -21,7 +21,9 @@ CONFIG_PATH = ''
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins="*")
 
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'index.html'))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
 
 app.config['JWT_SECRET_KEY'] = 'teste'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=20)
@@ -548,10 +550,12 @@ def userinfo():
     
 @app.route('/')
 def index():
-    return send_from_directory(FRONTEND_DIR, 'index.html')
+    # Serve o index.html que está fora do frontend, na pasta BASE_DIR
+    return send_from_directory(BASE_DIR, 'index.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
+    # Para os outros arquivos, continua servindo do frontend
     return send_from_directory(FRONTEND_DIR, path)
 
 if __name__ == '__main__':
