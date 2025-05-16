@@ -21,9 +21,9 @@ CONFIG_PATH = ''
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins="*")
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # pasta backend/
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'frontend'))
+ROOT_HTML = os.path.abspath(os.path.join(BASE_DIR, '..'))  # onde está o index.html
 
 app.config['JWT_SECRET_KEY'] = 'teste'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=20)
@@ -550,18 +550,19 @@ def userinfo():
 
 @app.route('/')
 def index():
-    # Serve o index.html que está na raiz do projeto
-    return send_from_directory(BASE_DIR, 'index.html')
+    return send_from_directory(ROOT_HTML, 'index.html')  # index está fora de frontend
 
 @app.route('/<path:path>')
 def serve_static(path):
-    # Serve arquivos estáticos da pasta frontend, como src/, image/, css/, etc.
+    # tenta servir da pasta frontend
     file_path = os.path.join(FRONTEND_DIR, path)
-    if os.path.isfile(file_path):
+    if os.path.exists(file_path):
         return send_from_directory(FRONTEND_DIR, path)
-    else:
-        # Se arquivo não existe, pode retornar 404 ou o index.html (pra SPA)
-        return "Arquivo não encontrado", 404
+    # se não existir, tenta servir da raiz (onde está o index.html)
+    file_path_root = os.path.join(ROOT_HTML, path)
+    if os.path.exists(file_path_root):
+        return send_from_directory(ROOT_HTML, path)
+    return "Arquivo não encontrado", 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
