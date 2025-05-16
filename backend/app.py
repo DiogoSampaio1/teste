@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, request, jsonify, session, redirect, make_response, url_for, render_template
+from flask import Flask, Blueprint, request, jsonify, session, redirect, make_response, url_for, render_template, send_from_directory
 from flask_cors import CORS
 from sqlalchemy import create_engine, text
 from flasgger import Swagger, swag_from, LazyJSONEncoder
@@ -557,5 +557,12 @@ def userinfo():
 # ===================================== ROUTE ======================================= #   
     
 @app.route('/')
-def root():
-    return jsonify({'message': 'Hello World!'})
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def static_files(path):
+    return send_from_directory(app.static_folder, path)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
