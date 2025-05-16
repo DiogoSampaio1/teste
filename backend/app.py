@@ -21,6 +21,8 @@ CONFIG_PATH = ''
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins="*")
 
+FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+
 app.config['JWT_SECRET_KEY'] = 'teste'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=20)
 
@@ -558,14 +560,11 @@ def userinfo():
     
 @app.route('/')
 def index():
-    # Caminho absoluto para a pasta frontend
-    frontend_path = os.path.join(os.getcwd(), 'frontend')
-    return send_from_directory(frontend_path, 'scanpage.html')
+    return send_from_directory(FRONTEND_DIR, 'scanpage.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
-    frontend_path = os.path.join(os.getcwd(), 'frontend')
-    return send_from_directory(frontend_path, path)
+    return send_from_directory(FRONTEND_DIR, path)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
