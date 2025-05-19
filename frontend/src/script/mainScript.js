@@ -13,8 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
 function openSidebar() {
     let icon = document.getElementById('ham-men');
     let sidebar = document.getElementById('nav');
+    let menu = document.getElementById('menu-burguer')
 
     sidebar.classList.toggle('active');
+    menu.classList.toggle('fixed');
 
     if (sidebar.classList.contains('active')) {
         icon.classList.remove('fa-bars');

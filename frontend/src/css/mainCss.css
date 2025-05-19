@@ -91,6 +91,13 @@ header{
     left: 0;
 }
 
+.menu.fixed {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 300;
+}
+
 .nav a{
     display: flex;
     flex-direction: row;
