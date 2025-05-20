@@ -27,7 +27,7 @@ function openSidebar() {
     }
 };
 
-const URL = 'http://100.68.0.76:8080';
+const URL = 'https://100.68.0.76:8080';
 
 function userPlace() {
   const userDiv = document.getElementById('user-name');
