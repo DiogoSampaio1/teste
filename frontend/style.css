@@ -285,8 +285,8 @@ i{
 /* ========= */
 
 @media (min-width: 360px) and (max-width: 768px){
-  .edit-alert-box, .dialog-box{
-    width: 250px;
+  .edit-alert-box, .dialog-box, .alert{
+    width: 300px;
   }
 
   .amount-btns{
@@ -295,7 +295,7 @@ i{
 }
 
 @media (min-width: 1024px){
-  .container .camera-btn{
+  .container .camera-btn,{
     display: none;
   }
 }
