@@ -268,7 +268,7 @@ function alterarEditQuantia(delta){
 }
 
 function carregarLocalizacoes() {
-  fetch('http://127.0.0.1:5000/room')
+  fetch(`${URL}/room`)
     .then(response => response.json())
     .then(data => {
       const datalist = document.getElementById('location-list');
