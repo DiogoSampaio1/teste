@@ -19,6 +19,7 @@ from datetime import timedelta
 CONFIG_PATH = ''
 #creating app
 app = Flask(__name__)
+app.run(ssl_context=('cert.pem', 'key.pem'))
 CORS(app, supports_credentials=True, origins="*")
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__)) 
@@ -564,3 +565,4 @@ def serve_static(path):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+    app.run(ssl_context=('cert.pem', 'key.pem'))
