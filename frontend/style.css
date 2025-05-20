@@ -285,7 +285,7 @@ i{
 /* ========= */
 
 @media (min-width: 360px) and (max-width: 768px){
-  .edit-alert-box, .dialog-box, .alert{
+  .edit-alert-box, .dialog-box, .alert-box{
     width: 300px;
   }
 
@@ -295,7 +295,7 @@ i{
 }
 
 @media (min-width: 1024px){
-  .container .camera-btn,{
+  .container .camera-btn{
     display: none;
   }
 }
