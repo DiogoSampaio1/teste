@@ -56,6 +56,7 @@ def generate_random_password(length=28):
 #GET PRODUCTS
 @app.route('/products', methods=['GET'])
 @swag_from('../swagger/getProducts.yaml')
+@jwt_required()
 def get_products():
     query = text("""
     SELECT 
