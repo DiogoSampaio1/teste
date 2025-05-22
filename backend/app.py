@@ -43,7 +43,6 @@ Base = declarative_base()
 def jwt_optional_for_swagger(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        # Permitir acesso anônimo se for o Swagger tentando acessar
         if 'swagger' in request.headers.get('User-Agent', '').lower():
             return fn(*args, **kwargs)
         try:
@@ -69,7 +68,7 @@ def generate_random_password(length=28):
 
 #GET PRODUCTS
 @app.route('/products', methods=['GET'])
-@jwt_required()
+@jwt_optional_for_swagger
 @swag_from('../swagger/getProducts.yaml')
 def get_products():
     query = text("""
