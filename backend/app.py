@@ -300,6 +300,17 @@ def delete_room():
             if not result:
                 return jsonify({'message': 'Sala não encontrada'}), 404
 
+
+            room_id = result[0] 
+
+            query_check_exist = text("SELECT * FROM Products WHERE room_id = :room_id")
+            exist = con.execute(query_check_exist, {'room_id': room_id}).fetchone()
+
+            if exist:
+                return jsonify({'message': 'A sala contém produtos, retire os produtos primeiro'}), 400
+
+
+
             query_delete = text("DELETE FROM Rooms WHERE room_name = :room_name")
             con.execute(query_delete, {'room_name': room_name})
 
