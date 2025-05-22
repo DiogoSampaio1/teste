@@ -134,10 +134,21 @@
               fetch(`${URL}/room?room_name=${encodeURIComponent(roomName)}`, {
                 method: 'DELETE'
               })
-              .then(response => response.json())
-              .then(data => {
-                showToast(`Sala "${roomName}" removida com sucesso!`);
-                return fetch(`${URL}/room`);
+              .then(response => {
+                return response.json().then(data => ({
+                  status: response.status,
+                  ok: response.ok,
+                  body: data
+                }));
+              })
+              .then(({ status, ok, body }) => {
+                if (ok) {
+                  showToast(`Sala "${roomName}" removida com sucesso!`);
+                  return fetch(`${URL}/room`);
+                } else {
+                  showAlert(body.message || 'Erro ao deletar sala.');
+                  throw new Error(body.message); // impede o then seguinte
+                }
               })
               .then(response => response.json())
               .then(data => {
@@ -146,7 +157,6 @@
               })
               .catch(error => {
                 console.error('Erro ao deletar:', error);
-                showAlert("Erro ao deletar sala.");
               });
             });
           }
