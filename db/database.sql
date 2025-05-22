@@ -13,8 +13,8 @@ CREATE TABLE Products (
     product_name VARCHAR(255),
     product_class VARCHAR(50),
     product_amount INT,
-    room_id INT,
-    FOREIGN KEY (room_id) REFERENCES Rooms(room_id)
+    room_id INT NULL,
+    FOREIGN KEY (room_id) REFERENCES Rooms(room_id) ON DELETE SET NULL
 );
 
 

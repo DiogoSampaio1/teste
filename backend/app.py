@@ -287,7 +287,6 @@ def update_room():
 @swag_from('../swagger/deleteRoom.yaml')
 def delete_room():
     room_name = request.args.get('room_name')
-    room_id = request.args.get('room_id')
 
     if not room_name:
         return jsonify({'message': 'Por favor adicione o Nome da Sala que deseja eliminar'}), 400
@@ -301,8 +300,8 @@ def delete_room():
             if not result:
                 return jsonify({'message': 'Sala não encontrada'}), 404
 
-            query_delete = text("DELETE FROM Rooms WHERE room_id = :room_id")
-            con.execute(query_delete, {'room_id': room_id})
+            query_delete = text("DELETE FROM Rooms WHERE room_name = :room_name")
+            con.execute(query_delete, {'room_name': room_name})
 
         return jsonify({'message': 'Sala eliminada com sucesso!'}), 200
 
