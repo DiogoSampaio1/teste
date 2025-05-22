@@ -34,6 +34,12 @@ document.getElementById('editAmount').addEventListener('input', function() {
   }
 });
 
+document.getElementById('placeAmount').addEventListener('input', function() {
+  if (this.value.length > 5) {
+      this.value = this.value.slice(0, 5);
+  }
+});
+
 function iniciarScanner() {
   const readerDiv = document.getElementById("reader");
   const resultadoDiv = document.getElementById("resultado");
