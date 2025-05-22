@@ -576,6 +576,12 @@ def serve_static(path):
         return send_from_directory(ROOT_HTML, path)
     return "Arquivo não encontrado", 404
 
+@app.route('/test_headers')
+def test_headers():
+    print("Headers recebidos:", dict(request.headers))
+    return jsonify({"msg": "Veja no console os headers"})
+
+
 if __name__ == '__main__':
     app.run(
         debug=True,
