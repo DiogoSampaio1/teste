@@ -537,7 +537,7 @@ def login():
             stored_password = user[1] 
 
             if bcrypt.check_password_hash(stored_password, passphrase):
-                access_token = create_access_token(identity=ist_number, expires_delta=timedelta(seconds=20))
+                access_token = create_access_token(identity=ist_number)
                 return jsonify({'message': 'Login bem-sucedido', 'ist_number': ist_number,'access_token': access_token}), 200
             else:
                 return jsonify({'message': 'Senha incorreta'}), 401
@@ -575,12 +575,6 @@ def serve_static(path):
     if os.path.exists(file_path_root):
         return send_from_directory(ROOT_HTML, path)
     return "Arquivo não encontrado", 404
-
-@app.route('/test_headers')
-def test_headers():
-    print("Headers recebidos:", dict(request.headers))
-    return jsonify({"msg": "Veja no console os headers"})
-
 
 if __name__ == '__main__':
     app.run(
