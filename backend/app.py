@@ -23,7 +23,7 @@ CORS(app, supports_credentials=True, origins="*")
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__)) 
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'frontend'))
-ROOT_HTML = os.path.abspath(os.path.join(BASE_DIR, '..')) 
+ROOT_HTML = os.path.abspath(os.path.join(BASE_DIR, '..'))
 
 app.config['JWT_SECRET_KEY'] = 'teste'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 5000
@@ -58,8 +58,6 @@ def generate_random_password(length=28):
 @swag_from('../swagger/getProducts.yaml')
 @jwt_required()
 def get_products():
-
-    print("Headers recebidos:", dict(request.headers))
     query = text("""
     SELECT 
         Products.*,

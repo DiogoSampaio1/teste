@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-// Interceptor para incluir token em todas as requisições
+
+axios.defaults.baseURL = 'https://100.68.0.76:8080';
+
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
