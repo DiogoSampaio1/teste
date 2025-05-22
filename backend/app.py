@@ -100,9 +100,12 @@ def add_product():
         return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
 
     try:
-       with engine.begin() as con:
-            query_check = text("SELECT room_id FROM Products WHERE product_code = :product_code")
+        with engine.begin() as con:
+            query_check = text("SELECT * FROM Products WHERE product_code = :product_code")
             result = con.execute(query_check, {'product_code': product_code}).fetchone()
+
+            if result:
+                return jsonify({'message': 'Este produto já existe'}), 409
 
             query_room = text("SELECT room_id FROM Rooms WHERE room_name = :room_name")
             room_result = con.execute(query_room, {'room_name': room_name}).fetchone()
@@ -112,46 +115,16 @@ def add_product():
             
             room_id = room_result[0]
 
-            if result:
-                room_id_existing = result[0]
-                if room_id_existing is not None:
-                    return jsonify({'message': 'Este produto já existe em uma sala'}), 409
-                else:
-                    # Produto órfão, atualiza para nova sala
-                    query_update = text("""
-                        UPDATE Products SET 
-                            product_name = :product_name,
-                            product_class = :product_class,
-                            product_amount = :product_amount,
-                            room_id = :room_id
-                        WHERE product_code = :product_code
-                    """)
-                    con.execute(query_update, {
-                        'product_name': product_name,
-                        'product_class': product_class,
-                        'product_amount': product_amount,
-                        'room_id': room_id,
-                        'product_code': product_code
-                    })
+            query_insert = text("""
+                INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id)
+                VALUES (:product_code, :product_name, :product_class, :product_amount, :room_id)
+            """)
 
-                    return jsonify({'message': 'Produto órfão atualizado com nova sala'}), 200
+            con.execute(query_insert, {
+                'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'product_class': product_class, 'room_id': room_id
+            })
 
-            else:
-                # Produto não existe → insere novo
-                query_insert = text("""
-                    INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id)
-                    VALUES (:product_code, :product_name, :product_class, :product_amount, :room_id)
-                """)
-                con.execute(query_insert, {
-                    'product_code': product_code,
-                    'product_name': product_name,
-                    'product_class': product_class,
-                    'product_amount': product_amount,
-                    'room_id': room_id
-                })
-
-                return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
-
+        return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
 
     except Exception as e:
         print("Erro ao adicionar produto:", e)
