@@ -237,6 +237,7 @@ function openDialog(){
   codeInput.value = '';
   codeInput.readOnly = false;
   ultimoCodigoDetectado = '';
+  document.getElementById('newName').focus();
 }
 
 function closeDialog() {

@@ -216,11 +216,13 @@
     const passwordInput = document.getElementById('password');
     const istInput = document.getElementById('istInput');
 
+    
     checkbox.checked = false;
     passwordInput.style.display = 'none';
     passwordInput.value = '';
     istInput.value = '';
     document.getElementById("dialog-overlay").style.display = "flex";
+    istInput.focus();
   }
 
   function closeDialog() {
@@ -548,7 +550,7 @@ th{
 }
 
 .dialog-box .typeInput:focus {
-  background-color: #333;
+  background-color: #2c2c2c8c;
 }
 
 .dialog-actions {

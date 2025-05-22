@@ -105,10 +105,10 @@
   const user = localStorage.getItem('ist_number');
   const logInfo = document.getElementById('log-info');
   let icon = document.getElementById('log-icon');
+  let inputs = document.querySelectorAll('input[type="text"]');
   let allProducts = []; 
   let currentEditCode = null;
   let confirmCallback = null;
-    
 
   if(user) {
     logInfo.textContent = "Logout";
@@ -143,7 +143,7 @@
               })
               .then(({ status, ok, body }) => {
                 if (ok) {
-                  showToast(`Sala "${roomName}" removida com sucesso!`);
+                  showToast(`Localização "${roomName}" removida com sucesso!`);
                   return fetch(`${URL}/room`);
                 } else {
                   showAlert(body.message || 'Erro ao deletar sala.');
@@ -163,11 +163,12 @@
           if (e.target.classList.contains('edit-icon')) {
             const row = e.target.closest('tr');
             const location = row.children[0].textContent;
-
+            
             document.getElementById('editLocation').value = location;
             oldRoomName = location; // <<< armazenando o nome antigo
 
             document.getElementById('edit-alert').style.display = 'block';
+            document.getElementById('editLocation').focus();
           }
         });
         document.getElementById('edit-confirm-btn').addEventListener('click', () => {
@@ -271,6 +272,7 @@
 
   function openAddDialog() {
     document.getElementById("dialog-overlay").style.display = "flex";
+    document.getElementById('roomInput').focus()
   }
 
   function closeDialog() {
@@ -509,7 +511,7 @@ th{
 }
 
 .dialog-box input:focus {
-  background-color: #333;
+  background-color: #2c2c2c8c;
 }
 
 .dialog-actions {
@@ -685,7 +687,7 @@ th{
 }
 
 .edit-alert-box input:focus {
-  background-color: #333;
+  background-color: #2c2c2c8c;
 }
 
 .edit-alert-box .btn button{

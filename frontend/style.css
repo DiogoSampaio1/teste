@@ -96,6 +96,10 @@ button:hover {
   background-color: #2c2c2c8c;
 }
 
+.dialog-box input:focus{
+  background-color: #2c2c2c8c;
+}
+
 .btns{
   display: flex;
   flex-direction: row;
@@ -252,6 +256,14 @@ i{
   transition: .3s ease;
   border-bottom: 1px solid #fff;
   border-radius: 5px 5px 0 0 ;
+}
+
+.edit-alert-box input:hover{
+  background-color: #2c2c2c8c;
+}
+
+.edit-alert-box input:focus{
+  background-color: #2c2c2c8c;
 }
 
 .edit-alert-box .btn{
