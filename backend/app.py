@@ -58,6 +58,8 @@ def generate_random_password(length=28):
 @swag_from('../swagger/getProducts.yaml')
 @jwt_required()
 def get_products():
+
+    print("Headers recebidos:", dict(request.headers))
     query = text("""
     SELECT 
         Products.*,
