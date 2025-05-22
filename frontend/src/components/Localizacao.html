@@ -119,7 +119,11 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    fetch(`${URL}/room`)
+    fetch(`${URL}/room`, {
+       headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          })
       .then(response => response.json())
       .then(data => {
         allRooms = data.sort((a, b) => a.room_name.localeCompare(b.room_name));

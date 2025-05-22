@@ -9,13 +9,12 @@ import json
 import os
 import hashlib
 from flask_bcrypt import Bcrypt, check_password_hash
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, verify_jwt_in_request,get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 from sqlalchemy import Column, Integer, String, Boolean
 import string
 import secrets
 from datetime import timedelta
-from functools import wraps
 
 CONFIG_PATH = ''
 #creating app
@@ -40,18 +39,6 @@ engine = create_engine("mysql://Scan:Scan@localhost/Scan")
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
-def jwt_optional_for_swagger(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        if 'swagger' in request.headers.get('User-Agent', '').lower():
-            return fn(*args, **kwargs)
-        try:
-            verify_jwt_in_request()
-        except Exception:
-            return {"msg": "Missing or invalid Authorization Header"}, 401
-        return fn(*args, **kwargs)
-    return wrapper
-
 def hash_password(password):
     return bcrypt.generate_password_hash(password).decode('utf-8')
 
@@ -68,8 +55,8 @@ def generate_random_password(length=28):
 
 #GET PRODUCTS
 @app.route('/products', methods=['GET'])
-@jwt_optional_for_swagger
 @swag_from('../swagger/getProducts.yaml')
+@jwt_required()
 def get_products():
     query = text("""
     SELECT 
@@ -211,6 +198,7 @@ def delete_products():
 #GET ROOMS
 @app.route('/room', methods=['GET'])
 @swag_from('../swagger/getRoom.yaml')
+@jwt_required()
 def get_room():
     query = text("""
     SELECT 
@@ -339,6 +327,7 @@ def delete_room():
 #GET USERS
 @app.route('/user', methods=['GET'])
 @swag_from('../swagger/getUser.yaml')
+@jwt_required()
 def get_users():
     query = text("""
     SELECT 
