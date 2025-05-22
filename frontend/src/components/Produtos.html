@@ -140,7 +140,12 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      fetch(`${URL}/products`)
+      fetch(`${URL}/products`, {
+       headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+
         .then(response => response.json())
         .then(data => {
           allProducts = data;
