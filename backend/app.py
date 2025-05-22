@@ -115,16 +115,40 @@ def add_product():
             
             room_id = room_result[0]
 
-            query_insert = text("""
-                INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id)
-                VALUES (:product_code, :product_name, :product_class, :product_amount, :room_id)
-            """)
+            if result:
+                query_update = text("""
+                    UPDATE Products SET 
+                        product_name = :product_name,
+                        product_class = :product_class,
+                        product_amount = :product_amount,
+                        room_id = :room_id
+                    WHERE product_code = :product_code
+                """)
+                con.execute(query_update, {
+                    'product_name': product_name,
+                    'product_class': product_class,
+                    'product_amount': product_amount,
+                    'room_id': room_id,
+                    'product_code': product_code
+                })
 
-            con.execute(query_insert, {
-                'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'product_class': product_class, 'room_id': room_id
-            })
+                return jsonify({'message': 'Produto existente atualizado com nova sala'}), 200
 
-        return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
+            else:
+                # Produto não existe → insere novo
+                query_insert = text("""
+                    INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id)
+                    VALUES (:product_code, :product_name, :product_class, :product_amount, :room_id)
+                """)
+                con.execute(query_insert, {
+                    'product_code': product_code,
+                    'product_name': product_name,
+                    'product_class': product_class,
+                    'product_amount': product_amount,
+                    'room_id': room_id
+                })
+
+                return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
 
     except Exception as e:
         print("Erro ao adicionar produto:", e)
