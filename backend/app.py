@@ -197,7 +197,7 @@ def delete_products():
 #GET CLASSES
 @app.route('/class', methods=['GET'])
 @swag_from('../swagger/getClasses.yaml')
-def get_room():
+def get_classes():
     query = text("""
     SELECT 
         * FROM Classes
