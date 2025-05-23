@@ -57,8 +57,6 @@ def generate_random_password(length=28):
 @app.route('/products', methods=['GET'])
 @swag_from('../swagger/getProducts.yaml')
 def get_products():
-
-    print("Headers recebidos:", dict(request.headers))
     query = text("""
     SELECT 
         Products.*,
