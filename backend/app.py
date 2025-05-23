@@ -233,14 +233,14 @@ def add_class():
 
     try:
         with engine.begin() as con:
-            query_check = text("SELECT * FROM Rooms WHERE class_name = :class_name")
+            query_check = text("SELECT * FROM Classes WHERE class_name = :class_name")
             result = con.execute(query_check, {'class_name': class_name}).fetchone()
 
             if result:
                 return jsonify({'message': 'Esta Classe já existe'}), 409
 
             query_insert = text("""
-                INSERT INTO Rooms (class_name)
+                INSERT INTO Classes (class_name)
                 VALUES (:class_name)
             """)
 
