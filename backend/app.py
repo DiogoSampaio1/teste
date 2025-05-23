@@ -101,12 +101,6 @@ def add_product():
 
     try:
         with engine.begin() as con:
-            query_check = text("SELECT * FROM Products WHERE product_code = :product_code")
-            result = con.execute(query_check, {'product_code': product_code}).fetchone()
-
-            if result:
-                return jsonify({'message': 'Este produto já existe'}), 409
-
             query_room = text("SELECT room_id FROM Rooms WHERE room_name = :room_name")
             room_result = con.execute(query_room, {'room_name': room_name}).fetchone()
 
@@ -114,6 +108,13 @@ def add_product():
                 return jsonify({'message': 'Sala não encontrada'}), 404
             
             room_id = room_result[0]
+
+            query_check = text("SELECT product_code FROM Products WHERE room_id = :room_id")
+            result = con.execute(query_check, {'room_id': room_id}).fetchone()
+
+            if result:
+                return jsonify({'message': 'Este produto já está nesta sala, muda a quantidade apenas'}), 409
+
 
             query_insert = text("""
                 INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id)
