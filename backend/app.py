@@ -219,6 +219,106 @@ def get_classes():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+
+#POST CLASSES
+@app.route('/class', methods=['POST'])
+@swag_from('../swagger/postClasses.yaml')
+def add_class():
+    data = request.json
+
+    class_name = data.get('class_name')
+
+    if not class_name:
+        return jsonify({'message': 'Preencha todos os campos obrigatórios'}), 400
+
+    try:
+        with engine.begin() as con:
+            query_check = text("SELECT * FROM Rooms WHERE class_name = :class_name")
+            result = con.execute(query_check, {'class_name': class_name}).fetchone()
+
+            if result:
+                return jsonify({'message': 'Esta Classe já existe'}), 409
+
+            query_insert = text("""
+                INSERT INTO Rooms (class_name)
+                VALUES (:class_name)
+            """)
+
+            con.execute(query_insert, {
+                'class_name': class_name
+            })
+
+        return jsonify({'message': 'Classe criada com sucesso!'}), 201
+
+    except Exception as e:
+        print("Erro ao criar Classe:", e)
+        return jsonify({'error': str(e)}), 500
+
+#PUT CLASSES
+@app.route('/class', methods=['PUT'])
+@swag_from('../swagger/putClasses.yaml')
+def update_class():
+    with engine.connect() as con:
+        data = request.get_json()
+        old_class_name = data.get('old_class_name')
+        new_class_name = data.get('class_name')
+
+        if not old_class_name or not new_class_name:
+            return jsonify({'message': 'Nome antigo e o novo são obrigatórios.'}), 400
+
+        query = text("SELECT * FROM Classes WHERE class_name = :old_class_name").bindparams(old_class_name=old_class_name)
+        if con.execute(query).fetchone() is None:
+            return jsonify({'message': 'Classe original não encontrada.'}), 404
+
+        check_new_name = text("SELECT * FROM Classes WHERE class_name = :new_class_name").bindparams(new_class_name=new_class_name)
+        if con.execute(check_new_name).fetchone():
+            return jsonify({'message': 'Já existe uma classe com esse nome.'}), 409
+
+        update = text("UPDATE Classes SET class_name = :new_class_name WHERE class_name = :old_class_name") \
+            .bindparams(new_class_name=new_class_name, old_class_name=old_class_name)
+
+        con.execute(update)
+        con.commit()
+
+    return jsonify({'message': 'Classe atualizada com sucesso!'}), 200
+
+
+#DELETE CLASSES
+@app.route('/class', methods=['DELETE'])
+@swag_from('../swagger/deleteClasses.yaml')
+def delete_class():
+    class_name = request.args.get('class_name')
+
+    if not class_name:
+        return jsonify({'message': 'Por favor adicione o Nome da classe que deseja eliminar'}), 400
+
+    try:
+        with engine.begin() as con:
+
+            query_check = text("SELECT * FROM Classes WHERE class_name = :class_name")
+            result = con.execute(query_check, {'class_name': class_name}).fetchone()
+
+            if not result:
+                return jsonify({'message': 'Classe não encontrada'}), 404
+
+
+            class_id = result[0] 
+
+            query_check_exist = text("SELECT * FROM Products WHERE class_id = :class_id")
+            exist = con.execute(query_check_exist, {'class_id': class_id}).fetchone()
+
+            if exist:
+                return jsonify({'message': 'A Classe contém produtos, retire os produtos primeiro'}), 400
+
+
+
+            query_delete = text("DELETE FROM Classes WHERE class_name = :class_name")
+            con.execute(query_delete, {'class_name': class_name})
+
+        return jsonify({'message': 'Classe eliminada com sucesso!'}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     
 # ===================================== ROOMS ======================================= #
 
