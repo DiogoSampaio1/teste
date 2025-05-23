@@ -1,0 +1,10 @@
+tags:
+  - 'Classes'
+summary: 'Get Classes'
+responses: 
+  200:
+    description: 'Successful operation'
+    schema: 
+      type: 'array'
+      items: 
+        $ref: '#definitions/Classes' 

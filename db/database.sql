@@ -8,13 +8,20 @@ CREATE TABLE Rooms (
     room_name VARCHAR(15)
 );
 
+CREATE TABLE Classes(
+  class_id INT AUTO_INCREMENT PRIMARY KEY,
+  class_name VARCHAR(255)
+); 
+
 CREATE TABLE Products (
     product_code VARCHAR(255) PRIMARY KEY,
     product_name VARCHAR(255),
     product_class VARCHAR(50),
     product_amount INT,
     room_id INT,
-    FOREIGN KEY (room_id) REFERENCES Rooms(room_id)
+    class_id INT,
+    FOREIGN KEY (room_id) REFERENCES Rooms(room_id),
+    FOREIGN KEY (class_id) REFERENCES Classes(class_id)
 );
 
 
@@ -28,8 +35,13 @@ VALUES
   (1, 2.24),
   (2, 0.59);
 
-INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id)
+INSERT INTO Classes (class_id, class_name)
+VALUES
+  (1, 'TESTE1'),
+  (2, '59');
+
+INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id, class_id)
 VALUES 
-  (1032131232132, 'Cabos Rede Red', 'ms', 3, 1),
-  ('CZC3298D83', 'ARROXZ','ABOBORA', 1, 1),
-  ('201044G010006126', 'werfjo', 'arroz', 2, 2);
+  (1032131232132, 'Cabos Rede Red', 'ms', 3, 1, 1),
+  ('CZC3298D83', 'ARROXZ','ABOBORA', 1, 1, 2),
+  ('201044G010006126', 'werfjo', 'arroz', 2, 2, 2);

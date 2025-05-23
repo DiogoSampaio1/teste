@@ -193,6 +193,33 @@ def delete_products():
         print("Erro ao deletar produto:", e)
         return jsonify({'error': str(e)}), 500
 
+# ===================================== CLASSES ======================================= #
+#GET CLASSES
+@app.route('/class', methods=['GET'])
+@swag_from('../swagger/getClasses.yaml')
+def get_room():
+    query = text("""
+    SELECT 
+        * FROM Classes
+     """)
+    
+    try:
+        with engine.connect() as con: 
+            result = con.execute(query)
+            products = []
+
+            for row in result:
+                products.append({
+                    'class_id': row[0],
+                    'class_name': row[1],
+                })
+
+        return jsonify(products), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    
 # ===================================== ROOMS ======================================= #
 
 #GET ROOMS

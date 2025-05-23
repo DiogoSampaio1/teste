@@ -1,0 +1,22 @@
+tags:
+  - 'Classes'
+summary: 'Update Class'
+parameters:
+  - in: 'body'
+    name: 'body'
+    schema:
+      properties:
+        old_class_name:
+          type: string
+          maxLength: 255
+        class_name:
+          type: string
+          maxLength: 255
+
+responses:
+  200:
+    description: 'Class updated successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'not found'

@@ -1,0 +1,15 @@
+tags:
+  - 'Classes'
+summary: 'Delete Class'
+parameters:
+  - in: 'query'
+    name: 'class_name'
+    required: true
+    type: 'string'
+responses:
+  200:
+    description: 'Class deleted successfully'
+  400:
+    description: 'Invalid input'
+  404:
+    description: 'Room does not exist or is deleted'

@@ -11,6 +11,8 @@ tags:
     description: Room operations
   - name: User
     description: User operations
+  - name: Classes
+    description: Classes operations
 
 
 definitions:
@@ -30,6 +32,15 @@ definitions:
       product_amount:
         type: number
       room_name:
+        type: string
+        maxLength: 255
+
+  Classes:
+    type: object
+    properties:
+      class_id:
+        type: integer
+      class_name : 
         type: string
         maxLength: 255
 
