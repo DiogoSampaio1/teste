@@ -130,7 +130,6 @@ def add_product():
         return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
 
     except Exception as e:
-        print("Erro ao adicionar produto:", e)
         return jsonify({'error': str(e)}), 500
     
 #PUT PRODUCTS
@@ -192,7 +191,6 @@ def delete_products():
         return jsonify({'message': 'Produto removido com sucesso!'}), 200
 
     except Exception as e:
-        print("Erro ao deletar produto:", e)
         return jsonify({'error': str(e)}), 500
 
 # ===================================== CLASSES ======================================= #
@@ -253,7 +251,6 @@ def add_class():
         return jsonify({'message': 'Classe criada com sucesso!'}), 201
 
     except Exception as e:
-        print("Erro ao criar Classe:", e)
         return jsonify({'error': str(e)}), 500
 
 #PUT CLASSES
@@ -378,7 +375,6 @@ def add_room():
         return jsonify({'message': 'Sala criada com sucesso!'}), 201
 
     except Exception as e:
-        print("Erro ao criar sala:", e)
         return jsonify({'error': str(e)}), 500
 
 #PUT ROOMS
@@ -445,7 +441,6 @@ def delete_room():
         return jsonify({'message': 'Sala eliminada com sucesso!'}), 200
 
     except Exception as e:
-        print("Erro ao eliminar sala:", e)
         return jsonify({'error': str(e)}), 500
 
 # ===================================== Users ======================================= #
@@ -483,20 +478,14 @@ def add_user():
     ist_number = data.get('ist_number')
     passphrase = data.get('passphrase')
 
-    print(f"Tentativa de criar usuário com IST Number: {ist_number}")
-    print(f"Senha fornecida na criação: {passphrase}")
-
     if not ist_number:
         return jsonify({'message': 'O IST Number é obrigatório'}), 400
 
     if passphrase:
         hashed_password = hash_password(passphrase)
-        print(f"Senha hasheada na criação: {hashed_password}")
     else:
         passphrase = generate_random_password()
         hashed_password = hash_password(passphrase)
-        print(f"Senha aleatória gerada: {passphrase}")
-        print(f"Senha aleatória hasheada: {hashed_password}")
 
     try:
         with engine.begin() as con:
@@ -519,7 +508,6 @@ def add_user():
         return jsonify({'message': 'Utilizador adicionado com sucesso!', 'passphrase': passphrase}), 201
 
     except Exception as e:
-        print("Erro ao adicionar Utilizador:", e)
         return jsonify({'error': str(e)}), 500
 
     
@@ -547,7 +535,6 @@ def delete_users():
         return jsonify({'message': 'Acesso retirado com sucesso!'}), 200
 
     except Exception as e:
-        print("Erro ao retirar acesso:", e)
         return jsonify({'error': str(e)}), 500
 
 
