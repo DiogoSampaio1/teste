@@ -7,12 +7,12 @@ info:
 tags:
   - name: Products
     description: Products operations
+  - name: Classes
+    description: Classes operations
   - name: Room
     description: Room operations
   - name: User
     description: User operations
-  - name: Classes
-    description: Classes operations
 
 
 definitions:
