@@ -60,9 +60,11 @@ def get_products():
     query = text("""
     SELECT 
         Products.*,
-        Rooms.room_name
+        Rooms.room_name,
+        Classes.class_name
     FROM Products
     JOIN Rooms ON Products.room_id = Rooms.room_id
+    JOIN Classes ON Products.class_id = Classes.class_id
      """)
     
     try:
@@ -77,6 +79,7 @@ def get_products():
                     'product_class': row[2],
                     'product_amount': row[3],
                     'room_name': row[5],
+                    'class_name': row[6],
                 })
 
         return jsonify(products), 200

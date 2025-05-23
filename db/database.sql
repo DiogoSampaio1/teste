@@ -39,8 +39,8 @@ VALUES
   (1, 'TESTE1'),
   (2, '59');
 
-INSERT INTO Products (product_code, product_name, product_amount, room_id, class_id)
+INSERT INTO Products (product_code, product_name, class_id, room_id, product_amount)
 VALUES 
-  (1032131232132, 'Cabos Rede Red', 3, 1, 1),
-  ('CZC3298D83', 'ARROXZ','ABOBORA', 1, 2),
+  (1032131232132, 'Cabos Rede Red', 1, 1, 3),
+  ('CZC3298D83', 'ARROXZ', 2, 1, 2),
   ('201044G010006126', 'werfjo', 2, 2, 2);
