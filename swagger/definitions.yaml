@@ -34,6 +34,9 @@ definitions:
       room_name:
         type: string
         maxLength: 255
+      class_name:
+        type: string
+        maxLength: 255
 
   Classes:
     type: object
