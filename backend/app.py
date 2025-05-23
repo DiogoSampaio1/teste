@@ -76,8 +76,7 @@ def get_products():
                 products.append({
                     'product_code': row[0],
                     'product_name': row[1],
-                    'product_class': row[2],
-                    'product_amount': row[3],
+                    'product_amount': row[2],
                     'room_name': row[5],
                     'class_name': row[6],
                 })
