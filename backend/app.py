@@ -310,8 +310,6 @@ def delete_class():
             if exist:
                 return jsonify({'message': 'A Classe contém produtos, retire os produtos primeiro'}), 400
 
-
-
             query_delete = text("DELETE FROM Classes WHERE class_name = :class_name")
             con.execute(query_delete, {'class_name': class_name})
 

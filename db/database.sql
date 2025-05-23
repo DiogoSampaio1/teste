@@ -16,7 +16,6 @@ CREATE TABLE Classes(
 CREATE TABLE Products (
     product_code VARCHAR(255) PRIMARY KEY,
     product_name VARCHAR(255),
-    product_class VARCHAR(50),
     product_amount INT,
     room_id INT,
     class_id INT,
@@ -40,8 +39,8 @@ VALUES
   (1, 'TESTE1'),
   (2, '59');
 
-INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id, class_id)
+INSERT INTO Products (product_code, product_name, product_amount, room_id, class_id)
 VALUES 
-  (1032131232132, 'Cabos Rede Red', 'ms', 3, 1, 1),
-  ('CZC3298D83', 'ARROXZ','ABOBORA', 1, 1, 2),
-  ('201044G010006126', 'werfjo', 'arroz', 2, 2, 2);
+  (1032131232132, 'Cabos Rede Red', 3, 1, 1),
+  ('CZC3298D83', 'ARROXZ','ABOBORA', 1, 2),
+  ('201044G010006126', 'werfjo', 2, 2, 2);
