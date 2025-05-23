@@ -15,7 +15,8 @@
       <div class="icon-menu-and-sidebar">
         <div class="menu" id="menu-burguer" onclick="openSidebar()"><i id="ham-men" class="fa-solid fa-bars"></i></div>
         <aside class="nav" id="nav">
-          <a href="" class="foucus"><i class="fa-solid fa-box-open"></i> Produtos</a>
+          <a href="" class="focus"><i class="fa-solid fa-box-open"></i> Produtos</a>
+          <a href="Classes.html"><i class="fa-solid fa-tags"></i>Classes</a>
           <a href="Localizacao.html"><i class="fa-solid fa-house"></i> Localização</a>
           <a href="Utilizadores.html"><i class="fa-solid fa-user"></i> Utilizadores</a>
           <a href="../../scanpage.html"><i class="fa-solid fa-barcode"></i> Scan</a>
@@ -41,7 +42,7 @@
       <thead>
         <tr>
           <th>Código</th>
-          <th>Nome</th>
+          <th>Nome do Produto</th>
           <th>Classe</th>
           <th>Localização</th>
           <th>Quantidade</th>
@@ -211,7 +212,7 @@
             const payload = {
               product_code: currentEditCode,
               product_name: updatedName,
-              product_class: updatedClass,
+              class_name: updatedClass,
               room_name: updatedRoomName,
               product_amount: updatedAmount
             };
@@ -261,8 +262,8 @@
         const row = document.createElement('tr');
         row.innerHTML = `
           <td data-label="Código">${product.product_code}</td>
-          <td data-label="Nome">${product.product_name}</td>
-          <td data-label="Classe">${product.product_class}</td>
+          <td data-label="Nome do Produto">${product.product_name}</td>
+          <td data-label="Classe">${product.class_name}</td>
           <td data-label="Localização">${product.room_name}</td>
           <td data-label="Quantidade">${product.product_amount}</td>
           <td data-label="Ações">
@@ -361,7 +362,7 @@
       const filtered = allProducts.filter(p =>
         p.product_name.toLowerCase().includes(searchTerm) ||
         p.product_code.toLowerCase().includes(searchTerm) ||
-        p.product_class.toLowerCase().includes(searchTerm) ||
+        p.class_name.toLowerCase().includes(searchTerm) ||
         p.room_name.toLowerCase().includes(searchTerm)
       );
       renderTable(filtered);

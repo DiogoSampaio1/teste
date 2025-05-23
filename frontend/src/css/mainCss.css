@@ -114,11 +114,11 @@ header{
     transition: .1s ease;
 }
 
-.nav a:hover:not(.foucus){
+.nav a:hover:not(.focus){
     background-color: #30303083;
 }
 
-.nav .foucus{
+.nav .focus{
     font-weight: bold;
     color: rgb(40, 132, 224);
     background-color: #30303083;
