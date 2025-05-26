@@ -16,9 +16,6 @@ parameters:
         product_code:
           type: string
           maxLength: 255
-        product_class:
-          type: string
-          maxLength: 255
         product_amount:
           type: number
         room_name:
