@@ -15,10 +15,6 @@ from sqlalchemy import Column, Integer, String, Boolean
 import string
 import secrets
 from datetime import timedelta
-import ssl
-
-context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-context.load_cert_chain('2025-05-23_scan.tp.dsi.tecnico.ulisboa.pt_cert.pem')
 
 CONFIG_PATH = ''
 #creating app
@@ -697,5 +693,5 @@ if __name__ == '__main__':
         debug=True,
         host='0.0.0.0',
         port=8080,
-        ssl_context=context
+        ssl_context=('2025-05-23_scan.tp.dsi.tecnico.ulisboa.pt_cert.pem', 'privkey.pem')
     )
