@@ -173,7 +173,7 @@ def update_products():
         
         room_id = room_result[0]
         
-        update = text("UPDATE Products SET product_name = :product_name, class_name = :class_name, product_amount = :product_amount, room_id = :room_id WHERE product_code = :product_code ;").bindparams(product_name=product_name, class_name=class_name, product_amount=product_amount, room_id=room_id,product_code=product_code)
+        update = text("UPDATE Products SET product_name = :product_name, product_amount = :product_amount, room_id = :room_id WHERE product_code = :product_code, class_name = :class_name ;").bindparams(product_name=product_name, product_amount=product_amount, room_id=room_id,product_code=product_code , class_name=class_name)
 
         con.execute(update)
         con.commit()
