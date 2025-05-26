@@ -126,8 +126,8 @@ def add_product():
 
 
             query_insert = text("""
-                INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id, class_id)
-                VALUES (:product_code, :product_name, :product_class, :product_amount, :room_id, :class_id)
+                INSERT INTO Products (product_code, product_name, product_amount, room_id, class_id)
+                VALUES (:product_code, :product_name, :product_amount, :room_id, :class_id)
             """)
 
             con.execute(query_insert, {
