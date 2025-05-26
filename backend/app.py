@@ -118,8 +118,8 @@ def add_product():
             room_id = room_result[0]
             class_id = class_result[0]
 
-            query_check = text("SELECT product_code FROM Products")
-            result = con.execute(query_check, {'product_code': product_code}).fetchone()
+            query_check = text("SELECT product_code FROM Products WHERE room_id = :room_id")
+            result = con.execute(query_check, {'product_code': product_code, 'room_id': room_id}).fetchone()
 
             if result:
                 return jsonify({'message': 'Este produto já está nesta sala, muda a quantidade apenas'}), 409
