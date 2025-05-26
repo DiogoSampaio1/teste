@@ -49,7 +49,8 @@
       <h1>Adicionar novo produto</h1>
       <input type="text" id="newCode" placeholder="Código do produto" autocomplete="off">
       <input type="text" id="newName" placeholder="Nome do produto" autocomplete="off">
-      <input type="text" id="newClass" placeholder="Classe do produto" autocomplete="off">
+      <input type="text" id="newClass" list="class-list" placeholder="Classe do produto" autocomplete="off">
+      <datalist id="class-list"></datalist>
       <input type="text" id="newLocation" list="location-list" placeholder="Localização do produto" autocomplete="off">
       <datalist id="location-list"></datalist>
       <input type="number" min="0" max="5" value="1" id="placeAmount" placeholder="Quantidade do produto" autocomplete="off">

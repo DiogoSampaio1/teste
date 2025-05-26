@@ -147,7 +147,7 @@ function tratarCodigoLido(decodedText) {
         <section class="info">
           <div><span>Nome:</span> <i>${produto.product_name}</i></div>
           <div><span>Código:</span> <i>${produto.product_code}</i></div>
-          <div><span>Classe:</span> <i>${produto.product_class}</i></div>
+          <div><span>Classe:</span> <i>${produto.class_name}</i></div>
           <div><span>Localização:</span> <i>${produto.room_name}</i></div>
           <div><span>Quantidade:</span> <i>${produto.product_amount}</i></div>
         </section>
@@ -292,6 +292,24 @@ function carregarLocalizacoes() {
     });
 }
 
+function carregarClasses() {
+      fetch(`${URL}/class`)
+        .then(response => response.json())
+        .then(data => {
+          const datalist = document.getElementById('class-list');
+          datalist.innerHTML = ''; // limpa opções anteriores
+          const nomesUnicos = [...new Set(data.map(classes => classes.class_name))].sort((a, b) => a.localeCompare(b));
+          nomesUnicos.forEach(nome => {
+            const option = document.createElement('option');
+            option.value = nome;
+            datalist.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error('Erro ao carregar localizações:', error);
+        });
+    }
+
 
 // Função para adicionar o produto após o preenchimento do formulário
 function adicionarProduto() {
@@ -310,7 +328,7 @@ function adicionarProduto() {
   const novoProduto = {
     product_code: code,
     product_name: nome,
-    product_class: classe,
+    class_name: classe,
     room_name: locations,
     product_amount: amount
   };
@@ -351,6 +369,7 @@ function adicionarProduto() {
 
 document.addEventListener('DOMContentLoaded', () => {
   carregarLocalizacoes();
+  carregarClasses();
 });
 
 function logout() {

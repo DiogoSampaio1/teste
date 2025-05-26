@@ -71,7 +71,8 @@
     <div class="edit-alert-box">
       <h1>Editar:</h1>
       <input type="text" id="editName" placeholder="Nome do produto" autocomplete="off">
-      <input type="text" id="editClass" placeholder="Classe do produto" autocomplete="off">
+      <input type="text" id="editClass" list="class-list" placeholder="Classe do produto" autocomplete="off">
+      <datalist id="class-list"></datalist>
       <input type="text" id="editLocation" list="location-list" placeholder="Localização" autocomplete="off">
       <datalist id="location-list"></datalist>
       <input type="number" min="0" max="5" id="editAmount" placeholder="Quantidade do produto" autocomplete="off">
@@ -353,8 +354,27 @@
         });
     }
 
+    function carregarClasses() {
+      fetch(`${URL}/class`)
+        .then(response => response.json())
+        .then(data => {
+          const datalist = document.getElementById('class-list');
+          datalist.innerHTML = ''; // limpa opções anteriores
+          const nomesUnicos = [...new Set(data.map(classes => classes.class_name))].sort((a, b) => a.localeCompare(b));
+          nomesUnicos.forEach(nome => {
+            const option = document.createElement('option');
+            option.value = nome;
+            datalist.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error('Erro ao carregar localizações:', error);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       carregarLocalizacoes();
+      carregarClasses();
     });
 
     document.getElementById("searchbar").addEventListener("input", (e) => {
