@@ -24,6 +24,9 @@ parameters:
         room_name:
           type: string
           maxLength: 255
+        class_name:
+          type: string
+          maxLength: 255
 
       
 responses:
