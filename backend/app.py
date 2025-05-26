@@ -118,16 +118,16 @@ def add_product():
             room_id = room_result[0]
             class_id = class_result[0]
 
-            query_check = text("SELECT product_code FROM Products")
-            result = con.execute(query_check, {'product_code': product_code}).fetchone()
+            query_check = text("SELECT product_code FROM Products WHERE room_id = :room_id AND product_code = :product_code")
+            result = con.execute(query_check, {'room_id': room_id, 'product_code': product_code}).fetchone()
 
             if result:
                 return jsonify({'message': 'Este produto já está nesta sala, muda a quantidade apenas'}), 409
 
 
             query_insert = text("""
-                INSERT INTO Products (product_code, product_name, product_class, product_amount, room_id, class_id)
-                VALUES (:product_code, :product_name, :product_class, :product_amount, :room_id, :class_id)
+                INSERT INTO Products (product_code, product_name, product_amount, room_id, class_id)
+                VALUES (:product_code, :product_name, :product_amount, :room_id, :class_id)
             """)
 
             con.execute(query_insert, {
