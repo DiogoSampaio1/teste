@@ -172,8 +172,9 @@ def update_products():
             return jsonify({'message': 'Sala não encontrada'}), 404
         
         room_id = room_result[0]
-        
-        update = text("UPDATE Products SET product_name = :product_name, product_amount = :product_amount, room_id = :room_id, class_name = :class_name WHERE product_code = :product_code;").bindparams(product_name=product_name, product_amount=product_amount, room_id=room_id,product_code=product_code , class_name=class_name)
+        class_id = class_result[0]
+
+        update = text("UPDATE Products SET product_name = :product_name, product_amount = :product_amount, room_id = :room_id, class_id = :class_id WHERE product_code = :product_code;").bindparams(product_name=product_name, product_amount=product_amount, room_id=room_id,product_code=product_code , class_id=class_id)
 
         con.execute(update)
         con.commit()
