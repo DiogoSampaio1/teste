@@ -693,5 +693,5 @@ if __name__ == '__main__':
         debug=True,
         host='0.0.0.0',
         port=8080,
-        ssl_context=('2025-05-23_scan.tp.dsi.tecnico.ulisboa.pt_cert.pem')
+        ssl_context=('2025-05-23_scan.tp.dsi.tecnico.ulisboa.pt_cert.pem', 'privkey.pem')
     )
