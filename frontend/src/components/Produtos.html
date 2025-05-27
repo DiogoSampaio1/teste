@@ -41,6 +41,7 @@
     <table>
       <thead>
         <tr>
+          <th style="display: none;">Id</th>
           <th>Código</th>
           <th>Nome do Produto</th>
           <th>Classe</th>
@@ -151,11 +152,12 @@
           document.getElementById('items-table').addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-icon')) {
               const row = e.target.closest('tr');
-              const productCode = row.children[0].textContent;
-              const productName = row.children[1].textContent;
+              const productId = row.children[0].textContent;
+              const productName = row.children[2].textContent;
+              const productRoom = row.children[4].textContent;
 
-              showAlertConfirm(`Deseja deletar o produto "${productName}"?`, () => {
-                fetch(`${URL}/products?product_code=${encodeURIComponent(productCode)}`, {
+              showAlertConfirm(`Deseja deletar o produto "${productName}" que está na "${productRoom}"?`, () => {
+                fetch(`${URL}/products?product_id=${encodeURIComponent(productId)}`, {
                   method: 'DELETE'
                 })
                 .then(response => response.json())
@@ -182,11 +184,11 @@
 
             if (e.target.classList.contains('edit-icon')) {
               const row = e.target.closest('tr');
-              currentEditCode = row.children[0].textContent; // Código
-              const name = row.children[1].textContent;
-              const prodClass = row.children[2].textContent;
-              const location = row.children[3].textContent;
-              const amount = row.children[4].textContent;
+              currentEditCode = row.children[1].textContent; // Código
+              const name = row.children[2].textContent;
+              const prodClass = row.children[3].textContent;
+              const location = row.children[4].textContent;
+              const amount = row.children[5].textContent;
 
               // Preencher os inputs
               document.getElementById('editName').value = name;
@@ -232,7 +234,7 @@
                   return; // para aqui
                 }
 
-                showToast(data.message || "Atualizado com sucesso!", 'success'); // <-- Sucesso: exibe toast
+                showToast(data.message || "Atualizado com sucesso!", 'success');
                 closeEditDialog();
 
                 // Recarrega a tabela
@@ -262,6 +264,7 @@
       products.forEach(product => {
         const row = document.createElement('tr');
         row.innerHTML = `
+          <td data-label="Id" style="display: none;">${product.product_id}</td>
           <td data-label="Código">${product.product_code}</td>
           <td data-label="Nome do Produto">${product.product_name}</td>
           <td data-label="Classe">${product.class_name}</td>
@@ -749,7 +752,7 @@ td {
   bottom: 30px;
   right: 30px;
   pointer-events: none;
-  flex-direction: column-reverse; /* troca para 'column' se quiser novos em cima */
+  flex-direction: column-reverse;
   gap: 10px;
   z-index: 9999;
 }
