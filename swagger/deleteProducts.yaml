@@ -3,6 +3,8 @@ tags:
 summary: 'Delete Products'
 parameters:
   - in: 'query'
+    name: 'product_id'
+    type: intenger
     name: 'product_code'
     required: true
     type: 'string'
