@@ -6,6 +6,8 @@ parameters:
     name: 'product_id'
     required: true
     type: intenger
+
+  - in: 'query'
     name: 'product_code'
     required: true
     type: 'string'
