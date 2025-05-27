@@ -356,10 +356,7 @@ function adicionarProduto() {
       ultimoCodigoDetectado = "";
       scannerAtivo = false;
 
-      // Só recarrega a página se tudo deu certo
-      setTimeout(() => {
-        location.reload();
-      }, 700);
+    
     })
     .catch(err => {
       showAlert(err.message);
