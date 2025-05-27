@@ -567,9 +567,10 @@ def get_products_scan():
         with engine.connect() as con:
             if product_code:
                 query = text("""
-                SELECT Products.*, Rooms.room_name
+                SELECT Products.*, Rooms.room_name, Classes.class_name
                 FROM Products
                 JOIN Rooms ON Products.room_id = Rooms.room_id
+                JOIN Classes ON Products.class_id = Classes.class_id
                 WHERE Products.product_code = :code
                 """)
                 result = con.execute(query, {"code": product_code})
@@ -577,11 +578,11 @@ def get_products_scan():
 
                 if row:
                     produto = {
-                        'product_code': row[0],
-                        'product_name': row[1],
-                        'product_class': row[2],
+                        'product_code': row[1],
+                        'product_name': row[2],
                         'product_amount': row[3],
-                        'room_name': row[5],
+                        'room_name': row[6],
+                        'class_name': row[7],
                     }
                     return jsonify(produto), 200
                 else:
@@ -590,17 +591,18 @@ def get_products_scan():
             else:
                 query = text("""SELECT Products.*, Rooms.room_name
                 FROM Products
-                JOIN Rooms ON Products.room_id = Rooms.room_id """)
+                JOIN Rooms ON Products.room_id = Rooms.room_id
+                JOIN Classes ON Products.class_id = Classes.class_id """)
                 result = con.execute(query)
 
                 products = []
                 for row in result:
                     products.append({
-                        'product_code': row[0],
-                        'product_name': row[1],
-                        'product_class': row[2],
+                        'product_code': row[1],
+                        'product_name': row[2],
                         'product_amount': row[3],
-                        'room_name': row[5],
+                        'room_name': row[6],
+                        'class_name': row[7],
                     })
                 return jsonify(products), 200
 
@@ -611,6 +613,7 @@ def get_products_scan():
 @app.route
 @app.route('/products_scan', methods=['PUT'])
 def put_products_scan():
+     
      with engine.connect() as con:
         data = request.get_json()
         product_amount = data.get('product_amount', None)
