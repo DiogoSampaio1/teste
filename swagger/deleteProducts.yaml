@@ -4,6 +4,7 @@ summary: 'Delete Products'
 parameters:
   - in: 'query'
     name: 'product_id'
+    required: true
     type: intenger
     name: 'product_code'
     required: true
