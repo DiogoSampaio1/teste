@@ -190,7 +190,7 @@ def delete_products():
     product_code = request.args.get('product_code')
     product_id = request.args.get('product_id')
 
-    if not product_code:
+    if not product_code and not product_id:
         return jsonify({'message': 'Por favor adicione o código do Produto'}), 400
 
     try:
