@@ -188,6 +188,7 @@ def update_products():
 @swag_from('../swagger/deleteProducts.yaml')
 def delete_products():
     product_code = request.args.get('product_code')
+    product_id = request.args.get('product_id')
 
     if not product_code:
         return jsonify({'message': 'Por favor adicione o código do Produto'}), 400
@@ -195,14 +196,14 @@ def delete_products():
     try:
         with engine.begin() as con:
 
-            query_check = text("SELECT * FROM Products WHERE product_code = :product_code")
-            result = con.execute(query_check, {'product_code': product_code}).fetchone()
+            query_check = text("SELECT * FROM Products WHERE product_id = :product_id")
+            result = con.execute(query_check, {'product_id': product_id}).fetchone()
 
             if not result:
                 return jsonify({'message': 'Produto não encontrado'}), 404
 
-            query_delete = text("DELETE FROM Products WHERE product_code = :product_code")
-            con.execute(query_delete, {'product_code': product_code})
+            query_delete = text("DELETE FROM Products WHERE product_id = :product_id")
+            con.execute(query_delete, {'product_id': product_id})
 
         return jsonify({'message': 'Produto removido com sucesso!'}), 200
 
