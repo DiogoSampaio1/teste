@@ -12,12 +12,12 @@ parameters:
         product_name:
           type: string
           maxLength: 255
-        product_class:
-          type: string
-          maxLenght: 255
         product_amount:
           type: number
         room_name:
+          type: string
+          maxLenght: 255
+        class_name:
           type: string
           maxLenght: 255
 

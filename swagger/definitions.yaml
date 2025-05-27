@@ -19,6 +19,8 @@ definitions:
   Products:
     type: object
     properties:
+      product_id: 
+        type: integer
       product_code:
         type: string
         maxLength: 255
