@@ -355,13 +355,12 @@ function adicionarProduto() {
       document.getElementById("newLocation").value = "";
       ultimoCodigoDetectado = "";
       scannerAtivo = false;
-
-    
     })
     .catch(err => {
       showAlert(err.message);
       scannerAtivo = false;
     });
+  focusInput();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
