@@ -2,19 +2,20 @@ tags:
   - 'Products'
 summary: 'Delete Products'
 parameters:
-  - in: 'query'
-    name: 'product_id'
+  - in: query
+    name: product_id
     required: true
-    type: intenger
-
-  - in: 'query'
-    name: 'product_code'
+    schema:
+      type: integer
+  - in: query
+    name: product_code
     required: true
-    type: 'string'
+    schema:
+      type: string
 responses:
-  200:
+  '200':
     description: 'Product deleted successfully'
-  400:
+  '400':
     description: 'Invalid input'
-  404:
+  '404':
     description: 'Product does not exist or is deleted'
