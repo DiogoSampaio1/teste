@@ -74,11 +74,11 @@ def get_products():
 
             for row in result:
                 products.append({
-                    'product_code': row[0],
-                    'product_name': row[1],
-                    'product_amount': row[2],
-                    'room_name': row[5],
-                    'class_name': row[6],
+                    'product_code': row[1],
+                    'product_name': row[2],
+                    'product_amount': row[3],
+                    'room_name': row[6],
+                    'class_name': row[7],
                 })
 
         return jsonify(products), 200
@@ -92,6 +92,7 @@ def get_products():
 def add_product():
     data = request.json
 
+    product_id = data.get('product_id')
     product_code = data.get('product_code')
     product_name = data.get('product_name')
     product_amount = data.get('product_amount')
@@ -118,20 +119,20 @@ def add_product():
             room_id = room_result[0]
             class_id = class_result[0]
 
-            query_check = text("SELECT product_code FROM Products WHERE room_id = :room_id AND product_code = :product_code")
-            result = con.execute(query_check, {'room_id': room_id, 'product_code': product_code}).fetchone()
+            query_check = text("SELECT product_id FROM Products WHERE room_id = :room_id AND product_id = :product_id")
+            result = con.execute(query_check, {'room_id': room_id, 'product_id': product_id}).fetchone()
 
             if result:
                 return jsonify({'message': 'Este produto já está nesta sala, muda a quantidade apenas'}), 409
 
 
             query_insert = text("""
-                INSERT INTO Products (product_code, product_name, product_amount, room_id, class_id)
-                VALUES (:product_code, :product_name, :product_amount, :room_id, :class_id)
+                INSERT INTO Products (product_id, product_code, product_name, product_amount, room_id, class_id)
+                VALUES (:product_id, :product_code, :product_name, :product_amount, :room_id, :class_id)
             """)
 
             con.execute(query_insert, {
-                'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'class_id': class_id, 'room_id': room_id
+                'product_id': product_id,'product_amount': product_amount, 'product_code': product_code, 'product_name': product_name, 'class_id': class_id, 'room_id': room_id
             })
 
         return jsonify({'message': 'Produto adicionado com sucesso!'}), 201
