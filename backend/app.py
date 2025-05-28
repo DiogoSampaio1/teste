@@ -59,6 +59,7 @@ def expired_token_callback(jwt_header, jwt_payload):
 
 #GET PRODUCTS
 @app.route('/products', methods=['GET'])
+@jwt_required()
 @swag_from('../swagger/getProducts.yaml')
 def get_products():
     query = text("""
