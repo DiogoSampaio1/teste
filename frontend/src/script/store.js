@@ -6,6 +6,7 @@ axios.defaults.baseURL = 'https://100.68.0.76:8080';
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    console.log('Token enviado no header Authorization:', token);
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -83,13 +84,4 @@ export default createStore({
   },
 });
 
-async function testarProducts() {
-  try {
-    const response = await axios.get('/products');
-    console.log('Resposta /products:', response.data);
-  } catch (error) {
-    console.error('Erro /products:', error.response ? error.response.data : error.message);
-  }
-}
 
-testarProducts();
