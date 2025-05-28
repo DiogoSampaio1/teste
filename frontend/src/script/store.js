@@ -1,20 +1,3 @@
-import axios from 'axios';
-
-axios.defaults.baseURL = 'https://100.68.0.76:8080';
-
-axios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    console.log('Token enviado no header Authorization:', token);
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Função para decodificar o JWT e pegar o payload
 function parseJwt(token) {
   try {
     const base64Payload = token.split('.')[1];
@@ -25,7 +8,6 @@ function parseJwt(token) {
   }
 }
 
-// Variável para guardar o timeout do logout automático
 let logoutTimeoutId = null;
 
 export default createStore({
@@ -70,12 +52,23 @@ export default createStore({
   actions: {
     async login({ commit, dispatch }, { ist_number, passphrase }) {
       try {
-        const response = await axios.post('/login', {
-          ist_number,
-          passphrase,
+        const response = await fetch('https://100.68.0.76:8080/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ist_number, passphrase }),
         });
 
-        const { ist_number: uid, access_token } = response.data;
+        if (!response.ok) {
+          const errorData = await response.json();
+          const message = errorData.message || 'Erro ao efetuar login';
+          commit('loginFailure', message);
+          throw new Error(message);
+        }
+
+        const data = await response.json();
+        const { ist_number: uid, access_token } = data;
 
         commit('loginSuccess', {
           ist_number: uid,
@@ -104,10 +97,11 @@ export default createStore({
 
         return { ist_number: uid, access_token };
       } catch (error) {
-        const message =
-          error.response?.data?.message || 'Erro ao efetuar login';
-        commit('loginFailure', message);
-        throw new Error(message);
+        if (!error.message) {
+          commit('loginFailure', 'Erro ao efetuar login');
+          throw new Error('Erro ao efetuar login');
+        }
+        throw error;
       }
     },
 
@@ -117,6 +111,27 @@ export default createStore({
         logoutTimeoutId = null;
       }
       commit('logout');
+    },
+
+    async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
+      if (!state.token) {
+        dispatch('logout');
+        throw new Error('Não autenticado');
+      }
+
+      const headers = {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${state.token}`,
+      };
+
+      const response = await fetch(url, { ...options, headers });
+
+      if (response.status === 401) {
+        dispatch('logout');
+        throw new Error('Sessão expirada. Faça login novamente.');
+      }
+
+      return response;
     },
   },
 });
