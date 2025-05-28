@@ -10,6 +10,7 @@ import os
 import hashlib
 from flask_bcrypt import Bcrypt, check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended.exceptions import ExpiredSignatureError
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 from sqlalchemy import Column, Integer, String, Boolean
 import string
@@ -50,6 +51,10 @@ def generate_random_password(length=28):
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(secrets.choice(characters) for _ in range(length))
 
+
+@jwt.expired_token_loader
+def expired_token_callback(jwt_header, jwt_payload):
+    return jsonify({"message": "Token expirado, faça login novamente"}), 401
 
 # ===================================== PRODUCTS ======================================= #
 
