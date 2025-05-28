@@ -1,8 +1,13 @@
 function parseJwt(token) {
   try {
-    const base64Payload = token.split('.')[1];
-    const payload = atob(base64Payload);
-    return JSON.parse(payload);
+    const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
   } catch (e) {
     return null;
   }
@@ -120,6 +125,7 @@ export default createStore({
       }
 
       const headers = {
+        'Content-Type': 'application/json',
         ...(options.headers || {}),
         Authorization: `Bearer ${state.token}`,
       };
