@@ -82,3 +82,14 @@ export default createStore({
     },
   },
 });
+
+async function testarProducts() {
+  try {
+    const response = await axios.get('/products');
+    console.log('Resposta /products:', response.data);
+  } catch (error) {
+    console.error('Erro /products:', error.response ? error.response.data : error.message);
+  }
+}
+
+testarProducts();
