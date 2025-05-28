@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 axios.defaults.baseURL = 'https://100.68.0.76:8080';
 
 axios.interceptors.request.use(
@@ -14,6 +13,20 @@ axios.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+// Função para decodificar o JWT e pegar o payload
+function parseJwt(token) {
+  try {
+    const base64Payload = token.split('.')[1];
+    const payload = atob(base64Payload);
+    return JSON.parse(payload);
+  } catch (e) {
+    return null;
+  }
+}
+
+// Variável para guardar o timeout do logout automático
+let logoutTimeoutId = null;
 
 export default createStore({
   state: {
@@ -55,7 +68,7 @@ export default createStore({
     },
   },
   actions: {
-    async login({ commit }, { ist_number, passphrase }) {
+    async login({ commit, dispatch }, { ist_number, passphrase }) {
       try {
         const response = await axios.post('/login', {
           ist_number,
@@ -69,6 +82,26 @@ export default createStore({
           token: access_token,
         });
 
+        if (logoutTimeoutId) {
+          clearTimeout(logoutTimeoutId);
+        }
+
+        const decoded = parseJwt(access_token);
+        if (decoded && decoded.exp) {
+          const expTime = decoded.exp * 1000;
+          const currentTime = Date.now();
+          const timeout = expTime - currentTime;
+
+          if (timeout > 0) {
+            logoutTimeoutId = setTimeout(() => {
+              dispatch('logout');
+              alert('Sessão expirada. Faça login novamente.');
+            }, timeout);
+          } else {
+            dispatch('logout');
+          }
+        }
+
         return { ist_number: uid, access_token };
       } catch (error) {
         const message =
@@ -79,9 +112,11 @@ export default createStore({
     },
 
     logout({ commit }) {
+      if (logoutTimeoutId) {
+        clearTimeout(logoutTimeoutId);
+        logoutTimeoutId = null;
+      }
       commit('logout');
     },
   },
 });
-
-
