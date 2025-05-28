@@ -10,7 +10,6 @@ import os
 import hashlib
 from flask_bcrypt import Bcrypt, check_password_hash
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-from flask_jwt_extended.exceptions import ExpiredSignatureError
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 from sqlalchemy import Column, Integer, String, Boolean
 import string
