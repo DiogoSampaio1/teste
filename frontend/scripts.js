@@ -128,51 +128,28 @@ document.getElementById("usb-scanner").addEventListener("input", (e) => {
   }, 300);
 });
 
-// Substituir a parte de tratarCodigoLido por esta versão atualizada
+// Função para tratar o código lido (câmera ou USB)
 function tratarCodigoLido(decodedText) {
   const resultadoDiv = document.getElementById("resultado");
   const formAdd = document.getElementById("form-add");
 
+  // Não mostrar o decodedText diretamente ao usuário
   fetch(`${URL}/products_scan?product_code=${decodedText}`)
     .then(res => {
       if (!res.ok) throw new Error("Produto não encontrado");
       return res.json();
     })
-    .then(produtos => {
-      if (!Array.isArray(produtos)) produtos = [produtos];
-
-      if (produtos.length === 0) throw new Error("Produto não encontrado");
-
-      let produtoSelecionado;
-
-      if (produtos.length === 1) {
-        produtoSelecionado = produtos[0];
-      } else {
-        const listaOpcoes = produtos.map((p, i) =>
-          `${i + 1}: ${p.product_name} | Sala: ${p.room_name}`
-        ).join("\n");
-
-        const escolha = prompt(`Vários produtos encontrados:\n${listaOpcoes}\n\nDigite o número do produto:`);
-        const index = parseInt(escolha) - 1;
-
-        if (isNaN(index) || index < 0 || index >= produtos.length) {
-          alert("Escolha inválida.");
-          return;
-        }
-
-        produtoSelecionado = produtos[index];
-      }
-
+    .then(produto => {
       resultadoDiv.style.display = 'flex';
       resultadoDiv.innerHTML = `
       <h2>✅Produto encontrado:</h2>
       <div class="product-container">
         <section class="info">
-          <div><span>Nome:</span> <i>${produtoSelecionado.product_name}</i></div>
-          <div><span>Código:</span> <i>${produtoSelecionado.product_code}</i></div>
-          <div><span>Classe:</span> <i>${produtoSelecionado.class_name}</i></div>
-          <div><span>Localização:</span> <i>${produtoSelecionado.room_name}</i></div>
-          <div><span>Quantidade:</span> <i>${produtoSelecionado.product_amount}</i></div>
+          <div><span>Nome:</span> <i>${produto.product_name}</i></div>
+          <div><span>Código:</span> <i>${produto.product_code}</i></div>
+          <div><span>Classe:</span> <i>${produto.class_name}</i></div>
+          <div><span>Localização:</span> <i>${produto.room_name}</i></div>
+          <div><span>Quantidade:</span> <i>${produto.product_amount}</i></div>
         </section>
         <hr>
         <section class="icon">
@@ -180,33 +157,37 @@ function tratarCodigoLido(decodedText) {
         </section>
       </div>
       `;
-
       document.querySelector('.edit-icon').addEventListener('click', () => {
         const amountInput = document.getElementById('editAmount');
         const locationInput = document.getElementById('editLocation');
-
-        if (!amountInput || !locationInput) {
-          console.error("Elemento editAmount ou editLocation não encontrado");
-          return;
-        }
-
-        amountInput.value = produtoSelecionado.product_amount;
-        locationInput.value = produtoSelecionado.room_name;
-
-        currentEditCode = produtoSelecionado.product_id;
-        document.getElementById('edit-alert').style.display = 'block';
+      
+          if (!amountInput || !locationInput) {
+            console.error("Elemento editAmount ou editLocation não encontrado");
+            return;
+          }
+        
+          amountInput.value = produto.product_amount;
+          locationInput.value = produto.room_name; // <- esta linha preenche a localização atual
+        
+          currentEditCode = produto.product_id;
+          document.getElementById('edit-alert').style.display = 'block';
       });
     })
     .catch(() => {
+      // Produto não encontrado
       resultadoDiv.innerText = `❌ Produto não encontrado para o código "${decodedText}".`;
+
+      // Mostrar formulário para adicionar novo produto
       formAdd.style.display = "block";
 
+      // Preenche o campo do código manualmente
       const codeInput = document.getElementById("newCode");
       if (codeInput) {
         codeInput.value = decodedText;
-        codeInput.readOnly = true;
+        codeInput.readOnly = true; // evita edição se o código foi escaneado
       }
 
+      // Dar foco no primeiro campo do formulário para facilitar
       document.getElementById("newName").focus();
     });
 }
