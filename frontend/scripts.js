@@ -130,6 +130,7 @@ document.getElementById("usb-scanner").addEventListener("input", (e) => {
 
 function tratarCodigoLido(decodedText) {
   const resultadoDiv = document.getElementById("resultado");
+  const contentDiv = document.getElementById("content");
   const formAdd = document.getElementById("form-add");
 
   fetch(`${URL}/products_scan?product_code=${decodedText}`)
@@ -147,9 +148,10 @@ function tratarCodigoLido(decodedText) {
 
       // Montar HTML com todos os produtos
       let html = `<h2>✅ Produtos encontrados:</h2>`;
+      let content = "";
 
       produtos.forEach((produto, index) => {
-        html += `
+        content += `
           <div class="product-container" data-index="${index}">
             <section class="info">
               <div style="display: none;"><span>ID:</span> <i>${produto.product_id}</i></div>
@@ -167,7 +169,7 @@ function tratarCodigoLido(decodedText) {
         `;
       });
 
-      resultadoDiv.innerHTML = html;
+      contentDiv.innerHTML = content;
 
       // Esconder formulário de adicionar (caso estivesse aberto)
       formAdd.style.display = "none";
