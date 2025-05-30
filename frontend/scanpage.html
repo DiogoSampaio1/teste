@@ -69,7 +69,8 @@
   <div class="edit-alert" id="edit-alert" style="display: none;">
     <div class="edit-alert-box">
       <h1>Editar:</h1>
-      <input type="text" id="editLocation" placeholder="Localização" autocomplete="off">
+      <input type="text" id="editLocation" list="data-list" placeholder="Localização" autocomplete="off">
+      <datalist id="class-list"></datalist>
       <input type="number" min="0" max="5" id="editAmount" placeholder="Quantidade do produto" autocomplete="off">
       <div class="amount-btns">
         <button onclick="alterarEditQuantia(-1)">-</button>
