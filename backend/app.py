@@ -128,7 +128,7 @@ def add_product():
             result = con.execute(query_check, {'room_id': room_id, 'product_code': product_code}).fetchone()
 
             if result:
-                return jsonify({'message': 'Este produto já está nesta sala, muda a quantidade apenas'}), 409
+                return jsonify({'message': 'Este produto já está nesta sala'}), 409
 
 
             query_insert = text("""

@@ -152,7 +152,7 @@ function tratarCodigoLido(decodedText) {
         html += `
           <div class="product-container" data-index="${index}">
             <section class="info">
-              <div><span>ID:</span> <i>${produto.product_id}</i></div>
+              <div style="display: none;"><span>ID:</span> <i>${produto.product_id}</i></div>
               <div><span>Nome:</span> <i>${produto.product_name}</i></div>
               <div><span>Código:</span> <i>${produto.product_code}</i></div>
               <div><span>Classe:</span> <i>${produto.class_name}</i></div>
@@ -161,7 +161,7 @@ function tratarCodigoLido(decodedText) {
             </section>
             <hr>
             <section class="icon">
-              <button class="edit-button" data-index="${index}" style="cursor:pointer;">✏️ Editar</button>
+              <button class="edit-button no-style" data-index="${index}" style="cursor:pointer;">✏️</button>
             </section>
           </div>
         `;
