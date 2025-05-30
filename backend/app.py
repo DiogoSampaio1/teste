@@ -565,11 +565,11 @@ def delete_users():
 # GET PRODUCTS?BY?SCAN
 @app.route('/products_scan', methods=['GET'])
 def get_products_scan():
-    product_id = request.args.get('product_id')
+    product_code = request.args.get('product_code')
 
     try:
         with engine.connect() as con:
-            if product_id:
+            if product_code:
                 query = text("""
                 SELECT Products.*, Rooms.room_name, Classes.class_name
                 FROM Products
@@ -577,7 +577,7 @@ def get_products_scan():
                 JOIN Classes ON Products.class_id = Classes.class_id
                 WHERE Products.product_id = :id
                 """)
-                result = con.execute(query, {"id": product_id})
+                result = con.execute(query, {"id": product_code})
                 row = result.fetchone()
 
                 if row:
@@ -623,13 +623,13 @@ def put_products_scan():
      with engine.connect() as con:
         data = request.get_json()
         product_amount = data.get('product_amount', None)
-        product_id = data.get('product_id')
+        product_code = data.get('product_code')
         room_name = data.get('room_name')
         
         if not product_amount or not room_name:
             return jsonify({'message': 'Por favor altere um dos campos para avançar'}), 400
         
-        query = text("SELECT * FROM Products WHERE product_id =  :product_id ;").bindparams(product_id=product_id)
+        query = text("SELECT * FROM Products WHERE product_code =  :product_code ;").bindparams(product_code=product_code)
         if  con.execute(query).fetchone() is None:
             return jsonify({'message': 'Produto não encontrado'}), 404
         
@@ -641,7 +641,7 @@ def put_products_scan():
         
         room_id = room_result[0]
 
-        update = text("UPDATE Products SET product_amount = :product_amount, room_id = :room_id WHERE product_id = :product_id ;").bindparams(product_amount=product_amount, room_id=room_id,product_id=product_id)
+        update = text("UPDATE Products SET product_amount = :product_amount, room_id = :room_id WHERE product_code = :product_code ;").bindparams(product_amount=product_amount, room_id=room_id,product_code=product_code)
 
         con.execute(update)
         con.commit()
