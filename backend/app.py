@@ -565,11 +565,11 @@ def delete_users():
 # GET PRODUCTS?BY?SCAN
 @app.route('/products_scan', methods=['GET'])
 def get_products_scan():
-    product_code = request.args.get('product_code')
+    product_id = request.args.get('product_id')
 
     try:
         with engine.connect() as con:
-            if product_code:
+            if product_id:
                 query = text("""
                 SELECT Products.*, Rooms.room_name, Classes.class_name
                 FROM Products
@@ -577,7 +577,7 @@ def get_products_scan():
                 JOIN Classes ON Products.class_id = Classes.class_id
                 WHERE Products.product_id = :id
                 """)
-                result = con.execute(query, {"id": product_code})
+                result = con.execute(query, {"id": product_id})
                 row = result.fetchone()
 
                 if row:
