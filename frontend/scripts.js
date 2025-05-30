@@ -134,7 +134,7 @@ function tratarCodigoLido(decodedText) {
   const formAdd = document.getElementById("form-add");
 
   // Não mostrar o decodedText diretamente ao usuário
-  fetch(`${URL}/products_scan?product_code=${decodedText}`)
+  fetch(`${URL}/products_scan?product_id=${decodedText}`)
     .then(res => {
       if (!res.ok) throw new Error("Produto não encontrado");
       return res.json();
