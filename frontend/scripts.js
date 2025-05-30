@@ -145,6 +145,7 @@ function tratarCodigoLido(decodedText) {
       <h2>✅Produto encontrado:</h2>
       <div class="product-container">
         <section class="info">
+          <div><span>ID:</span> <i>${produto.product_id}</i></div>
           <div><span>Nome:</span> <i>${produto.product_name}</i></div>
           <div><span>Código:</span> <i>${produto.product_code}</i></div>
           <div><span>Classe:</span> <i>${produto.class_name}</i></div>
