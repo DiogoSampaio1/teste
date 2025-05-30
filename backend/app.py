@@ -575,13 +575,14 @@ def get_products_scan():
                 FROM Products
                 JOIN Rooms ON Products.room_id = Rooms.room_id
                 JOIN Classes ON Products.class_id = Classes.class_id
-                WHERE Products.product_code = :code
+                WHERE Products.product_id = :id
                 """)
-                result = con.execute(query, {"code": product_code})
+                result = con.execute(query, {"id": product_code})
                 row = result.fetchone()
 
                 if row:
                     produto = {
+                        'product_id': row[0],
                         'product_code': row[1],
                         'product_name': row[2],
                         'product_amount': row[3],
@@ -602,6 +603,7 @@ def get_products_scan():
                 products = []
                 for row in result:
                     products.append({
+                        'product_id': row[0],
                         'product_code': row[1],
                         'product_name': row[2],
                         'product_amount': row[3],
@@ -621,13 +623,13 @@ def put_products_scan():
      with engine.connect() as con:
         data = request.get_json()
         product_amount = data.get('product_amount', None)
-        product_code = data.get('product_code')
+        product_id = data.get('product_id')
         room_name = data.get('room_name')
         
         if not product_amount or not room_name:
             return jsonify({'message': 'Por favor altere um dos campos para avançar'}), 400
         
-        query = text("SELECT * FROM Products WHERE product_code =  :product_code ;").bindparams(product_code=product_code)
+        query = text("SELECT * FROM Products WHERE product_id =  :product_id ;").bindparams(product_id=product_id)
         if  con.execute(query).fetchone() is None:
             return jsonify({'message': 'Produto não encontrado'}), 404
         
@@ -639,7 +641,7 @@ def put_products_scan():
         
         room_id = room_result[0]
 
-        update = text("UPDATE Products SET product_amount = :product_amount, room_id = :room_id WHERE product_code = :product_code ;").bindparams(product_amount=product_amount, room_id=room_id,product_code=product_code)
+        update = text("UPDATE Products SET product_amount = :product_amount, room_id = :room_id WHERE product_id = :product_id ;").bindparams(product_amount=product_amount, room_id=room_id,product_id=product_id)
 
         con.execute(update)
         con.commit()
