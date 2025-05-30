@@ -134,7 +134,7 @@ function tratarCodigoLido(decodedText) {
   const formAdd = document.getElementById("form-add");
 
   // Não mostrar o decodedText diretamente ao usuário
-  fetch(`${URL}/products_scan?product_code=${decodedText}`)
+  fetch(`${URL}/products_scan?product_id=${decodedText}`)
     .then(res => {
       if (!res.ok) throw new Error("Produto não encontrado");
       return res.json();
@@ -169,7 +169,7 @@ function tratarCodigoLido(decodedText) {
           amountInput.value = produto.product_amount;
           locationInput.value = produto.room_name; // <- esta linha preenche a localização atual
         
-          currentEditCode = produto.product_code;
+          currentEditCode = produto.product_id;
           document.getElementById('edit-alert').style.display = 'block';
       });
     })
@@ -207,7 +207,7 @@ function confirmOk() {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      product_code: currentEditCode,
+      product_id: currentEditCode,
       room_name: newLocation,
       product_amount: newAmount
     })
