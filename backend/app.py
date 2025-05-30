@@ -571,46 +571,63 @@ def get_products_scan():
         with engine.connect() as con:
             if product_code:
                 query = text("""
-                SELECT Products.*, Rooms.room_name, Classes.class_name
-                FROM Products
-                JOIN Rooms ON Products.room_id = Rooms.room_id
-                JOIN Classes ON Products.class_id = Classes.class_id
-                WHERE Products.product_code = :code
+                    SELECT 
+                        Products.product_id,
+                        Products.product_code,
+                        Products.product_name,
+                        Products.product_amount,
+                        Rooms.room_name,
+                        Classes.class_name
+                    FROM Products
+                    JOIN Rooms ON Products.room_id = Rooms.room_id
+                    JOIN Classes ON Products.class_id = Classes.class_id
+                    WHERE Products.product_code = :code
                 """)
-                result = con.execute(query, {"code": product_code})
-                row = result.fetchone()
+                result = con.execute(query, {"code": product_code}).mappings().all()
 
-                if row:
-                    produto = {
-                        'product_id': row[0],
-                        'product_code': row[1],
-                        'product_name': row[2],
-                        'product_amount': row[3],
-                        'room_name': row[6],
-                        'class_name': row[7],
-                    }
-                    return jsonify(produto), 200
-                else:
+                if not result:
                     return jsonify({'error': 'Produto não encontrado'}), 404
 
-            else:
-                query = text("""SELECT Products.*, Rooms.room_name
-                FROM Products
-                JOIN Rooms ON Products.room_id = Rooms.room_id
-                JOIN Classes ON Products.class_id = Classes.class_id """)
-                result = con.execute(query)
-
-                products = []
+                produtos = []
                 for row in result:
-                    products.append({
-                        'product_id': row[0],
-                        'product_code': row[1],
-                        'product_name': row[2],
-                        'product_amount': row[3],
-                        'room_name': row[6],
-                        'class_name': row[7],
+                    produtos.append({
+                        'product_id': row['product_id'],
+                        'product_code': row['product_code'],
+                        'product_name': row['product_name'],
+                        'product_amount': row['product_amount'],
+                        'room_name': row['room_name'],
+                        'class_name': row['class_name'],
                     })
-                return jsonify(products), 200
+
+                return jsonify(produtos), 200
+
+            else:
+                query = text("""
+                    SELECT 
+                        Products.product_id,
+                        Products.product_code,
+                        Products.product_name,
+                        Products.product_amount,
+                        Rooms.room_name,
+                        Classes.class_name
+                    FROM Products
+                    JOIN Rooms ON Products.room_id = Rooms.room_id
+                    JOIN Classes ON Products.class_id = Classes.class_id
+                """)
+                result = con.execute(query).mappings().all()
+
+                produtos = []
+                for row in result:
+                    produtos.append({
+                        'product_id': row['product_id'],
+                        'product_code': row['product_code'],
+                        'product_name': row['product_name'],
+                        'product_amount': row['product_amount'],
+                        'room_name': row['room_name'],
+                        'class_name': row['class_name'],
+                    })
+
+                return jsonify(produtos), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
