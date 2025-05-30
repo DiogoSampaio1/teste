@@ -134,22 +134,22 @@ function tratarCodigoLido(decodedText) {
   const formAdd = document.getElementById("form-add");
 
   // Não mostrar o decodedText diretamente ao usuário
-  fetch(`${URL}/products_scan?product_id=${decodedText}`)
+  fetch(`${URL}/products_scan?product_code=${decodedText}`)
     .then(res => {
       if (!res.ok) throw new Error("Produto não encontrado");
       return res.json();
     })
-    .then(produto => {
+    .then(produtos => {
       resultadoDiv.style.display = 'flex';
       resultadoDiv.innerHTML = `
       <h2>✅Produto encontrado:</h2>
       <div class="product-container">
         <section class="info">
-          <div><span>Nome:</span> <i>${produto.product_name}</i></div>
-          <div><span>Código:</span> <i>${produto.product_code}</i></div>
-          <div><span>Classe:</span> <i>${produto.class_name}</i></div>
-          <div><span>Localização:</span> <i>${produto.room_name}</i></div>
-          <div><span>Quantidade:</span> <i>${produto.product_amount}</i></div>
+          <div><span>Nome:</span> <i>${produtos.product_name}</i></div>
+          <div><span>Código:</span> <i>${produtos.product_code}</i></div>
+          <div><span>Classe:</span> <i>${produtos.class_name}</i></div>
+          <div><span>Localização:</span> <i>${produtos.room_name}</i></div>
+          <div><span>Quantidade:</span> <i>${produtos.product_amount}</i></div>
         </section>
         <hr>
         <section class="icon">
@@ -166,10 +166,10 @@ function tratarCodigoLido(decodedText) {
             return;
           }
         
-          amountInput.value = produto.product_amount;
-          locationInput.value = produto.room_name; // <- esta linha preenche a localização atual
+          amountInput.value = produtos.product_amount;
+          locationInput.value = produtos.room_name; // <- esta linha preenche a localização atual
         
-          currentEditCode = produto.product_id;
+          currentEditCode = produtos.product_id;
           document.getElementById('edit-alert').style.display = 'block';
       });
     })
