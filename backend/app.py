@@ -627,7 +627,7 @@ def get_products_scan():
                         'class_name': row['class_name'],
                     })
 
-                return jsonify(produtos[0]), 200
+                return jsonify(produtos), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
