@@ -575,9 +575,9 @@ def get_products_scan():
                 FROM Products
                 JOIN Rooms ON Products.room_id = Rooms.room_id
                 JOIN Classes ON Products.class_id = Classes.class_id
-                WHERE Products.product_id = :id
+                WHERE Products.product_code = :code
                 """)
-                result = con.execute(query, {"id": product_code})
+                result = con.execute(query, {"code": product_code})
                 row = result.fetchone()
 
                 if row:
