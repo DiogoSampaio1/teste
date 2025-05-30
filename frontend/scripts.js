@@ -128,7 +128,6 @@ document.getElementById("usb-scanner").addEventListener("input", (e) => {
   }, 300);
 });
 
-// Função para tratar o código lido (câmera ou USB)
 function tratarCodigoLido(decodedText) {
   const resultadoDiv = document.getElementById("resultado");
   const formAdd = document.getElementById("form-add");
@@ -142,42 +141,58 @@ function tratarCodigoLido(decodedText) {
       if (!produtos.length) {
         throw new Error("Produto não encontrado");
       }
-      const produto = produtos[0]; // Pega o primeiro produto do array
 
+      // Exibir lista de produtos
       resultadoDiv.style.display = "flex";
-      resultadoDiv.innerHTML = `
-        <h2>✅Produto encontrado:</h2>
-        <div class="product-container">
-          <section class="info">
-            <div><span>Nome:</span> <i>${produto.product_name}</i></div>
-            <div><span>Código:</span> <i>${produto.product_code}</i></div>
-            <div><span>Classe:</span> <i>${produto.class_name}</i></div>
-            <div><span>Localização:</span> <i>${produto.room_name}</i></div>
-            <div><span>Quantidade:</span> <i>${produto.product_amount}</i></div>
-          </section>
-          <hr>
-          <section class="icon">
-            <i class="fa-solid fa-pencil edit-icon" style="cursor: pointer;"></i>
-          </section>
-        </div>
-      `;
 
-      // Evento para editar o produto
-      document.querySelector(".edit-icon").addEventListener("click", () => {
-        const amountInput = document.getElementById("editAmount");
-        const locationInput = document.getElementById("editLocation");
-        if (!amountInput || !locationInput) {
-          console.error("Elemento editAmount ou editLocation não encontrado");
-          return;
-        }
-        amountInput.value = produto.product_amount;
-        locationInput.value = produto.room_name;
-        currentEditCode = produto.product_id;
-        document.getElementById("edit-alert").style.display = "block";
+      // Montar HTML com todos os produtos
+      let html = `<h2>✅ Produtos encontrados:</h2>`;
+
+      produtos.forEach((produto, index) => {
+        html += `
+          <div class="product-container" data-index="${index}">
+            <section class="info">
+              <div><span>ID:</span> <i>${produto.product_id}</i></div>
+              <div><span>Nome:</span> <i>${produto.product_name}</i></div>
+              <div><span>Código:</span> <i>${produto.product_code}</i></div>
+              <div><span>Classe:</span> <i>${produto.class_name}</i></div>
+              <div><span>Localização:</span> <i>${produto.room_name}</i></div>
+              <div><span>Quantidade:</span> <i>${produto.product_amount}</i></div>
+            </section>
+            <hr>
+            <section class="icon">
+              <button class="edit-button" data-index="${index}" style="cursor:pointer;">✏️ Editar</button>
+            </section>
+          </div>
+        `;
       });
+
+      resultadoDiv.innerHTML = html;
 
       // Esconder formulário de adicionar (caso estivesse aberto)
       formAdd.style.display = "none";
+
+      // Adicionar evento para todos os botões de editar
+      document.querySelectorAll(".edit-button").forEach(button => {
+        button.addEventListener("click", (e) => {
+          const idx = e.target.getAttribute("data-index");
+          const produto = produtos[idx];
+
+          const amountInput = document.getElementById("editAmount");
+          const locationInput = document.getElementById("editLocation");
+
+          if (!amountInput || !locationInput) {
+            console.error("Elemento editAmount ou editLocation não encontrado");
+            return;
+          }
+
+          amountInput.value = produto.product_amount;
+          locationInput.value = produto.room_name;
+
+          currentEditCode = produto.product_id;
+          document.getElementById("edit-alert").style.display = "block";
+        });
+      });
     })
     .catch(() => {
       // Produto não encontrado
