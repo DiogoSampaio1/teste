@@ -188,8 +188,8 @@ def update_products():
             query_check = text("SELECT product_id FROM Products WHERE room_id = :room_id AND product_code = :product_code")
             result = con.execute(query_check, {'room_id': room_id, 'product_code': product_code}).fetchone()
 
-        if result:
-            return jsonify({'message': 'Este produto já está nesta sala'}), 409
+            if result:
+                return jsonify({'message': 'Este produto já está nesta sala'}), 409
     
         update = text("UPDATE Products SET product_name = :product_name, product_amount = :product_amount, room_id = :room_id, class_id = :class_id WHERE product_id = :product_id;").bindparams(product_name=product_name, product_amount=product_amount, room_id=room_id,product_id=product_id , class_id=class_id)
 
