@@ -190,12 +190,14 @@
 
             if (e.target.classList.contains('edit-icon')) {
               const row = e.target.closest('tr');
-              currentEditCode = row.children[1].textContent; // Código
+              const producId = row.children[0].textContent;
+              currentEditId = producId;
+              currentEditCode = row.children[1].textContent;
               const name = row.children[2].textContent;
               const prodClass = row.children[3].textContent;
               const location = row.children[4].textContent;
               const amount = row.children[5].textContent;
-
+              
               // Preencher os inputs
               document.getElementById('editName').value = name;
               document.getElementById('editClass').value = prodClass;
@@ -219,6 +221,7 @@
             }
 
             const payload = {
+              product_id: currentEditId,
               product_code: currentEditCode,
               product_name: updatedName,
               class_name: updatedClass,
