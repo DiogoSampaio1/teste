@@ -1,11 +1,13 @@
+body, html{
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .container{
   display: flex;
   flex-direction: column;
-  position: absolute;
   align-items: center;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  margin-top: 60px;
   color: #fff;
 }
 
@@ -45,12 +47,6 @@ button:hover:not(.no-style){
   border: 1px solid #ccc; 
   border-radius: 10px;
   overflow: hidden;
-}
-
-#resultado {
-  margin-top: 20px;
-  font-size: 18px;
-  font-weight: bold;
 }
 /* ========== */
 
@@ -140,6 +136,10 @@ button:hover:not(.no-style){
   text-align: center;
   padding: 20px;
   width: 1200px;
+  min-height: 100vh;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 #resultado h2{
@@ -158,7 +158,7 @@ button:hover:not(.no-style){
 
 #content{
   display: grid;
-  grid-template-columns: repeat(auto-fit, 300px);
+  grid-template-columns: repeat(3, 300px);
   justify-content: center;
   max-width: calc(300px * 4);
   gap: 30px;
@@ -183,8 +183,6 @@ i{
 hr{
   height: 80px  ;
 }
-
-
 
 .icon{
   display: flex;
@@ -327,6 +325,10 @@ hr{
 
   .amount-btns{
     flex-direction: column-reverse;
+  }
+
+  #content{
+    grid-template-columns: repeat(1, 300px);
   }
 }
 

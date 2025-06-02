@@ -40,6 +40,18 @@ document.getElementById('placeAmount').addEventListener('input', function() {
   }
 });
 
+document.getElementById('newName').addEventListener('input', function () {
+  if (this.value.length > 30) {
+    this.value = this.value.slice(0, 30);
+  }
+})
+
+document.getElementById('newCode').addEventListener('input', function() {
+  if (this.value.length > 30) {
+    this.value = this.value.slice(0, 30);
+  }
+})
+
 function iniciarScanner() {
   const readerDiv = document.getElementById("reader");
   const resultadoDiv = document.getElementById("resultado");
@@ -194,6 +206,7 @@ function tratarCodigoLido(decodedText) {
           currentEditCode = produto.product_id;
           document.getElementById("edit-alert").style.display = "block";
         });
+        document.getElementById('editAmount').value = "1"; // Volta ao valor original
       });
     })
     .catch(() => {
@@ -255,13 +268,15 @@ function closeEditDialog() {
 }
 
 function openDialog(){
+  const input = document.getElementById('placeAmount').value;
   document.getElementById('form-add').style.display = 'block';
 
   const codeInput = document.getElementById("newCode");
   codeInput.value = '';
   codeInput.readOnly = false;
   ultimoCodigoDetectado = '';
-  document.getElementById('newName').focus();
+  document.getElementById('newCode').focus();
+  input.value = "1";
 }
 
 function closeDialog() {

@@ -142,6 +142,12 @@
       }
     });
 
+    document.getElementById('editName').addEventListener('input', function() {
+      if(this.length > 30) {
+        this.value = this.value.slice(0, 30);
+      }
+    });
+
     document.addEventListener("DOMContentLoaded", () => {
       fetch(`${URL}/products`)
         .then(response => response.json())
@@ -149,38 +155,38 @@
           allProducts = data;
           renderTable(allProducts);
 
-          document.getElementById('items-table').addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-icon')) {
-              const row = e.target.closest('tr');
-              const productId = row.children[0].textContent;
-              const productName = row.children[2].textContent;
-              const productRoom = row.children[4].textContent;
+            document.getElementById('items-table').addEventListener('click', (e) => {
+              if (e.target.classList.contains('delete-icon')) {
+                const row = e.target.closest('tr');
+                const productId = row.children[0].textContent;
+                const productName = row.children[2].textContent;
+                const productRoom = row.children[4].textContent;
 
-              showAlertConfirm(`Deseja deletar o produto "${productName}" que está na "${productRoom}"?`, () => {
-                fetch(`${URL}/products?product_id=${encodeURIComponent(productId)}`, {
-                  method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.message) {
-                    showToast(data.message, 'success');
-                  } else {
-                    showAlert(data.error || "Erro desconhecido", 'error');
-                  }
+                showAlertConfirm(`Deseja deletar o produto "${productName}" que está na "${productRoom}"?`, () => {
+                  fetch(`${URL}/products?product_id=${encodeURIComponent(productId)}`, {
+                    method: 'DELETE'
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.message) {
+                      showToast(data.message, 'success');
+                    } else {
+                      showAlert(data.error || "Erro desconhecido", 'error');
+                    }
 
-                  return fetch(`${URL}/products`);
-                })
-                .then(response => response.json())
-                .then(data => {
-                  allProducts = data;
-                  renderTable(allProducts);
-                })
-                .catch(error => {
-                  console.error('Erro ao deletar:', error);
-                  showAlert("Erro ao deletar produto.", 'error');
+                    return fetch(`${URL}/products`);
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    allProducts = data;
+                    renderTable(allProducts);
+                  })
+                  .catch(error => {
+                    console.error('Erro ao deletar:', error);
+                    showAlert("Erro ao deletar produto.", 'error');
+                  });
                 });
-              });
-            }
+              }
 
             if (e.target.classList.contains('edit-icon')) {
               const row = e.target.closest('tr');
@@ -230,11 +236,12 @@
               .then(res => res.json())
               .then(data => {
                 if (data.error) {
-                  showAlert(data.error); // <-- Erro: exibe alerta vermelho
-                  return; // para aqui
+                  showAlert(data.error || data.message);
+                  return; 
+                } else {
+                  showToast("Produto editado com sucesso!")
                 }
 
-                showToast(data.message || "Atualizado com sucesso!", 'success');
                 closeEditDialog();
 
                 // Recarrega a tabela
@@ -278,7 +285,7 @@
           </td>
         `;
         tableBody.appendChild(row);
-      });
+      }); 
     }
 
     function closeEditDialog() {
