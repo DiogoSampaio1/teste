@@ -151,6 +151,7 @@ def add_product():
 def update_products():
     with engine.connect() as con:
         data = request.get_json()
+        product_id = data.get('product_id')
         product_name = data.get('product_name', None)
         product_amount = data.get('product_amount', None)
         product_code = data.get('product_code')
@@ -186,7 +187,7 @@ def update_products():
         if result:
             return jsonify({'message': 'Este produto já está nesta sala'}), 409
         
-        update = text("UPDATE Products SET product_name = :product_name, product_amount = :product_amount, room_id = :room_id, class_id = :class_id WHERE product_code = :product_code;").bindparams(product_name=product_name, product_amount=product_amount, room_id=room_id,product_code=product_code , class_id=class_id)
+        update = text("UPDATE Products SET product_name = :product_name, product_amount = :product_amount, room_id = :room_id, class_id = :class_id WHERE product_id = :product_id;").bindparams(product_name=product_name, product_amount=product_amount, room_id=room_id,product_id=product_id , class_id=class_id)
 
         con.execute(update)
         con.commit()
