@@ -181,12 +181,16 @@ def update_products():
         room_id = room_result[0]
         class_id = class_result[0]
 
-        query_check = text("SELECT product_id FROM Products WHERE room_id = :room_id AND product_code = :product_code")
-        result = con.execute(query_check, {'room_id': room_id, 'product_code': product_code}).fetchone()
+        query_current = text("SELECT room_id FROM Products WHERE product_id = :product_id")
+        current_room = con.execute(query_current, {'product_id': product_id}).fetchone()
+
+        if current_room and current_room[0] != room_id:
+            query_check = text("SELECT product_id FROM Products WHERE room_id = :room_id AND product_code = :product_code")
+            result = con.execute(query_check, {'room_id': room_id, 'product_code': product_code}).fetchone()
 
         if result:
             return jsonify({'message': 'Este produto já está nesta sala'}), 409
-        
+    
         update = text("UPDATE Products SET product_name = :product_name, product_amount = :product_amount, room_id = :room_id, class_id = :class_id WHERE product_id = :product_id;").bindparams(product_name=product_name, product_amount=product_amount, room_id=room_id,product_id=product_id , class_id=class_id)
 
         con.execute(update)
