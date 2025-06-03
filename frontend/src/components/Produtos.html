@@ -239,10 +239,10 @@
               .then(res => res.json())
               .then(data => {
                 if (data.error) {
+                  showToast("Produto editado com sucesso!");
+                } else {
                   showAlert(data.error || data.message);
                   return; 
-                } else {
-                  showToast("Produto editado com sucesso!")
                 }
 
                 closeEditDialog();
