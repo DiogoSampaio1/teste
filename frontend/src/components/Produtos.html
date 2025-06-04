@@ -238,8 +238,8 @@
             })
               .then(res => res.json())
               .then(data => {
-                if (data.message) {
-                  showAlert(data.message);
+                if (data.error) {
+                  showAlert(data.error);
                   return;
                 } else {
                   showToast('Produto atualizado!');
