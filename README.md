@@ -59,7 +59,7 @@ O site tem como principal funcionalidade a leitura de QRCodes e Códigos de Barr
 6. Executar o servidor:
 
     ```bash
-    python/python3 app.py
+    python3 app.py
     ```
 
 7. Entrar em [http://127.0.0.1:5000/](http://127.0.0.1:5000/) ou [http://127.0.0.1:5000/apidocs](http://127.0.0.1:5000/apidocs) para aceder à API do site.
