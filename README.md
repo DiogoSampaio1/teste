@@ -40,7 +40,7 @@ O site tem como principal funcionalidade a leitura de QRCodes e Códigos de Barr
     sudo apt install python3-full python3-dev python3-venv default-libmysqlclient-dev build-essential pkg-config
     ```
 
-2. Deploy na base de dados de teste  
+2. Deploy na base de dados de teste que se encontra em: `db/database.sql`
    Mais informação em: https://dev.mysql.com/doc/
 
 3. Criar um ambiente virtual de python no backend:
