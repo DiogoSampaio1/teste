@@ -52,7 +52,7 @@ O site tem como principal funcionalidade a leitura de QRCodes e Códigos de Barr
     pip3 install -r requirements.txt
     ```
 
-4. Lembra-te de mudar o engine connection no backend para a tua password e username.
+4. Lembra-te de mudar o engine connection no backend para a tua password e username do MySql.
 
 5. Muda também no ficheiro `Frontend/src/script/mainScript.js` a const `URL` para `http://127.0.0.1:5000/`
 
