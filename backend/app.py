@@ -26,7 +26,7 @@ FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'frontend'))
 ROOT_HTML = os.path.abspath(os.path.join(BASE_DIR, '..')) 
 
 app.config['JWT_SECRET_KEY'] = 'teste'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 120
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 120 #120 segundos para testes
 
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
@@ -60,7 +60,6 @@ def expired_token_callback(jwt_header, jwt_payload):
 #GET PRODUCTS
 @app.route('/products', methods=['GET'])
 @swag_from('../swagger/getProducts.yaml')
-@jwt_required()
 def get_products():
     query = text("""
     SELECT 
