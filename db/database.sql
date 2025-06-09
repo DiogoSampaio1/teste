@@ -33,15 +33,20 @@ VALUES
 INSERT INTO Rooms (room_id, room_name)
 VALUES
   (1, 2.24),
-  (2, 0.59);
+  (2, 0.14),
+  (3, 1.13),
+  (4, 0.59);
 
 INSERT INTO Classes (class_id, class_name)
 VALUES
-  (1, 'TESTE1'),
-  (2, '59');
+  (1, 'Cabo Rede 20 Metros'),
+  (2, 'PENs'),
+  (3, 'Caderno A5'),
+  (4, 'USB-C');
 
 INSERT INTO Products (product_id ,product_code, product_name, class_id, room_id, product_amount)
 VALUES 
-  (1, 1032131232132, 'Cabos Rede Red', 1, 1, 3),
-  (2, 'CZC3298D83', 'ARROXZ', 2, 1, 2),
-  (3, '201044G010006126', 'werfjo', 2, 2, 2);
+  (1, 5606996121177, 'Caderno Linhas', 3, 2, 21),
+  (2, '213926H32729C', 'Cabo Vermelho', 1, 3, 14),
+  (3, 'CZC3298D83', 'Pen Ubuntu 22.04.5', 2, 1, 2),
+  (4, '201044G010006126', 'Pen Windows 11', 2, 4, 1);
