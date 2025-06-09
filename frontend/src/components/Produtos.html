@@ -149,7 +149,12 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      fetch(`${URL}/products`)
+       fetch(`${URL}/products`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
         .then(response => response.json())
         .then(data => {
           allProducts = data;
@@ -164,7 +169,8 @@
 
                 showAlertConfirm(`Deseja deletar o produto "${productName}" que está na "${productRoom}"?`, () => {
                   fetch(`${URL}/products?product_id=${encodeURIComponent(productId)}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
                   })
                   .then(response => response.json())
                   .then(data => {
@@ -232,7 +238,8 @@
             fetch(`${URL}/products`, {
               method: 'PUT',
               headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                 headers: getAuthHeaders()
               },
               body: JSON.stringify(payload)
             })

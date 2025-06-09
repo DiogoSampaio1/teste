@@ -29,6 +29,14 @@ function openSidebar() {
 
 const URL = 'https://100.68.0.76:8080';
 
+function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  };
+}
+
 function userPlace() {
   const userDiv = document.getElementById('user-name');
   const nav = document.getElementById('nav');
