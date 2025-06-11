@@ -89,18 +89,10 @@ export default createStore({
           const timeout = 120 * 1000; // 120 segundos para testes
 
           logoutTimeoutId = setTimeout(() => {
-          console.log('Logout automático disparado');
-
-          // Dispara a action de logout da store
-          dispatch('logout');
-
-          // Limpa o localStorage manualmente (backup)
-          localStorage.removeItem('loggedIn');
-          localStorage.removeItem('ist_number');
-          localStorage.removeItem('token');
-
-          alert('Sessão expirada. Faça login novamente.');
-        }, timeout);
+            console.log('Logout automático disparado');
+            dispatch('logout');
+            alert('Sessão expirada. Faça login novamente.');
+          }, timeout);
         }
 
 
@@ -120,6 +112,7 @@ export default createStore({
         logoutTimeoutId = null;
       }
       commit('logout');
+      window.location = 'Login.html'
     },
 
     async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
