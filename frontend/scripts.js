@@ -402,7 +402,7 @@ function adicionarProduto() {
   focusInput();
   setTimeout(() => {
     window.location.reload()
-  }), 500
+  }, 500);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
