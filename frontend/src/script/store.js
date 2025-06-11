@@ -107,6 +107,14 @@ export default createStore({
       }
     },
 
+    logout({ commit }) {
+      if (logoutTimeoutId) {
+        clearTimeout(logoutTimeoutId);
+        logoutTimeoutId = null;
+      }
+      commit('logout');
+    },
+
     async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
       if (!state.token) {
         dispatch('logout');
