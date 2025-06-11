@@ -116,7 +116,8 @@ export default createStore({
           logoutTimeoutId = setTimeout(() => {
             console.log('Automatic logout triggered by setTimeout.');
             dispatch('logout'); // This dispatches the logout action, which clears localStorage
-            alert('Sessão expirada. Faça login novamente.'); // Alert user after logout state is set
+            // Replaced alert with console.log, consider using a modal/toast for user notification
+            console.log('Sessão expirada. Faça login novamente.');
           }, timeout);
         }
 
