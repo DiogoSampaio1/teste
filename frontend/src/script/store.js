@@ -88,11 +88,11 @@ export default createStore({
         if (decoded && decoded.exp) {
           const timeout = 120 * 1000; // 120 segundos para testes
 
-          logoutTimeoutId = setTimeout(() => {
-            console.log('Logout automático disparado');
-            dispatch('logout');
-            alert('Sessão expirada. Faça login novamente.');
-          }, timeout);
+          logoutTimeoutId = setTimeout(async () => {
+          console.log('Logout automático disparado');
+          await dispatch('logout');
+          alert('Sessão expirada. Faça login novamente.');
+        }, timeout);
         }
 
 
