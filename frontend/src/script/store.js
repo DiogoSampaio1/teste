@@ -1,3 +1,18 @@
+function parseJwt(token) {
+  try {
+    const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
 let logoutTimeoutId = null;
 
 export default createStore({
@@ -68,6 +83,18 @@ export default createStore({
         if (logoutTimeoutId) {
           clearTimeout(logoutTimeoutId);
         }
+
+        const decoded = parseJwt(access_token);
+        if (decoded && decoded.exp) {
+          const timeout = 120 * 1000; // 120 segundos para testes
+
+          logoutTimeoutId = setTimeout(() => {
+            console.log('Logout automático disparado');
+            dispatch('logout');
+            alert('Sessão expirada. Faça login novamente.');
+          }, timeout);
+        }
+
 
         return { ist_number: uid, access_token };
       } catch (error) {
