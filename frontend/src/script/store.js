@@ -44,7 +44,6 @@ export default createStore({
       localStorage.removeItem('token');
     },
     logout(state) {
-      console.log('MUTATION logout chamada');
       state.loggedIn = false;
       state.ist_number = '';
       state.token = '';
@@ -90,10 +89,18 @@ export default createStore({
           const timeout = 120 * 1000; // 120 segundos para testes
 
           logoutTimeoutId = setTimeout(() => {
-            console.log('Logout automático disparado');
-            dispatch('logout');
-            alert('Sessão expirada. Faça login novamente.');
-          }, timeout);
+          console.log('Logout automático disparado');
+
+          // Dispara a action de logout da store
+          dispatch('logout');
+
+          // Limpa o localStorage manualmente (backup)
+          localStorage.removeItem('loggedIn');
+          localStorage.removeItem('ist_number');
+          localStorage.removeItem('token');
+
+          alert('Sessão expirada. Faça login novamente.');
+        }, timeout);
         }
 
 
@@ -108,7 +115,6 @@ export default createStore({
     },
 
     logout({ commit }) {
-      console.log('ACTION logout chamada');
       if (logoutTimeoutId) {
         clearTimeout(logoutTimeoutId);
         logoutTimeoutId = null;
