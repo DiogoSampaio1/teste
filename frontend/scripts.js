@@ -400,6 +400,9 @@ function adicionarProduto() {
       scannerAtivo = false;
     });
   focusInput();
+  setTimeout(() => {
+    window.location.reload()
+  }), 500
 }
 
 document.addEventListener('DOMContentLoaded', () => {
