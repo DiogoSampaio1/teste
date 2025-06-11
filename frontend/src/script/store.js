@@ -1,3 +1,4 @@
+// Function to parse JWT token
 function parseJwt(token) {
   try {
     const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
@@ -9,12 +10,16 @@ function parseJwt(token) {
     );
     return JSON.parse(jsonPayload);
   } catch (e) {
+    console.error('Error parsing JWT:', e); // Added error logging for parseJwt
     return null;
   }
 }
 
 let logoutTimeoutId = null;
 
+// Assuming 'createStore' is a function that sets up a Vuex-like store.
+// If you are using Vuex, ensure it's imported correctly.
+// For example: import { createStore } from 'vuex';
 export default createStore({
   state: {
     loggedIn: localStorage.getItem('loggedIn') === 'true',
@@ -32,6 +37,7 @@ export default createStore({
       localStorage.setItem('loggedIn', 'true');
       localStorage.setItem('ist_number', ist_number);
       localStorage.setItem('token', token);
+      console.log('Login Success: Token and user info set in localStorage.', { ist_number, token }); // Added log
     },
     loginFailure(state, error) {
       state.loggedIn = false;
@@ -39,19 +45,29 @@ export default createStore({
       state.token = '';
       state.error = error;
 
+      console.log('Login Failure: Clearing localStorage items.'); // Added log
       localStorage.removeItem('loggedIn');
       localStorage.removeItem('ist_number');
       localStorage.removeItem('token');
+      console.log('Login Failure: localStorage items cleared.'); // Added log
     },
     logout(state) {
+      console.log('Logout Mutation: Attempting to clear localStorage.'); // Added log
+      // Log the current token value before removal to confirm it's there
+      console.log('Before removal, token in localStorage:', localStorage.getItem('token'));
+
       state.loggedIn = false;
       state.ist_number = '';
       state.token = '';
       state.error = null;
 
+      // Remove items from localStorage
       localStorage.removeItem('loggedIn');
       localStorage.removeItem('ist_number');
       localStorage.removeItem('token');
+
+      // Log the token value after removal to confirm it's gone
+      console.log('After removal, token in localStorage:', localStorage.getItem('token'));
     },
   },
   actions: {
@@ -80,26 +96,28 @@ export default createStore({
           token: access_token,
         });
 
+        // Clear any existing logout timeout
         if (logoutTimeoutId) {
           clearTimeout(logoutTimeoutId);
         }
 
         const decoded = parseJwt(access_token);
         if (decoded && decoded.exp) {
-          const now = Date.now();
-          const expTime = decoded.exp * 1000;
-          const timeout = expTime - now;
+          // You can calculate the timeout based on the actual 'exp' claim from the JWT,
+          // which is more accurate than a fixed 120 seconds if the server's expiry can vary.
+          // const expiryTimeMs = decoded.exp * 1000; // Convert Unix timestamp to milliseconds
+          // const currentTimeMs = Date.now();
+          // const timeout = expiryTimeMs - currentTimeMs;
 
-          if (timeout > 0) {
-            logoutTimeoutId = setTimeout(() => {
-              console.log('Logout automático disparado');
-              dispatch('logout');
-              alert('Sessão expirada. Faça login novamente.');
-            }, timeout);
-          } else {
-            dispatch('logout');
-            alert('Sessão já expirada. Faça login novamente.');
-          }
+          // Keeping your original fixed timeout for testing as requested
+          const timeout = 120 * 1000; // 120 segundos para testes
+
+          console.log(`Setting automatic logout timeout for ${timeout / 1000} seconds.`); // Added log
+          logoutTimeoutId = setTimeout(() => {
+            console.log('Automatic logout triggered by setTimeout.');
+            dispatch('logout'); // This dispatches the logout action, which clears localStorage
+            alert('Sessão expirada. Faça login novamente.'); // Alert user after logout state is set
+          }, timeout);
         }
 
 
@@ -109,20 +127,23 @@ export default createStore({
           commit('loginFailure', 'Erro ao efetuar login');
           throw new Error('Erro ao efetuar login');
         }
+        console.error('Login Action Error:', error); // Added error log
         throw error;
       }
     },
 
     logout({ commit }) {
+      console.log('Logout Action: Clearing timeout and committing logout mutation.'); // Added log
       if (logoutTimeoutId) {
         clearTimeout(logoutTimeoutId);
         logoutTimeoutId = null;
       }
-      commit('logout');
+      commit('logout'); // Call the mutation to update state and clear localStorage
     },
 
     async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
       if (!state.token) {
+        console.warn('fetchWithAuth: No token found in state. Dispatching logout and throwing error.'); // Added log
         dispatch('logout');
         throw new Error('Não autenticado');
       }
@@ -133,10 +154,18 @@ export default createStore({
         Authorization: `Bearer ${state.token}`,
       };
 
-      const response = await fetch(url, { ...options, headers });
+      let response;
+      try {
+        response = await fetch(url, { ...options, headers });
+      } catch (networkError) {
+        console.error('fetchWithAuth: Network error during fetch:', networkError); // Added network error log
+        throw new Error('Erro de rede ao acessar o servidor.');
+      }
+
 
       if (response.status === 401) {
-        dispatch('logout');
+        console.warn('fetchWithAuth: Received 401 Unauthorized status. Dispatching logout.'); // Added log
+        dispatch('logout'); // Dispatch logout if token is invalid or expired (on backend)
         throw new Error('Sessão expirada. Faça login novamente.');
       }
 
