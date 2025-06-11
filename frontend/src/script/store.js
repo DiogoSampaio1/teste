@@ -86,13 +86,20 @@ export default createStore({
 
         const decoded = parseJwt(access_token);
         if (decoded && decoded.exp) {
-          const timeout = 120 * 1000; // 120 segundos para testes
+          const now = Date.now();
+          const expTime = decoded.exp * 1000;
+          const timeout = expTime - now;
 
-          logoutTimeoutId = setTimeout(() => {
-            console.log('Logout automático disparado');
+          if (timeout > 0) {
+            logoutTimeoutId = setTimeout(() => {
+              console.log('Logout automático disparado');
+              dispatch('logout');
+              alert('Sessão expirada. Faça login novamente.');
+            }, timeout);
+          } else {
             dispatch('logout');
-            alert('Sessão expirada. Faça login novamente.');
-          }, timeout);
+            alert('Sessão já expirada. Faça login novamente.');
+          }
         }
 
 
