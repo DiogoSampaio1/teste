@@ -15,82 +15,125 @@ function parseJwt(token) {
 
 let logoutTimeoutId = null;
 
-// Inicialização automática ao carregar a página
-(function checkTokenOnLoad() {
-  const token = localStorage.getItem('token');
-  if (token) {
-    const decoded = parseJwt(token);
-    const now = Math.floor(Date.now() / 1000);
-    if (!decoded || decoded.exp < now) {
-      console.log('Token expirado ao carregar');
-      logout();
-    } else {
-      console.log('Token válido. Login mantido.');
-      // Opcional: reiniciar o timeout
-      startAutoLogout(120 * 1000); // 120 segundos
-    }
-  }
-})();
+export default createStore({
+  state: {
+    loggedIn: localStorage.getItem('loggedIn') === 'true',
+    ist_number: localStorage.getItem('ist_number'),
+    token: localStorage.getItem('token') || '',
+    error: null,
+  },
+  mutations: {
+    loginSuccess(state, { ist_number, token }) {
+      state.loggedIn = true;
+      state.ist_number = ist_number;
+      state.token = token;
+      state.error = null;
 
-async function login(ist_number, passphrase) {
-  try {
-    const response = await fetch('https://100.68.0.76:8080/login', {
-      method: 'POST',
-      headers: {
+      localStorage.setItem('loggedIn', 'true');
+      localStorage.setItem('ist_number', ist_number);
+      localStorage.setItem('token', token);
+    },
+    loginFailure(state, error) {
+      state.loggedIn = false;
+      state.ist_number = '';
+      state.token = '';
+      state.error = error;
+
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('ist_number');
+      localStorage.removeItem('token');
+    },
+    logout(state) {
+      state.loggedIn = false;
+      state.ist_number = '';
+      state.token = '';
+      state.error = null;
+
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('ist_number');
+      localStorage.removeItem('token');
+    },
+  },
+  actions: {
+    async login({ commit, dispatch }, { ist_number, passphrase }) {
+      try {
+        const response = await fetch('https://100.68.0.76:8080/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ist_number, passphrase }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          const message = errorData.message || 'Erro ao efetuar login';
+          commit('loginFailure', message);
+          throw new Error(message);
+        }
+
+        const data = await response.json();
+        const { ist_number: uid, access_token } = data;
+
+        commit('loginSuccess', {
+          ist_number: uid,
+          token: access_token,
+        });
+
+        if (logoutTimeoutId) {
+          clearTimeout(logoutTimeoutId);
+        }
+
+        const decoded = parseJwt(access_token);
+        if (decoded && decoded.exp) {
+          const timeout = 120 * 1000; // 120 segundos para testes
+
+          logoutTimeoutId = setTimeout(() => {
+            console.log('Logout automático disparado');
+            dispatch('logout');
+            alert('Sessão expirada. Faça login novamente.');
+          }, timeout);
+        }
+
+
+        return { ist_number: uid, access_token };
+      } catch (error) {
+        if (!error.message) {
+          commit('loginFailure', 'Erro ao efetuar login');
+          throw new Error('Erro ao efetuar login');
+        }
+        throw error;
+      }
+    },
+
+    logout({ commit }) {
+      if (logoutTimeoutId) {
+        clearTimeout(logoutTimeoutId);
+        logoutTimeoutId = null;
+      }
+      commit('logout');
+    },
+
+    async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
+      if (!state.token) {
+        dispatch('logout');
+        throw new Error('Não autenticado');
+      }
+
+      const headers = {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ist_number, passphrase }),
-    });
+        ...(options.headers || {}),
+        Authorization: `Bearer ${state.token}`,
+      };
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      const message = errorData.message || 'Erro ao efetuar login';
-      throw new Error(message);
-    }
+      const response = await fetch(url, { ...options, headers });
 
-    const data = await response.json();
-    const { ist_number: uid, access_token } = data;
+      if (response.status === 401) {
+        dispatch('logout');
+        throw new Error('Sessão expirada. Faça login novamente.');
+      }
 
-    localStorage.setItem('loggedIn', 'true');
-    localStorage.setItem('ist_number', uid);
-    localStorage.setItem('token', access_token);
-
-    console.log('Login realizado com sucesso');
-
-    // Inicia logout automático
-    startAutoLogout(120 * 1000); // 120 segundos
-
-    return { ist_number: uid, access_token };
-  } catch (err) {
-    console.error('Erro no login:', err.message);
-    logout();
-    throw err;
-  }
-}
-
-function logout() {
-  console.log('Executando logout');
-
-  localStorage.removeItem('loggedIn');
-  localStorage.removeItem('ist_number');
-  localStorage.removeItem('token');
-
-  if (logoutTimeoutId) {
-    clearTimeout(logoutTimeoutId);
-    logoutTimeoutId = null;
-  }
-
-  window.location = 'Login.html';
-}
-
-function startAutoLogout(timeout) {
-  if (logoutTimeoutId) {
-    clearTimeout(logoutTimeoutId);
-  }
-
-  logoutTimeoutId = setTimeout(() => {
-    console.log('Logout automático disparado');
-    logout();
-    alert('Sessão expirada. Faça login novamente.');
-  }, timeout);
-}
+      return response;
+    },
+  },
+});
