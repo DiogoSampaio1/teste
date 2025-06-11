@@ -44,6 +44,7 @@ export default createStore({
       localStorage.removeItem('token');
     },
     logout(state) {
+      console.log('MUTATION logout chamada');
       state.loggedIn = false;
       state.ist_number = '';
       state.token = '';
@@ -104,6 +105,15 @@ export default createStore({
         }
         throw error;
       }
+    },
+
+    logout({ commit }) {
+      console.log('ACTION logout chamada');
+      if (logoutTimeoutId) {
+        clearTimeout(logoutTimeoutId);
+        logoutTimeoutId = null;
+      }
+      commit('logout');
     },
 
     async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
