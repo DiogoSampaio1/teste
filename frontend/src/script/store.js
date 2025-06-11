@@ -106,13 +106,14 @@ export default createStore({
       }
     },
 
-    logout({ commit }) {
+      logout({ commit }) {
+      console.log('Action logout foi chamada');
       if (logoutTimeoutId) {
         clearTimeout(logoutTimeoutId);
         logoutTimeoutId = null;
       }
       commit('logout');
-      window.location = 'Login.html'
+      window.location = 'Login.html';
     },
 
     async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
