@@ -1,3 +1,6 @@
+import { createStore } from 'vuex';
+
+// Função para decodificar JWT
 function parseJwt(token) {
   try {
     const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
@@ -13,13 +16,33 @@ function parseJwt(token) {
   }
 }
 
+// Verificação inicial do token ao carregar a app
+let token = localStorage.getItem('token') || '';
+let loggedIn = localStorage.getItem('loggedIn') === 'true';
+let ist_number = localStorage.getItem('ist_number');
+
+if (token) {
+  const decoded = parseJwt(token);
+  const now = Math.floor(Date.now() / 1000);
+  if (!decoded || decoded.exp < now) {
+    console.log('Token expirado ao carregar a página');
+    loggedIn = false;
+    ist_number = '';
+    token = '';
+    localStorage.removeItem('loggedIn');
+    localStorage.removeItem('ist_number');
+    localStorage.removeItem('token');
+    window.location = 'Login.html';
+  }
+}
+
 let logoutTimeoutId = null;
 
-export default createStore({
+const store = createStore({
   state: {
-    loggedIn: localStorage.getItem('loggedIn') === 'true',
-    ist_number: localStorage.getItem('ist_number'),
-    token: localStorage.getItem('token') || '',
+    loggedIn,
+    ist_number,
+    token,
     error: null,
   },
   mutations: {
@@ -55,7 +78,7 @@ export default createStore({
     },
   },
   actions: {
-    async login({ commit, dispatch }, { ist_number, passphrase }) {
+    async login({ commit }, { ist_number, passphrase }) {
       try {
         const response = await fetch('https://100.68.0.76:8080/login', {
           method: 'POST',
@@ -80,6 +103,7 @@ export default createStore({
           token: access_token,
         });
 
+        // Clear qualquer timeout anterior
         if (logoutTimeoutId) {
           clearTimeout(logoutTimeoutId);
         }
@@ -88,13 +112,13 @@ export default createStore({
         if (decoded && decoded.exp) {
           const timeout = 120 * 1000; // 120 segundos para testes
 
+          // Usando store.dispatch diretamente para manter escopo
           logoutTimeoutId = setTimeout(async () => {
-          console.log('Logout automático disparado');
-          await dispatch('logout');
-          alert('Sessão expirada. Faça login novamente.');
-        }, timeout);
+            console.log('Logout automático disparado');
+            await store.dispatch('logout');
+            alert('Sessão expirada. Faça login novamente.');
+          }, timeout);
         }
-
 
         return { ist_number: uid, access_token };
       } catch (error) {
@@ -106,8 +130,7 @@ export default createStore({
       }
     },
 
-      logout({ commit }) {
-      console.log('Action logout foi chamada');
+    logout({ commit }) {
       if (logoutTimeoutId) {
         clearTimeout(logoutTimeoutId);
         logoutTimeoutId = null;
@@ -118,7 +141,7 @@ export default createStore({
 
     async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
       if (!state.token) {
-        dispatch('logout');
+        await dispatch('logout');
         throw new Error('Não autenticado');
       }
 
@@ -131,7 +154,7 @@ export default createStore({
       const response = await fetch(url, { ...options, headers });
 
       if (response.status === 401) {
-        dispatch('logout');
+        await dispatch('logout');
         throw new Error('Sessão expirada. Faça login novamente.');
       }
 
@@ -139,3 +162,5 @@ export default createStore({
     },
   },
 });
+
+export default store;
