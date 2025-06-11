@@ -93,6 +93,7 @@ export default createStore({
             dispatch('logout');
             alert('Sessão expirada. Faça login novamente.');
           }, timeout);
+          window.location = '../components/Login.html';
         }
 
 

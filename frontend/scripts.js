@@ -23,6 +23,12 @@ document.getElementById('editAmount').addEventListener('keypress', function(even
 });
 
 document.getElementById('editAmount').addEventListener('keypress', function(event) {
+  if (event.key < "1" || event.key > "9") {
+    event.preventDefault();
+  }
+});
+
+document.getElementById('placeAmount').addEventListener('keypress', function(event) {
   if (event.key < "0" || event.key > "9") {
     event.preventDefault();
   }
@@ -300,7 +306,7 @@ function alterarQuantia(delta){
   let valorAtual = parseInt(input.value, 10) || 0;
   let novoValor = valorAtual + delta;
 
-  if (novoValor < 0) novoValor = 0
+  if (novoValor < 1) novoValor = 1
   input.value = novoValor;
 }
 
@@ -309,7 +315,7 @@ function alterarEditQuantia(delta){
   let valorAtual = parseInt(input.value, 10) || 0;
   let novoValor = valorAtual + delta;
 
-  if (novoValor < 0) novoValor = 0
+  if (novoValor < 1) novoValor = 1
   input.value = novoValor;
 }
 
@@ -360,7 +366,12 @@ function adicionarProduto() {
   const resultadoDiv = document.getElementById("resultado");
 
   if (!code || !nome || !classe || !amount || !locations) {
-    showAlert("Preencha todos os campos.");
+    showAlert("Preencha todos os campos!");
+    return;
+  }
+
+  if (amount <= 0) {
+    showAlert("Coloque uma quantidade válida!");
     return;
   }
 
@@ -394,15 +405,15 @@ function adicionarProduto() {
       document.getElementById("newLocation").value = "";
       ultimoCodigoDetectado = "";
       scannerAtivo = false;
+      setTimeout(() => {
+        window.location.reload()
+      }, 500);
     })
     .catch(err => {
       showAlert(err.message);
       scannerAtivo = false;
     });
   focusInput();
-  setTimeout(() => {
-    window.location.reload()
-  }, 500);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
