@@ -90,7 +90,9 @@ export default createStore({
 
           logoutTimeoutId = setTimeout(() => {
             console.log('Logout automático disparado');
-            dispatch('logout');
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('ist_number');
+            localStorage.removeItem('token');
             alert('Sessão expirada. Faça login novamente.');
           }, timeout);
         }
