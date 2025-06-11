@@ -15,11 +15,28 @@ function parseJwt(token) {
 
 let logoutTimeoutId = null;
 
+// Verifica expiração ao iniciar a app
+function isTokenExpired(token) {
+  const decoded = parseJwt(token);
+  if (!decoded || !decoded.exp) return true;
+  return decoded.exp * 1000 < Date.now();
+}
+
+// Dados iniciais com verificação de expiração
+const initialToken = localStorage.getItem('token');
+const tokenIsExpired = initialToken ? isTokenExpired(initialToken) : true;
+
+if (tokenIsExpired) {
+  localStorage.removeItem('loggedIn');
+  localStorage.removeItem('ist_number');
+  localStorage.removeItem('token');
+}
+
 export default createStore({
   state: {
-    loggedIn: localStorage.getItem('loggedIn') === 'true',
-    ist_number: localStorage.getItem('ist_number'),
-    token: localStorage.getItem('token') || '',
+    loggedIn: !tokenIsExpired && localStorage.getItem('loggedIn') === 'true',
+    ist_number: !tokenIsExpired ? localStorage.getItem('ist_number') : '',
+    token: !tokenIsExpired ? initialToken : '',
     error: null,
   },
   mutations: {
@@ -80,21 +97,26 @@ export default createStore({
           token: access_token,
         });
 
+        // Limpa timeout anterior se existir
         if (logoutTimeoutId) {
           clearTimeout(logoutTimeoutId);
         }
 
+        // Define logout automático com base na expiração real do token
         const decoded = parseJwt(access_token);
         if (decoded && decoded.exp) {
-          const timeout = 120 * 1000; // 120 segundos para testes
+          const expMs = decoded.exp * 1000;
+          const nowMs = Date.now();
+          const timeout = expMs - nowMs;
 
-          logoutTimeoutId = setTimeout(() => {
-            console.log('Logout automático disparado');
-            dispatch('logout');
-            alert('Sessão expirada. Faça login novamente.');
-          }, timeout);
+          if (timeout > 0) {
+            logoutTimeoutId = setTimeout(() => {
+              console.log('Logout automático disparado');
+              dispatch('logout');
+              alert('Sessão expirada. Faça login novamente.');
+            }, timeout);
+          }
         }
-
 
         return { ist_number: uid, access_token };
       } catch (error) {
@@ -118,6 +140,12 @@ export default createStore({
       if (!state.token) {
         dispatch('logout');
         throw new Error('Não autenticado');
+      }
+
+      const decoded = parseJwt(state.token);
+      if (!decoded || decoded.exp * 1000 < Date.now()) {
+        dispatch('logout');
+        throw new Error('Sessão expirada. Faça login novamente.');
       }
 
       const headers = {
