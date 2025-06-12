@@ -86,15 +86,22 @@ export default createStore({
 
         const decoded = parseJwt(access_token);
         if (decoded && decoded.exp) {
-          const timeout = 120 * 1000; // 120 segundos para testes
+          const expiresInMs = (decoded.exp * 1000) - Date.now();
 
-          logoutTimeoutId = setTimeout(() => {
-            console.log('Logout automático disparado');
+          if (expiresInMs > 0) {
+            logoutTimeoutId = setTimeout(() => {
+              console.log('Logout automático disparado');
+              dispatch('logout');
+              alert('Sessão expirada. Faça login novamente.');
+              window.location = '../components/Login.html';
+            }, expiresInMs);
+          } else {
+            // Token já expirado, logout imediato
             dispatch('logout');
-            alert('Sessão expirada. Faça login novamente.');
-          }, timeout);
-          window.location = '../components/Login.html';
+            window.location = '../components/Login.html';
+          }
         }
+
 
 
         return { ist_number: uid, access_token };
