@@ -96,7 +96,6 @@ export default createStore({
               window.location = '../components/Login.html';
             }, expiresInMs);
           } else {
-            // Token já expirado, logout imediato
             dispatch('logout');
             window.location = '../components/Login.html';
           }
@@ -114,13 +113,14 @@ export default createStore({
       }
     },
 
-    logout({ commit }) {
-      if (logoutTimeoutId) {
-        clearTimeout(logoutTimeoutId);
-        logoutTimeoutId = null;
-      }
-      commit('logout');
-    },
+        logout({ commit }) {
+          if (logoutTimeoutId) {
+            clearTimeout(logoutTimeoutId);
+            logoutTimeoutId = null;
+          }
+          commit('logout');
+          window.location = '../components/Login.html'; // <--- redirecionamento garantido
+          },
 
     async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
       if (!state.token) {
