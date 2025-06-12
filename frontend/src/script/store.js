@@ -86,21 +86,15 @@ export default createStore({
 
         const decoded = parseJwt(access_token);
         if (decoded && decoded.exp) {
-          const expiresInMs = (decoded.exp * 1000) - Date.now();
+          const timeout = 120 * 1000; // 120 segundos para testes
 
-          if (expiresInMs > 0) {
-            logoutTimeoutId = setTimeout(() => {
-              console.log('Logout automático disparado');
-              dispatch('logout');
-              alert('Sessão expirada. Faça login novamente.');
-              window.location = '../components/Login.html';
-            }, expiresInMs);
-          } else {
+          logoutTimeoutId = setTimeout(() => {
+            console.log('Logout automático disparado');
             dispatch('logout');
-            window.location = '../components/Login.html';
-          }
+            alert('Sessão expirada. Faça login novamente.');
+          }, timeout);
+          window.location = '../components/Login.html';
         }
-
 
 
         return { ist_number: uid, access_token };
@@ -113,14 +107,13 @@ export default createStore({
       }
     },
 
-        logout({ commit }) {
-          if (logoutTimeoutId) {
-            clearTimeout(logoutTimeoutId);
-            logoutTimeoutId = null;
-          }
-          commit('logout');
-          window.location = '../components/Login.html'; // <--- redirecionamento garantido
-          },
+    logout({ commit }) {
+      if (logoutTimeoutId) {
+        clearTimeout(logoutTimeoutId);
+        logoutTimeoutId = null;
+      }
+      commit('logout');
+    },
 
     async fetchWithAuth({ state, dispatch }, { url, options = {} }) {
       if (!state.token) {
