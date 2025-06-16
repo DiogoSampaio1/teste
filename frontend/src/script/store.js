@@ -84,6 +84,8 @@ export default createStore({
           clearTimeout(logoutTimeoutId);
         }
 
+        const decoded = parseJwt(access_token);
+        
         if (decoded && decoded.exp) {
   const expirationTime = decoded.exp * 1000; // JWT exp em segundos
   const currentTime = Date.now();
