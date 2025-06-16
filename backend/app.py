@@ -26,7 +26,7 @@ FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'frontend'))
 ROOT_HTML = os.path.abspath(os.path.join(BASE_DIR, '..')) 
 
 app.config['JWT_SECRET_KEY'] = 'teste'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 120 #120 segundos para testes
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 60 #120 segundos para testes
 
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
