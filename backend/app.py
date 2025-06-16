@@ -26,7 +26,7 @@ FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'frontend'))
 ROOT_HTML = os.path.abspath(os.path.join(BASE_DIR, '..')) 
 
 app.config['JWT_SECRET_KEY'] = 'teste'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 28800
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 60 #120 segundos para testes
 
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
@@ -95,7 +95,6 @@ def get_products():
 #POST PRODUCTS
 @app.route('/products', methods=['POST'])
 @swag_from('../swagger/postProducts.yaml')
-@jwt_required()
 def add_product():
     data = request.json
 
@@ -150,7 +149,6 @@ def add_product():
 #PUT PRODUCTS
 @app.route('/products', methods=['PUT'])
 @swag_from('../swagger/putProducts.yaml')
-@jwt_required()
 def update_products():
     with engine.connect() as con:
         data = request.get_json()
@@ -205,7 +203,6 @@ def update_products():
 #DELETE PRODUCTS
 @app.route('/products', methods=['DELETE'])
 @swag_from('../swagger/deleteProducts.yaml')
-@jwt_required()
 def delete_products():
     product_code = request.args.get('product_code')
     product_id = request.args.get('product_id')
@@ -234,7 +231,6 @@ def delete_products():
 #GET CLASSES
 @app.route('/class', methods=['GET'])
 @swag_from('../swagger/getClasses.yaml')
-@jwt_required()
 def get_classes():
     query = text("""
     SELECT 
@@ -261,7 +257,6 @@ def get_classes():
 #POST CLASSES
 @app.route('/class', methods=['POST'])
 @swag_from('../swagger/postClasses.yaml')
-@jwt_required()
 def add_class():
     data = request.json
 
@@ -295,7 +290,6 @@ def add_class():
 #PUT CLASSES
 @app.route('/class', methods=['PUT'])
 @swag_from('../swagger/putClasses.yaml')
-@jwt_required()
 def update_class():
     with engine.connect() as con:
         data = request.get_json()
@@ -325,7 +319,6 @@ def update_class():
 #DELETE CLASSES
 @app.route('/class', methods=['DELETE'])
 @swag_from('../swagger/deleteClasses.yaml')
-@jwt_required()
 def delete_class():
     class_name = request.args.get('class_name')
 
@@ -363,7 +356,6 @@ def delete_class():
 #GET ROOMS
 @app.route('/room', methods=['GET'])
 @swag_from('../swagger/getRoom.yaml')
-@jwt_required()
 def get_room():
     query = text("""
     SELECT 
@@ -389,7 +381,6 @@ def get_room():
 #POST ROOMS
 @app.route('/room', methods=['POST'])
 @swag_from('../swagger/postRoom.yaml')
-@jwt_required()
 def add_room():
     data = request.json
 
@@ -423,7 +414,6 @@ def add_room():
 #PUT ROOMS
 @app.route('/room', methods=['PUT'])
 @swag_from('../swagger/putRoom.yaml')
-@jwt_required()
 def update_room():
     with engine.connect() as con:
         data = request.get_json()
@@ -453,7 +443,6 @@ def update_room():
 #DELETE ROOMS
 @app.route('/room', methods=['DELETE'])
 @swag_from('../swagger/deleteRoom.yaml')
-@jwt_required()
 def delete_room():
     room_name = request.args.get('room_name')
 
@@ -493,7 +482,6 @@ def delete_room():
 #GET USERS
 @app.route('/user', methods=['GET'])
 @swag_from('../swagger/getUser.yaml')
-@jwt_required()
 def get_users():
     query = text("""
     SELECT 
@@ -518,7 +506,6 @@ def get_users():
 # POST USERS
 @app.route('/user', methods=['POST'])
 @swag_from('../swagger/postUser.yaml')
-@jwt_required()
 def add_user():
     data = request.json
 
@@ -561,7 +548,6 @@ def add_user():
 #DELETE USERS
 @app.route('/user', methods=['DELETE'])
 @swag_from('../swagger/deleteUser.yaml')
-
 def delete_users():
     ist_number = request.args.get('ist_number')
 
@@ -590,7 +576,6 @@ def delete_users():
 
 # GET PRODUCTS?BY?SCAN
 @app.route('/products_scan', methods=['GET'])
-@jwt_required()
 def get_products_scan():
     product_code = request.args.get('product_code')
 
@@ -662,7 +647,6 @@ def get_products_scan():
 #PUT PRODUCTS?BY?SCAN
 @app.route
 @app.route('/products_scan', methods=['PUT'])
-@jwt_required()
 def put_products_scan():
      
      with engine.connect() as con:
