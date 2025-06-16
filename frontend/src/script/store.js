@@ -86,11 +86,13 @@ export default createStore({
 
 const decoded = parseJwt(access_token);
 if (decoded && decoded.exp) {
-  const expirationTime = decoded.exp * 1000; // JWT 'exp' é em segundos, precisamos em milissegundos
+  const expirationTime = decoded.exp * 1000;
   const currentTime = Date.now();
   const timeout = expirationTime - currentTime;
 
-  console.log(`Sessão expira em ${timeout / 1000} segundos`);
+  console.log('⏳ Timeout em ms:', timeout);
+  console.log('⏰ Expira às:', new Date(expirationTime));
+  console.log('🕒 Agora:', new Date(currentTime));
 
   if (timeout > 0) {
     logoutTimeoutId = setTimeout(() => {
@@ -100,13 +102,12 @@ if (decoded && decoded.exp) {
       window.location = '../components/Login.html';
     }, timeout);
   } else {
-    // Token já expirou
+    console.warn('⚠️ Token já expirou, logout imediato');
     dispatch('logout');
     alert('Sessão expirada. Faça login novamente.');
     window.location = '../components/Login.html';
   }
 }
-
 
 
 
