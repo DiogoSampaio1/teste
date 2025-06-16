@@ -95,12 +95,12 @@ if (decoded && decoded.exp) {
   console.log('🕒 Agora:', new Date(currentTime));
 
   if (timeout > 0) {
-    logoutTimeoutId = setTimeout(() => {
-      console.log('Logout automático disparado');
-      dispatch('logout');
-      alert('Sessão expirada. Faça login novamente.');
-      window.location = '../components/Login.html';
-    }, timeout);
+  logoutTimeoutId = setTimeout(() => {
+  console.log('FORÇADO: Logout automático disparado');
+  dispatch('logout');
+  alert('Sessão expirada. Faça login novamente.');
+  window.location = '../components/Login.html';
+}, 5000); // 5 segundos
   } else {
     console.warn('⚠️ Token já expirou, logout imediato');
     dispatch('logout');
